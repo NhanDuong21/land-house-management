@@ -14,7 +14,7 @@ public class TestDBConnection {
                 System.out.println("Ket noi db thanh cong");
             }
         } catch (Exception e) {
-            System.out.println("Im lang ma fix di co be");
+            System.out.println("Im lang nao Ruby, connect fail roi");
             e.printStackTrace();
         }
     }
