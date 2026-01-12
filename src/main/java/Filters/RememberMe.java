@@ -26,16 +26,16 @@ public class RememberMe implements Filter {
         // Nếu chưa login
         if (session == null || session.getAttribute("account") == null) {
 
-            Cookie[] cookies = request.getCookies();
+            Cookie[] cookies = request.getCookies(); // client send all cookie of domain
             if (cookies != null) {
                 for (Cookie c : cookies) {
                     if ("Remember_me".equals(c.getName())) {
 
-                        String token = c.getValue();
+                        String token = c.getValue(); // get token(chuỗi random (UUID)) từ cookie
                         AccountDAO dao = new AccountDAO();
-                        Account acc = dao.findByRememberToken(token);
+                        Account acc = dao.findByRememberToken(token); // check sự tồn tại của cookie
 
-                        if (acc != null) {
+                        if (acc != null) { // cookie tồn tại => create new session vì trước đó user chưa login nên cần session mới để lưu account
                             HttpSession newSession = request.getSession(true);
                             newSession.setAttribute("account", acc);
                             newSession.setAttribute("role", acc.getRole());
@@ -46,6 +46,6 @@ public class RememberMe implements Filter {
             }
         }
 
-        chain.doFilter(req, res);
+        chain.doFilter(req, res); // allow request đi tiếp
     }
 }
