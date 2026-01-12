@@ -13,11 +13,29 @@ CREATE TABLE Account (
     email NVARCHAR(100) UNIQUE,
     avatar NVARCHAR(255),
     role NVARCHAR(20) NOT NULL,
-    status NVARCHAR(20) NOT NULL
+    status NVARCHAR(20) NOT NULL,
+    CONSTRAINT CK_Account_Role
+        CHECK (role IN ('ADMIN', 'MANAGER', 'TENANT')),
+    CONSTRAINT CK_Account_Status
+        CHECK (status IN ('ACTIVE', 'INACTIVE', 'BANNED'))
 );
 
 /* =========================
-   2. ROLE TABLES
+   2. HOUSE 
+   ========================= */
+CREATE TABLE House (
+    house_id INT IDENTITY PRIMARY KEY,
+    house_name NVARCHAR(100) NOT NULL,
+    address NVARCHAR(255) NOT NULL,
+    city NVARCHAR(100) NOT NULL,
+    description NVARCHAR(255),
+    status NVARCHAR(20) NOT NULL,
+    CONSTRAINT CK_House_Status
+        CHECK (status IN ('ACTIVE', 'INACTIVE'))
+);
+
+/* =========================
+   3. ROLE TABLES
    ========================= */
 CREATE TABLE Admin (
     admin_id INT IDENTITY PRIMARY KEY,
@@ -28,9 +46,11 @@ CREATE TABLE Admin (
 CREATE TABLE Manager (
     manager_id INT IDENTITY PRIMARY KEY,
     account_id INT NOT NULL UNIQUE,
+    house_id INT NOT NULL UNIQUE, -- 1 khu chỉ có 1 manager
     full_name NVARCHAR(100) NOT NULL,
     phone NVARCHAR(20),
-    FOREIGN KEY (account_id) REFERENCES Account(account_id)
+    FOREIGN KEY (account_id) REFERENCES Account(account_id),
+    FOREIGN KEY (house_id) REFERENCES House(house_id)
 );
 
 CREATE TABLE Tenant (
@@ -43,21 +63,24 @@ CREATE TABLE Tenant (
 );
 
 /* =========================
-   3. ROOM
+   4. ROOM
    ========================= */
 CREATE TABLE Room (
     room_id INT IDENTITY PRIMARY KEY,
-    room_number NVARCHAR(20) NOT NULL UNIQUE,
+    house_id INT NOT NULL,
+    room_number NVARCHAR(20) NOT NULL,
     price DECIMAL(18,2) NOT NULL,
     status NVARCHAR(20) NOT NULL,
     room_image NVARCHAR(255),
     description NVARCHAR(255),
-    CONSTRAINT CK_Room_Status
-        CHECK (status IN ('AVAILABLE', 'OCCUPIED', 'MAINTENANCE'))
+    FOREIGN KEY (house_id) REFERENCES House(house_id),
+    CONSTRAINT CK_Room_Status CHECK (status IN ('AVAILABLE', 'OCCUPIED', 'MAINTENANCE')),
+    CONSTRAINT UQ_Room_House_RoomNumber UNIQUE (house_id, room_number)
 );
 
+
 /* =========================
-   4. UTILITY
+   5. UTILITY
    ========================= */
 CREATE TABLE Utility (
     utility_id INT IDENTITY PRIMARY KEY,
@@ -67,13 +90,13 @@ CREATE TABLE Utility (
 );
 
 /* =========================
-   5. ROOM_UTILITY
+   6. ROOM_UTILITY
    ========================= */
 CREATE TABLE Room_Utility (
     room_utility_id INT IDENTITY PRIMARY KEY,
     room_id INT NOT NULL,
     utility_id INT NOT NULL,
-    initial_index DECIMAL(18,2), -- Lưu chỉ số hiện tại để làm mốc cho tháng sau
+    initial_index DECIMAL(18,2),
     start_date DATE NOT NULL,
     end_date DATE,
     FOREIGN KEY (room_id) REFERENCES Room(room_id),
@@ -82,7 +105,7 @@ CREATE TABLE Room_Utility (
 );
 
 /* =========================
-   6. CONTRACT
+   7. CONTRACT
    ========================= */
 CREATE TABLE Contract (
     contract_id INT IDENTITY PRIMARY KEY,
@@ -99,11 +122,11 @@ CREATE TABLE Contract (
     CONSTRAINT CK_Contract_Status
         CHECK (status IN ('ACTIVE', 'EXPIRED', 'TERMINATED')),
     CONSTRAINT CK_Contract_Dates
-        CHECK (end_date IS NULL OR end_date > start_date)    
+        CHECK (end_date IS NULL OR end_date > start_date)
 );
 
 /* =========================
-   7. BILL
+   8. BILL
    ========================= */
 CREATE TABLE Bill (
     bill_id INT IDENTITY PRIMARY KEY,
@@ -116,23 +139,26 @@ CREATE TABLE Bill (
 );
 
 /* =========================
-   8. BILL_DETAIL
+   9. BILL_DETAIL
    ========================= */
 CREATE TABLE Bill_Detail (
     bill_detail_id INT IDENTITY PRIMARY KEY,
     bill_id INT NOT NULL,
     utility_id INT NOT NULL,
-    old_index DECIMAL(18,2) NULL, -- Cho phép null vì Wifi/Rác không có chỉ số
+    old_index DECIMAL(18,2) NULL,
     new_index DECIMAL(18,2) NULL,
     quantity DECIMAL(18,2) NOT NULL,
-    unit_price DECIMAL(18,2) NOT NULL, -- Giá tại thời điểm xuất hóa đơn
+    unit_price DECIMAL(18,2) NOT NULL,
     amount DECIMAL(18,2) NOT NULL,
     FOREIGN KEY (bill_id) REFERENCES Bill(bill_id),
-    FOREIGN KEY (utility_id) REFERENCES Utility(utility_id)
+    FOREIGN KEY (utility_id) REFERENCES Utility(utility_id),
+    CONSTRAINT CK_BillDetail_Indexes
+        CHECK ((old_index IS NULL AND new_index IS NULL) OR (old_index IS NOT NULL AND new_index IS NOT NULL AND new_index >= old_index))
+        -- accept 1 trong 2 case ( block input ngay từ đầu )
 );
 
 /* =========================
-   9. MAINTENANCE_REQUEST
+   10. MAINTENANCE_REQUEST
    ========================= */
 CREATE TABLE Maintenance_Request (
     request_id INT IDENTITY PRIMARY KEY,
@@ -147,3 +173,17 @@ CREATE TABLE Maintenance_Request (
     FOREIGN KEY (room_id) REFERENCES Room(room_id)
 );
 GO
+
+/*
+        -- DB đã validate -- 
+    - role account hợp lệ
+    - status account
+    - status house
+    - status room
+    - unique trong cùng house
+    - room_utility check duplicate mapping ( check utitlity )
+    - status contract
+    - block ngày hợp đồng ko hợp lệ
+    - bill_detail block dữ liệu từ đầu
+
+*/
