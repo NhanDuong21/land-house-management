@@ -1,0 +1,51 @@
+package Filters;
+
+import java.io.IOException;
+
+import DALs.AccountDAO;
+import Models.Account;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
+public class RememberMe implements Filter {
+
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+            throws IOException, ServletException {
+
+        HttpServletRequest request = (HttpServletRequest) req;
+
+        HttpSession session = request.getSession(false);
+
+        // Nếu chưa login
+        if (session == null || session.getAttribute("account") == null) {
+
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie c : cookies) {
+                    if ("Remember_me".equals(c.getName())) {
+
+                        String token = c.getValue();
+                        AccountDAO dao = new AccountDAO();
+                        Account acc = dao.findByRememberToken(token);
+
+                        if (acc != null) {
+                            HttpSession newSession = request.getSession(true);
+                            newSession.setAttribute("account", acc);
+                            newSession.setAttribute("role", acc.getRole());
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        chain.doFilter(req, res);
+    }
+}
