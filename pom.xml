@@ -1,12 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jsp.shop</groupId>
     <artifactId>LandHouseManagement</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>LandHouseManagement-1.0-SNAPSHOT</name>
-    
+
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
@@ -14,7 +15,7 @@
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <jakartaee>9.1.0</jakartaee>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>jakarta.platform</groupId>
@@ -22,10 +23,10 @@
             <version>${jakartaee}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- ERROR: java.lang.ClassNotFoundException: 
         com.microsoft.sqlserver.jdbc.SQLServerDriver -->
-        
+
         <!-- => Nghĩa là dự án của mày không có file mssql-jdbc-x.x.x.jar trong classpath. -->
 
         <dependency>
@@ -33,7 +34,7 @@
             <artifactId>mssql-jdbc</artifactId>
             <version>12.4.1.jre11</version>
         </dependency>
-      
+
         <!-- JSTL for Jakarta EE 9 (Jakarta Standard Tag Library) -->
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
@@ -47,7 +48,7 @@
         </dependency>
 
     </dependencies>
-    
+
     <build>
         <plugins>
             <plugin>
