@@ -21,6 +21,17 @@ public class RememberMe implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) req;
 
+              String uri = request.getRequestURI();
+
+        //BỎ QUA FILTER VỚI CÁC URL PUBLIC
+        if (uri.endsWith("/home")
+                || uri.endsWith("/login")
+                || uri.endsWith("/register")
+                || uri.contains("/assets/")) {
+
+            chain.doFilter(req, res);
+            return;
+        }
         HttpSession session = request.getSession(false);
 
         // Nếu chưa login
