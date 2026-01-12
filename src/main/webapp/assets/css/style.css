@@ -1,0 +1,173 @@
+/* ===== RESET & GLOBAL ===== */
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f4f6fb;
+}
+
+/* ===== PAGE WRAPPER ===== */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===== TOP WAVE (BACKGROUND ONLY) ===== */
+.top-wave {
+  width: 100%;
+  height: 280px;
+  background: #2d3e73;
+  border-bottom-left-radius: 50% 30%;
+  border-bottom-right-radius: 50% 30%;
+}
+
+/* ===== LOGIN CARD ===== */
+.login-card {
+  background: #ffffff;
+  width: 420px;
+  margin-top: -140px; /* card đè lên sóng */
+  padding: 32px 36px;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  position: relative;
+}
+
+/* ===== LOGO (INSIDE CARD) ===== */
+.logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.logo img {
+  width: 105px;
+  height: auto;
+}
+
+/* ===== TITLES ===== */
+.login-card h2 {
+  margin: 0;
+}
+
+.subtitle {
+  margin-top: 6px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #888;
+}
+
+/* ===== FORM ===== */
+.login-card form {
+  text-align: left;
+}
+
+.login-card label {
+  display: block;
+  margin-top: 14px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.login-card input[type="text"],
+.login-card input[type="password"] {
+  width: 100%;
+  padding: 11px 12px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.login-card input:focus {
+  outline: none;
+  border-color: #6c63ff;
+}
+
+.forgot {
+  font-size: 13px;
+  color: #6c63ff;
+  text-decoration: none;
+}
+
+/* ===== REMEMBER ME ===== */
+.remember {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.remember input {
+  margin: 0;
+}
+
+/* ===== BUTTON ===== */
+.login-card button {
+  width: 100%;
+  margin-top: 22px;
+  padding: 13px;
+  background: #00b894;
+  border: none;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-card button:hover {
+  background: #019874;
+}
+
+/* ===== SWITCH ===== */
+.switch {
+  margin-top: 18px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.switch a {
+  color: #6c63ff;
+  text-decoration: none;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  margin-top: auto;
+  padding: 16px;
+  font-size: 13px;
+  color: #777;
+}
+
+footer a {
+  color: inherit;
+  text-decoration: none;
+}
+/* ===== REMEMBER + FORGOT ROW ===== */
+.options-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.options-row .remember {
+  margin: 0;
+}
+
+.options-row .forgot {
+  font-size: 13px;
+  color: #6c63ff;
+  text-decoration: none;
+}
+
+.options-row .forgot:hover {
+  text-decoration: underline;
+}
