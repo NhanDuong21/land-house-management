@@ -24,7 +24,7 @@ public class AccountDAO extends DBContext {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Account acc = new Account();
-                    acc.setAccountId(rs.getInt("accountId"));
+                    acc.setAccountId(rs.getInt("account_id"));
                     acc.setUsername(rs.getString("username"));
                     acc.setPassword(rs.getString("password"));
                     acc.setEmail(rs.getString("email"));
