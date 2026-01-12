@@ -46,8 +46,9 @@ public class LoginServlet extends HttpServlet {
             request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
             return;
         }
-        System.out.println("USERNAME = [" + username + "]");
-        System.out.println("PASSWORD = [" + password + "]");
+        //Debug lộ pass khi gắn pass vào object
+        // System.out.println("USERNAME = [" + acc.getUsername() + "]");
+        // System.out.println("PASSWORD = [" + acc.getPassword() + "]");
 
         // login ok -> set session
         HttpSession session = request.getSession();
