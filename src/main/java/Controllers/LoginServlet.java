@@ -5,12 +5,14 @@
 package Controllers;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
+import DALs.AccountDAO;
+import Models.Account;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -18,48 +20,50 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class LoginServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet HelloServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet HelloServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods.">
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
-    }
 
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }
-    // </editor-fold>
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        // basic validate
+        if (username == null || password == null || username.isBlank() || password.isBlank()) {
+            request.setAttribute("error", "Please enter your username and password!");
+            request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
+            return;
+        }
+        AccountDAO dao = new AccountDAO();
+        Account acc = dao.login(username.trim(), password);
 
+        if (acc == null) {
+            request.setAttribute("error", "Incorrect username/password or account locked.");
+            request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
+            return;
+        }
+        System.out.println("USERNAME = [" + username + "]");
+        System.out.println("PASSWORD = [" + password + "]");
+
+        // login ok -> set session
+        HttpSession session = request.getSession();
+        session.setAttribute("account", acc);
+        session.setAttribute("role", acc.getRole()); // tiện dùng
+
+        // set account theo role
+        switch (acc.getRole()) {
+            case "ADMIN" ->
+                response.sendRedirect(request.getContextPath() + "/admin/dashboard");
+            case "MANAGER" ->
+                response.sendRedirect(request.getContextPath() + "/manager/dashboard");
+            case "TENANT" ->
+                response.sendRedirect(request.getContextPath() + "/tenant/dashboard");
+            default ->
+                response.sendRedirect(request.getContextPath() + "/home");
+        }
+    }
 }
