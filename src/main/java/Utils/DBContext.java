@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Author: Duong Thien Nhan - CE190741 Created on: 2026-01-12
+ */
 public class DBContext {
 
     protected Connection connection;
@@ -27,5 +30,3 @@ public class DBContext {
     }
 
 }
-
-

@@ -4,7 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Author: Duong Thien Nhan - CE190741 Created on: 2026-01-12
+ */
 public class TestDBConnection {
+
     public static void main(String[] args) {
         try {
             DBContext db = new DBContext();
