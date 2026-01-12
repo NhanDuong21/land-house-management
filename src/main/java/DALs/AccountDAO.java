@@ -38,4 +38,48 @@ public class AccountDAO extends DBContext {
         return null;
     }
 
+    //remember me
+    public void saveRemember(int accountId, String token) {
+        String sql = "UPDATE Account SET token = ? WHERE account_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, token);
+            ps.setInt(2, accountId);
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("SAVE REMEMBER TOKEN ERROR: " + e.getMessage());
+        }
+    }
+
+    //muốn biết cookie token này thuộc về account nào trong DB thì phải có method này
+    //login select theo username + password
+    //findByRememberToken select theo token
+    public Account findByRememberToken(String token) {
+        String sql = """
+        SELECT account_id, username, role, status
+        FROM Account
+        WHERE token = ? AND status = 'ACTIVE'
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, token);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Account acc = new Account();
+                    acc.setAccountId(rs.getInt("account_id"));
+                    acc.setUsername(rs.getString("username"));
+                    acc.setRole(rs.getString("role"));
+                    acc.setStatus(rs.getString("status"));
+                    return acc;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("FIND BY REMEMBER TOKEN ERROR: " + e.getMessage());
+        }
+        return null;
+    }
+
 }
