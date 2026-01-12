@@ -82,4 +82,16 @@ public class AccountDAO extends DBContext {
         return null;
     }
 
+    //set token lại thành null 
+    public void clearRememberToken(int accountId) {
+        String sql = "UPDATE Account SET token = NULL WHERE account_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, accountId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("CLEAR REMEMBER TOKEN ERROR: " + e.getMessage());
+        }
+    }
+
 }
