@@ -1,7 +1,7 @@
 package Models;
 
 /**
- * Author: Duong Thien Nhan - CE190741 Created on: 2026-01-12
+ * Author: Duong Thien Nhan - CE190741 Created on: 2026-01-12  
  */
 public class Manager {
 
