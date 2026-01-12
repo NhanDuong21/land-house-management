@@ -5,14 +5,16 @@
 package Controllers;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import DALs.AccountDAO;
 import Models.Account;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession; // lib sinh chuỗi random ( UUID v4 (ví dụ: 550e8400-e29b-41d4-a716-446655440000))
 
 /**
  *
@@ -46,13 +48,29 @@ public class LoginServlet extends HttpServlet {
             request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
             return;
         }
+        //Remember me
+        String remember = request.getParameter("remember");
+
+        if (remember != null) {
+            String token = UUID.randomUUID().toString(); //toString để chuyển uuid v4 thành String để lưu db ( varchar )
+
+            //save token to DB
+            dao.saveRemember(acc.getAccountId(), token);
+
+            Cookie cookie = new Cookie("Remember_me", token);
+            cookie.setMaxAge(60 * 60 * 24 * 7); // 7 ngày
+            cookie.setHttpOnly(true);
+            cookie.setPath(request.getContextPath()); // quy định cookie send request đến url của contexpath
+
+            response.addCookie(cookie); // send cookie from server to client (Set-Cookie: Remember_me=abc123; Path=/LandHouseManagement; HttpOnly)
+        }
         //Debug lộ pass khi gắn pass vào object
         // System.out.println("USERNAME = [" + acc.getUsername() + "]");
         // System.out.println("PASSWORD = [" + acc.getPassword() + "]");
 
         // login ok -> set session
         HttpSession session = request.getSession();
-        session.setAttribute("account", acc);
+        session.setAttribute("account", acc); // account là name attribute do mình set
         session.setAttribute("role", acc.getRole()); // tiện dùng
 
         // set account theo role
