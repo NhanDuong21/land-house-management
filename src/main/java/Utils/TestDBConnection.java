@@ -1,6 +1,7 @@
 package Utils;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 public class TestDBConnection {
@@ -13,7 +14,7 @@ public class TestDBConnection {
             if (rs.next()) {
                 System.out.println("Ket noi db thanh cong");
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println("Im lang nao Ruby, connect fail roi");
             e.printStackTrace();
         }
