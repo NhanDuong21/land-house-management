@@ -43,5 +43,7 @@ public class LogoutServlet extends HttpServlet {
         response.addCookie(c); //send request delete về client
 
         response.sendRedirect("login");
+        response.sendRedirect(request.getContextPath() + "/home");
+
     }
 }
