@@ -6,7 +6,7 @@
     <title>LandHouse Login</title>
 </head>
 <body>
-<h2>Đăng nhập</h2>
+<h2>Login</h2>
 
 <% String err = (String) request.getAttribute("error"); %>
 <% if (err != null) { %>
