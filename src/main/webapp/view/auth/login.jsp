@@ -6,7 +6,7 @@
     <title>LandHouse Login</title>
 </head>
 <body>
-<h2>Login</h2>
+<h2>Đăng nhập</h2>
 
 <% String err = (String) request.getAttribute("error"); %>
 <% if (err != null) { %>
@@ -19,6 +19,9 @@
     </div>
     <div>
         Password: <input type="password" name="password" required />
+    </div>
+    <div>
+        <input type="checkbox" name="remember" value="1"> Remember me
     </div>
     <button type="submit">Login</button>
 </form>
