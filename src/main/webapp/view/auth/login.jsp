@@ -25,6 +25,15 @@
 
                 <form action="login" method="post">
 
+                    <%
+                        String error = (String) request.getAttribute("error");
+                        if (error != null) {
+                    %>
+                    <p style="color:red; text-align:center; margin-bottom:10px;">
+                        <%= error%>
+                    </p>
+                    <% }%>
+
                     <label>Username</label>
                     <input type="text" name="username" placeholder="Enter username" required>
 
@@ -44,6 +53,7 @@
                     <button type="submit">LOGIN</button>
 
                 </form>
+
 
 
                 <p class="switch">
