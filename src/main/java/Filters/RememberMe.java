@@ -21,7 +21,7 @@ public class RememberMe implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) req;
 
-              String uri = request.getRequestURI();
+        String uri = request.getRequestURI();
 
         //BỎ QUA FILTER VỚI CÁC URL PUBLIC
         if (uri.endsWith("/home")
