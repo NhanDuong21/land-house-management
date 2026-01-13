@@ -187,3 +187,103 @@ GO
     - bill_detail block dữ liệu từ đầu
 
 */
+
+USE LandHouseManagement;
+GO
+
+/* =========================
+   1. ACCOUNT (PLAIN PASSWORD)
+   ========================= */
+INSERT INTO Account (username, password, email, role, status)
+VALUES
+('admin1',   '123456', 'admin1@mail.com',   'ADMIN',   'ACTIVE'),
+('manager1', '123456', 'manager1@mail.com', 'MANAGER', 'ACTIVE'),
+('tenant1',  '123456', 'tenant1@mail.com',  'TENANT',  'ACTIVE'),
+('tenant2',  '123456', 'tenant2@mail.com',  'TENANT',  'ACTIVE');
+GO
+
+/* =========================
+   2. HOUSE
+   ========================= */
+INSERT INTO House (house_name, address, city, description, status)
+VALUES
+('Khu Tro A', '123 Le Loi', 'Da Nang', N'Khu trọ sinh viên', 'ACTIVE');
+GO
+
+/* =========================
+   3. ROLE TABLES
+   ========================= */
+INSERT INTO Admin (account_id)
+VALUES (1);
+
+INSERT INTO Manager (account_id, house_id, full_name, phone)
+VALUES (2, 1, N'Nguyen Van Manager', '0909000001');
+
+INSERT INTO Tenant (account_id, full_name, phone, identity_code)
+VALUES
+(3, N'Nguyen Van A', '0909000002', 'ID001'),
+(4, N'Le Thi B', '0909000003', 'ID002');
+GO
+
+/* =========================
+   4. ROOM
+   ========================= */
+INSERT INTO Room (house_id, room_number, price, status, description)
+VALUES
+(1, 'A101', 2500000, 'AVAILABLE', N'Phòng có gác'),
+(1, 'A102', 3000000, 'OCCUPIED',  N'Phòng ban công');
+GO
+
+/* =========================
+   5. UTILITY
+   ========================= */
+INSERT INTO Utility (utility_name, utility_price, unit)
+VALUES
+(N'Điện',     3500,   'kWh'),
+(N'Nước',     15000,  'm3'),
+(N'Internet', 100000, 'tháng');
+GO
+
+/* =========================
+   6. ROOM_UTILITY
+   ========================= */
+INSERT INTO Room_Utility (room_id, utility_id, initial_index, start_date)
+VALUES
+(2, 1, 100, '2024-01-01'),
+(2, 2, 20,  '2024-01-01'),
+(2, 3, NULL,'2024-01-01');
+GO
+
+/* =========================
+   7. CONTRACT
+   ========================= */
+INSERT INTO Contract (manager_id, tenant_id, room_id, start_date, end_date, deposit, status)
+VALUES
+(1, 1, 2, '2024-01-01', '2024-12-31', 3000000, 'ACTIVE');
+GO
+
+/* =========================
+   8. BILL
+   ========================= */
+INSERT INTO Bill (contract_id, bill_month, due_date, total_amount, payment_status)
+VALUES
+(1, '2024-02-01', '2024-02-10', 4500000, 'UNPAID');
+GO
+
+/* =========================
+   9. BILL_DETAIL
+   ========================= */
+INSERT INTO Bill_Detail (bill_id, utility_id, old_index, new_index, quantity, unit_price, amount)
+VALUES
+(1, 1, 100, 150, 50, 3500, 175000),
+(1, 2, 20,  25,  5, 15000, 75000),
+(1, 3, NULL, NULL, 1, 100000, 100000);
+GO
+
+/* =========================
+   10. MAINTENANCE_REQUEST
+   ========================= */
+INSERT INTO Maintenance_Request (tenant_id, manager_id, room_id, request_date, description, status)
+VALUES
+(1, 1, 2, GETDATE(), N'Bóng đèn bị hỏng', 'PENDING');
+GO
