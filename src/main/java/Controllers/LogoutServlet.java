@@ -6,14 +6,10 @@ package Controllers;
 
 import java.io.IOException;
 
-import DALs.AccountDAO;
-import Models.Account;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -25,25 +21,21 @@ public class LogoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false); // get sesssion hiện tại (false)
-
-        if (session != null) {
-            Account acc = (Account) session.getAttribute("account"); //get account đang login
-            if (acc != null) {
-                AccountDAO dao = new AccountDAO();
-                dao.clearRememberToken(acc.getAccountId());
-            }
-            session.invalidate(); // delete all session data ( lúc này "account" và "role" biến mất ) => user chính thức đã logout
-        }
-
-        // create cookie rỗng để Delete cookie Remember_me
-        Cookie c = new Cookie("Remember_me", "");
-        c.setMaxAge(0); // yêu cầu client delete cookie
-        c.setPath(request.getContextPath()); //path giống lúc tạo
-        response.addCookie(c); //send request delete về client
-
-        response.sendRedirect("login");
-        response.sendRedirect(request.getContextPath() + "/home");
-
+        // HttpSession session = request.getSession(false); // get sesssion hiện tại (false)
+        // if (session != null) {
+        //     Account acc = (Account) session.getAttribute("account"); //get account đang login
+        //     if (acc != null) {
+        //         AccountDAO dao = new AccountDAO();
+        //         dao.clearRememberToken(acc.getAccountId());
+        //     }
+        //     session.invalidate(); // delete all session data ( lúc này "account" và "role" biến mất ) => user chính thức đã logout
+        // }
+        // // create cookie rỗng để Delete cookie Remember_me
+        // Cookie c = new Cookie("Remember_me", "");
+        // c.setMaxAge(0); // yêu cầu client delete cookie
+        // c.setPath(request.getContextPath()); //path giống lúc tạo
+        // response.addCookie(c); //send request delete về client
+        // response.sendRedirect("login");
+        // response.sendRedirect(request.getContextPath() + "/home");
     }
 }
