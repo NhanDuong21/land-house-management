@@ -1,341 +1,351 @@
-/* =========================
+/* =========================================================
    DROP & RECREATE DATABASE
-   ========================= */
+========================================================= */
 USE master;
 GO
 
 IF DB_ID(N'LandHouseManagement') IS NOT NULL
 BEGIN
-    ALTER DATABASE LandHouseManagement SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE LandHouseManagement;
+    ALTER DATABASE [LandHouseManagement] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE [LandHouseManagement];
 END
 GO
 
-CREATE DATABASE LandHouseManagement;
-GO
-USE LandHouseManagement;
+CREATE DATABASE [LandHouseManagement];
 GO
 
-
-/* =========================
-   1. ACCOUNTS (Tài khoản hệ thống)
-   status: 0=inactive, 1=active, 2=locked
-   ========================= */
-CREATE TABLE ACCOUNTS (
-    account_id     INT IDENTITY(1,1) PRIMARY KEY,
-    username       NVARCHAR(50)  NOT NULL UNIQUE,
-    password_hash  NVARCHAR(255) NOT NULL,
-    email          NVARCHAR(120) NOT NULL UNIQUE,
-    status         TINYINT       NOT NULL CONSTRAINT CK_ACCOUNTS_status CHECK (status IN (0,1,2)),
-    created_at     DATETIME2(0)  NOT NULL CONSTRAINT DF_ACCOUNTS_created DEFAULT SYSDATETIME(),
-    updated_at     DATETIME2(0)  NULL
-);
+USE [LandHouseManagement];
 GO
 
-/* =========================
-   2. USER_PROFILES (Thông tin cá nhân)
-   gender: 0=unknown, 1=male, 2=female, 3=other
-   ========================= */
-CREATE TABLE USER_PROFILES (
-    profile_id     INT IDENTITY(1,1) PRIMARY KEY,
-    account_id     INT NOT NULL UNIQUE,
-    full_name      NVARCHAR(100) NOT NULL,
-    identity_code NVARCHAR(20) NOT NULL CONSTRAINT UQ_USER_PROFILES_identity UNIQUE,
-    phone_number   NVARCHAR(20)  NULL,
-    address        NVARCHAR(255) NULL,
-    date_of_birth  DATE          NULL,
-    gender         TINYINT       NULL CONSTRAINT CK_USER_PROFILES_gender CHECK (gender IN (0,1,2,3)),
-    avatar         NVARCHAR(500) NULL, 
-    CONSTRAINT FK_USER_PROFILES_account FOREIGN KEY (account_id) REFERENCES ACCOUNTS(account_id) ON DELETE CASCADE -- delete account => delete luôn profile
-);
-GO
+/* =========================================================
+   DROP TABLES ( optional )
+========================================================= */
+-- DROP TABLE IF EXISTS MAINTENANCE_REQUEST;
+-- DROP TABLE IF EXISTS BILL_DETAIL;
+-- DROP TABLE IF EXISTS BILL;
+-- DROP TABLE IF EXISTS ROOM_UTILITY;
+-- DROP TABLE IF EXISTS UTILITY;
+-- DROP TABLE IF EXISTS CONTRACT_TENANTS;
+-- DROP TABLE IF EXISTS CONTRACTS;
+-- DROP TABLE IF EXISTS STAFF;
+-- DROP TABLE IF EXISTS TENANTS;
+-- DROP TABLE IF EXISTS ROOMS;
+-- DROP TABLE IF EXISTS HOUSES;
+-- GO
 
-/* =========================
-   3. PHÂN QUYỀN (ROLES & PERMISSIONS)
-   ========================= */
-CREATE TABLE ROLES (
-    role_id    INT IDENTITY(1,1) PRIMARY KEY,
-    role_name  NVARCHAR(50) NOT NULL UNIQUE
-);
-GO
-
-CREATE TABLE PERMISSIONS (
-    permission_id    INT IDENTITY(1,1) PRIMARY KEY,
-    permission_name  NVARCHAR(255) NOT NULL UNIQUE,
-    description      NVARCHAR(255) NULL
-);
-GO
-
-CREATE TABLE ACCOUNT_ROLES (
-    account_id   INT NOT NULL,
-    role_id      INT NOT NULL,
-    granted_date DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
-    is_active    BIT NOT NULL DEFAULT 1, -- role active của account đó
-    CONSTRAINT PK_ACCOUNT_ROLES PRIMARY KEY (account_id, role_id),
-    CONSTRAINT FK_ACCOUNT_ROLES_acc FOREIGN KEY (account_id) REFERENCES ACCOUNTS(account_id) ON DELETE CASCADE,
-    CONSTRAINT FK_ACCOUNT_ROLES_role FOREIGN KEY (role_id) REFERENCES ROLES(role_id) ON DELETE CASCADE
-);
-GO
-
-CREATE TABLE ROLE_PERMISSIONS (
-    role_id        INT NOT NULL,
-    permission_id  INT NOT NULL,
-    assigned_date  DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
-    is_enabled     BIT NOT NULL DEFAULT 1,
-    CONSTRAINT PK_ROLE_PERMISSIONS PRIMARY KEY (role_id, permission_id),
-    CONSTRAINT FK_ROLE_PERMISSIONS_role FOREIGN KEY (role_id) REFERENCES ROLES(role_id) ON DELETE CASCADE,
-    CONSTRAINT FK_ROLE_PERMISSIONS_perm FOREIGN KEY (permission_id) REFERENCES PERMISSIONS(permission_id) ON DELETE CASCADE
-);
-GO
-
-/* =========================
-   5. TẠO BẢNG NHÀ TRỌ
-    status: 0=unavailable, 1=available, 2=occupied, 3=maintenance
-   ========================= */
+/* =========================================================
+   1) HOUSES
+========================================================= */
 CREATE TABLE HOUSES (
-    house_id      INT IDENTITY(1,1) PRIMARY KEY,
-    house_name    NVARCHAR(255) NOT NULL,
-    city          NVARCHAR(100)  NULL,
-    address       NVARCHAR(255) NOT NULL,
-    num_of_rooms  INT           NULL,
-    description   NVARCHAR(500) NULL,
-    status        TINYINT       NOT NULL DEFAULT 0 CONSTRAINT CK_HOUSES_status CHECK (status IN (0,1,2,3)) 
+    house_id     INT IDENTITY(1,1) PRIMARY KEY,
+    house_name   NVARCHAR(255) NOT NULL,
+    city         NVARCHAR(100) NULL,
+    address      NVARCHAR(255) NOT NULL,
+    description  NVARCHAR(500) NULL,
+    status       TINYINT NOT NULL CONSTRAINT DF_HOUSES_status DEFAULT 1,
+    num_of_rooms INT NULL,
+
+    CONSTRAINT CK_HOUSES_status CHECK (status IN (0,1,2,3)) 
+    -- 0=unavailable, 1=available, 2=occupied, 3=maintenance
 );
 GO
 
-/* =========================
-   6. QUẢN LÝ PHÒNG (ROOMS)
-   status: 0=unavailable, 1=available, 2=occupied, 3=maintenance
-   ========================= */
+/* =========================================================
+   2) ROOMS  (HOUSES 1-N ROOMS)
+========================================================= */
 CREATE TABLE ROOMS (
     room_id       INT IDENTITY(1,1) PRIMARY KEY,
     house_id      INT NOT NULL,
-    room_number   NVARCHAR(20)  NOT NULL,
-    area          DECIMAL(10,2)  NULL,
-    floor         INT           NULL,
-    max_tenants   INT           NULL,
-    price         DECIMAL(12,2) NOT NULL,
+    room_number   NVARCHAR(50) NOT NULL,
+    price         DECIMAL(12,2) NOT NULL,          -- giá niêm yết
+    area          DECIMAL(8,2) NULL,
+    floor         INT NULL,
+    max_tenants   INT NULL,
+    is_mezzanine  BIT NOT NULL CONSTRAINT DF_ROOMS_is_mezzanine DEFAULT 0,
     room_image    NVARCHAR(500) NULL,
-    is_mezzanine  BIT           NOT NULL DEFAULT 0,
+    status        TINYINT NOT NULL CONSTRAINT DF_ROOMS_status DEFAULT 1,
     description   NVARCHAR(500) NULL,
-    status        TINYINT       NOT NULL DEFAULT 0 CONSTRAINT CK_ROOMS_status CHECK (status IN (0,1,2,3)),
-    CONSTRAINT FK_ROOMS_house FOREIGN KEY (house_id) REFERENCES HOUSES(house_id) ON DELETE CASCADE
+
+    CONSTRAINT FK_ROOMS_HOUSES
+        FOREIGN KEY (house_id) REFERENCES HOUSES(house_id),
+
+    CONSTRAINT CK_ROOMS_status CHECK (status IN (0,1,2,3)),
+    -- 0=unavailable, 1=available, 2=occupied, 3=maintenance
+
+    CONSTRAINT CK_ROOMS_price CHECK (price >= 0),
+    CONSTRAINT CK_ROOMS_area  CHECK (area IS NULL OR area >= 0),
+    CONSTRAINT CK_ROOMS_max_tenants CHECK (max_tenants IS NULL OR max_tenants >= 0)
 );
 GO
 
-/* =========================
-   7. DỊCH VỤ (UTILITIES)
-   ========================= */
-CREATE TABLE UTILITIES (
-    utility_id     INT IDENTITY(1,1) PRIMARY KEY,
-    utility_name   NVARCHAR(255)  NOT NULL UNIQUE,
-    unit           NVARCHAR(20)  NOT NULL,
-    standard_price DECIMAL(12,2) NOT NULL
+-- Unique: 1 nhà không có 2 phòng cùng số
+CREATE UNIQUE INDEX UX_ROOMS_house_roomnumber
+ON ROOMS(house_id, room_number);
+GO
+
+/* ====================
+   3) TENANTS  (login)  
+======================= */
+CREATE TABLE TENANTS (
+    tenant_id     INT IDENTITY(1,1) PRIMARY KEY,
+    username      NVARCHAR(80)  NOT NULL,
+    password_hash NVARCHAR(255) NOT NULL,  
+    full_name     NVARCHAR(200) NOT NULL,
+    phone_number  NVARCHAR(30)  NOT NULL,
+    email         NVARCHAR(120) NULL,
+    identity_code NVARCHAR(30)  NOT NULL,
+    address       NVARCHAR(300) NOT NULL,
+    gender        TINYINT NULL,
+    date_of_birth DATE NULL,
+    avatar        NVARCHAR(500) NULL,
+    status        TINYINT NOT NULL CONSTRAINT DF_TENANTS_status DEFAULT 1,
+    created_at    DATETIME2 NOT NULL CONSTRAINT DF_TENANTS_created_at DEFAULT SYSDATETIME(),
+    updated_at    DATETIME2 NULL,
+
+    CONSTRAINT UQ_TENANTS_username UNIQUE(username),
+    CONSTRAINT UQ_TENANTS_phone    UNIQUE(phone_number),
+    CONSTRAINT UQ_TENANTS_identity UNIQUE(identity_code),
+
+    CONSTRAINT CK_TENANTS_status CHECK (status IN (0,1,2)),
+    -- 0=inactive, 1=active, 2=locked
+
+    CONSTRAINT CK_TENANTS_gender CHECK (gender IS NULL OR gender IN (0,1,2,3))
+    -- 0=unknown, 1=male, 2=female, 3=other
 );
 GO
 
--- Bảng trung gian Đăng ký dịch vụ cho từng phòng
-CREATE TABLE ROOM_UTILITY (
-    room_id       INT NOT NULL,
-    utility_id    INT NOT NULL,
-    start_date    DATE NOT NULL,
-    custom_price  DECIMAL(12,2) NULL, 
-    description   NVARCHAR(255) NULL,
-    CONSTRAINT PK_ROOM_UTILITY PRIMARY KEY (room_id, utility_id, start_date),
-    CONSTRAINT FK_ROOM_UTILITY_room FOREIGN KEY (room_id) REFERENCES ROOMS(room_id) ON DELETE CASCADE, 
-    CONSTRAINT FK_ROOM_UTILITY_util FOREIGN KEY (utility_id) REFERENCES UTILITIES(utility_id) ON DELETE CASCADE
+CREATE UNIQUE INDEX UX_TENANTS_email 
+ON TENANTS(email) WHERE email IS NOT NULL;
+GO
+
+/* =========================================================
+   4) STAFF (login) 
+========================================================= */
+CREATE TABLE STAFF (
+    staff_id      INT IDENTITY(1,1) PRIMARY KEY,
+    username      NVARCHAR(80)  NOT NULL,
+    password_hash NVARCHAR(255) NOT NULL,
+    full_name     NVARCHAR(200) NOT NULL,
+    phone_number  NVARCHAR(30)  NOT NULL,
+    email         NVARCHAR(120) NULL,
+    identity_code NVARCHAR(30)  NULL,
+    staff_role    TINYINT NOT NULL,        -- 1=admin, 2=manager
+    status        TINYINT NOT NULL CONSTRAINT DF_STAFF_status DEFAULT 1,
+    created_at    DATETIME2 NOT NULL CONSTRAINT DF_STAFF_created_at DEFAULT SYSDATETIME(),
+    updated_at    DATETIME2 NULL,
+    avatar        NVARCHAR(500) NULL,
+    gender        TINYINT NULL,
+    date_of_birth DATE NULL,
+
+    -- optional: staff phụ trách 1 house
+    house_id      INT NULL,
+
+    CONSTRAINT FK_STAFF_HOUSES
+        FOREIGN KEY (house_id) REFERENCES HOUSES(house_id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT UQ_STAFF_username UNIQUE(username),
+    CONSTRAINT UQ_STAFF_phone    UNIQUE(phone_number),
+
+    CONSTRAINT CK_STAFF_role   CHECK (staff_role IN (1,2)),
+    CONSTRAINT CK_STAFF_status CHECK (status IN (0,1,2)),
+    CONSTRAINT CK_STAFF_gender CHECK (gender IS NULL OR gender IN (0,1,2,3))
 );
 GO
 
-/* =========================
-   8. HỢP ĐỒNG (CONTRACTS)
-   status: 0 = Draft, 1 = Active, 2 = Expired, 3 = Terminated
-   ========================= */
+CREATE UNIQUE INDEX UX_STAFF_email 
+ON STAFF(email) WHERE email IS NOT NULL;
+GO
+
+/* =========================================================
+   5) CONTRACTS (ROOMS 1-N CONTRACTS)
+========================================================= */
 CREATE TABLE CONTRACTS (
-    contract_id            INT IDENTITY(1,1) PRIMARY KEY,
-    room_id                INT NOT NULL,
-    start_date             DATE NOT NULL,
-    end_date               DATE NULL,
-    deposit                DECIMAL(18,2) NOT NULL DEFAULT 0,
-    monthly_rent           DECIMAL(18,2) NOT NULL,
-    start_water_index      INT NULL,
+    contract_id             INT IDENTITY(1,1) PRIMARY KEY,
+    room_id                 INT NOT NULL,
+    start_date              DATE NOT NULL,
+    end_date                DATE NULL,
+    deposit                 DECIMAL(12,2) NULL,
+    monthly_rent            DECIMAL(12,2) NOT NULL,
+    start_water_index       INT NULL,
     start_electricity_index INT NULL,
-    status                 TINYINT NOT NULL DEFAULT 0 CONSTRAINT CK_CONTRACTS_status CHECK (status IN (0,1,2,3)),
-    note                   NVARCHAR(500) NULL,
-    CONSTRAINT FK_CONTRACTS_room FOREIGN KEY (room_id) REFERENCES ROOMS(room_id)
+    status                  TINYINT NOT NULL CONSTRAINT DF_CONTRACTS_status DEFAULT 1,
+    note                    NVARCHAR(500) NULL,
+
+    CONSTRAINT FK_CONTRACTS_ROOMS
+        FOREIGN KEY (room_id) REFERENCES ROOMS(room_id),
+
+    CONSTRAINT CK_CONTRACTS_dates CHECK (end_date IS NULL OR end_date >= start_date),
+    CONSTRAINT CK_CONTRACTS_money CHECK ((deposit IS NULL OR deposit >= 0) AND monthly_rent >= 0),
+    CONSTRAINT CK_CONTRACTS_status CHECK (status IN (0,1,2))
+    -- 0=inactive, 1=active, 2=terminated 
 );
 GO
 
+
+/* =========================================================
+   6) CONTRACT_TENANTS 
+========================================================= */
 CREATE TABLE CONTRACT_TENANTS (
-    record_id      INT IDENTITY(1,1) PRIMARY KEY,
-    contract_id    INT NOT NULL,
-    profile_id     INT NOT NULL,
-    move_in_date   DATE NOT NULL,
-    move_out_date  DATE NULL,
-    tenant_role    TINYINT NOT NULL CONSTRAINT CK_CONTRACT_TENANTS_role CHECK (tenant_role IN (1,2)), -- 1= Leader, 2= Member
-    CONSTRAINT FK_CONTRACT_TENANTS_con FOREIGN KEY (contract_id) REFERENCES CONTRACTS(contract_id) ON DELETE CASCADE,
-    CONSTRAINT FK_CONTRACT_TENANTS_pro FOREIGN KEY (profile_id) REFERENCES USER_PROFILES(profile_id)
+    record_id     INT IDENTITY(1,1) PRIMARY KEY,
+    contract_id   INT NOT NULL,
+    tenant_id     INT NOT NULL,
+    move_in_date  DATE NOT NULL,
+    move_out_date DATE NULL,
+    note          NVARCHAR(500) NULL,
+
+    CONSTRAINT FK_CT_CONTRACTS
+        FOREIGN KEY (contract_id) REFERENCES CONTRACTS(contract_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT FK_CT_TENANTS
+        FOREIGN KEY (tenant_id) REFERENCES TENANTS(tenant_id),
+
+    CONSTRAINT CK_CT_dates CHECK (move_out_date IS NULL OR move_out_date >= move_in_date)
 );
 GO
 
-/* =========================
-   9. HÓA ĐƠN (BILL & BILL_DETAIL)
-   ========================= */
+
+-- tránh tenant bị add trùng vào 1 hợp đồng cùng ngày vào ở
+CREATE UNIQUE INDEX UX_CT_unique
+ON CONTRACT_TENANTS(contract_id, tenant_id, move_in_date);
+GO
+
+/* =========================================================
+   7) UTILITY
+========================================================= */
+CREATE TABLE UTILITY (
+    utility_id     INT IDENTITY(1,1) PRIMARY KEY,
+    utility_name   NVARCHAR(200) NOT NULL,
+    unit           NVARCHAR(30)  NOT NULL,      -- kWh, m3, tháng...
+    standard_price DECIMAL(12,2) NOT NULL,
+    status         TINYINT NOT NULL CONSTRAINT DF_UTILITY_status DEFAULT 1,
+
+    CONSTRAINT UQ_UTILITY_name UNIQUE(utility_name),
+    CONSTRAINT CK_UTILITY_price  CHECK (standard_price >= 0),
+    CONSTRAINT CK_UTILITY_status CHECK (status IN (0,1,2))
+    -- 0=discontinued, 1=active, 2=maintenance
+);
+GO
+
+/* =========================================================
+   8) ROOM_UTILITY  (ROOMS M-N UTILITY theo thời gian)
+========================================================= */
+CREATE TABLE ROOM_UTILITY (
+    room_id      INT NOT NULL,
+    utility_id   INT NOT NULL,
+    start_date   DATE NOT NULL,
+    end_date     DATE NULL,
+    custom_price DECIMAL(12,2) NULL,
+    description  NVARCHAR(500) NULL,
+
+    CONSTRAINT PK_ROOM_UTILITY PRIMARY KEY (room_id, utility_id, start_date),
+	-- start_date PK để save lịch sử đổi giá utility
+
+    CONSTRAINT FK_RU_ROOMS
+        FOREIGN KEY (room_id) REFERENCES ROOMS(room_id) ON DELETE CASCADE,
+
+    CONSTRAINT FK_RU_UTILITY
+        FOREIGN KEY (utility_id) REFERENCES UTILITY(utility_id),
+
+    CONSTRAINT CK_RU_dates CHECK (end_date IS NULL OR end_date >= start_date),
+    CONSTRAINT CK_RU_price CHECK (custom_price IS NULL OR custom_price >= 0)
+);
+
+
+/* =========================================================
+   9) BILL - chỉ số điện/nước nằm ở bill
+========================================================= */
 CREATE TABLE BILL (
-    bill_id        INT IDENTITY(1,1) PRIMARY KEY,
-    room_id        INT NOT NULL, -- 
-    bill_month     INT NOT NULL, -- yyyymm
-    due_date       DATE NOT NULL,
-    payment_date   DATE NULL,
-    total_amount   DECIMAL(18,2) NOT NULL DEFAULT 0,
-    status         TINYINT NOT NULL DEFAULT 0 CONSTRAINT CK_BILL_status CHECK (status IN (0,1,2,3)),  -- 0 = Unpaid ,1 = Paid, 2 = Overdue, 3 = Terminated
-    note           NVARCHAR(500) NULL,
-    CONSTRAINT UQ_BILL_room_month UNIQUE (room_id, bill_month),
-    CONSTRAINT FK_BILL_room FOREIGN KEY (room_id) REFERENCES ROOMS(room_id) ON DELETE CASCADE
+    bill_id             INT IDENTITY(1,1) PRIMARY KEY,
+    room_id             INT NOT NULL,
+    bill_month          INT NOT NULL, -- yyyymm
+    due_date            DATE NOT NULL,
+    payment_date        DATE NULL,
+    status              TINYINT NOT NULL CONSTRAINT DF_BILL_status DEFAULT 0,
+    note                NVARCHAR(500) NULL,
+
+    old_water_number    INT NULL,
+    new_water_number    INT NULL,
+    old_electric_number INT NULL,
+    new_electric_number INT NULL,
+
+    CONSTRAINT FK_BILL_ROOMS
+        FOREIGN KEY (room_id) REFERENCES ROOMS(room_id),
+
+    CONSTRAINT CK_BILL_status CHECK (status IN (0,1,2,3)), -- 0 = Unpaid ,1 = Paid, 2 = Overdue, 3 = Terminated
+    CONSTRAINT CK_BILL_month CHECK (
+        bill_month BETWEEN 100001 AND 999912 
+        AND (bill_month % 100) BETWEEN 1 AND 12 -- lấy mm làm tháng 
+    ),
+    CONSTRAINT CK_BILL_water CHECK (
+        old_water_number IS NULL OR new_water_number IS NULL OR new_water_number >= old_water_number
+    ),
+    CONSTRAINT CK_BILL_electric CHECK (
+        old_electric_number IS NULL OR new_electric_number IS NULL OR new_electric_number >= old_electric_number
+    ),
+    CONSTRAINT CK_BILL_numbers_nonneg CHECK (
+        (old_water_number IS NULL OR old_water_number >= 0) AND
+        (new_water_number IS NULL OR new_water_number >= 0) AND
+        (old_electric_number IS NULL OR old_electric_number >= 0) AND
+        (new_electric_number IS NULL OR new_electric_number >= 0)
+    )
 );
 GO
 
+-- 1 phòng 1 tháng chỉ có 1 bill
+CREATE UNIQUE INDEX UX_BILL_room_month
+ON BILL(room_id, bill_month);
+GO
+
+/* =========================================================
+   10) BILL_DETAIL
+========================================================= */
 CREATE TABLE BILL_DETAIL (
     bill_detail_id INT IDENTITY(1,1) PRIMARY KEY,
     bill_id        INT NOT NULL,
-    utility_id     INT NOT NULL,
-    old_index      INT NULL,
-    new_index      INT NULL,
-    quantity       DECIMAL(12,3) NOT NULL DEFAULT 0,
+    item_name      NVARCHAR(200) NOT NULL,  --"electricity", "water", "internet"...
+    unit           NVARCHAR(30)  NOT NULL,
+    quantity       DECIMAL(12,3) NOT NULL,
     unit_price     DECIMAL(12,2) NOT NULL,
-    sub_total      AS (ROUND(quantity * unit_price, 2)), -- vd tính điện thì 150KWh * 4500 lm tròn 2 số thập phân
-    CONSTRAINT FK_BILL_DETAIL_bill FOREIGN KEY (bill_id) REFERENCES BILL(bill_id) ON DELETE CASCADE,
-    CONSTRAINT FK_BILL_DETAIL_util FOREIGN KEY (utility_id) REFERENCES UTILITIES(utility_id)
+
+    CONSTRAINT FK_BILL_DETAIL_BILL
+        FOREIGN KEY (bill_id) REFERENCES BILL(bill_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT CK_BD_quantity CHECK (quantity >= 0),
+    CONSTRAINT CK_BD_unit_price CHECK (unit_price >= 0)
 );
 GO
 
-/* =========================
-   10. BẢO TRÌ (MAINTENANCE_REQUESTS)
-   status: 0 = Submitted, 1 = In Progress, 2 = Completed, 3 = Rejected
-   ========================= */
+/* =========================================================
+   11) MAINTENANCE_REQUEST (TENANTS gửi, STAFF xử lý, gắn ROOMS)
+========================================================= */
 CREATE TABLE MAINTENANCE_REQUEST (
-    request_id     INT IDENTITY(1,1) PRIMARY KEY,
-    room_id        INT NOT NULL,
-    submitted_by_profile_id INT NOT NULL,
-    handled_by_account_id   INT NULL,
-    description    NVARCHAR(1000) NOT NULL,
-    image_url      NVARCHAR(500)  NULL,
-    status         TINYINT NOT NULL DEFAULT 0 CONSTRAINT CK_MAINT_status CHECK (status IN (0,1,2,3)),
-    created_at     DATETIME2(0) NOT NULL DEFAULT SYSDATETIME(),
-    completed_at   DATETIME2(0) NULL,
-    CONSTRAINT FK_MAINT_room FOREIGN KEY (room_id) REFERENCES ROOMS(room_id),
-    CONSTRAINT FK_MAINT_sub  FOREIGN KEY (submitted_by_profile_id) REFERENCES USER_PROFILES(profile_id),
-    CONSTRAINT FK_MAINT_hand FOREIGN KEY (handled_by_account_id) REFERENCES ACCOUNTS(account_id)
+    request_id           INT IDENTITY(1,1) PRIMARY KEY,
+    room_id              INT NOT NULL,
+    tenant_id            INT NOT NULL,
+    handled_by_staff_id  INT NULL,
+    description          NVARCHAR(800) NOT NULL,
+    image_url            NVARCHAR(500) NULL,
+    status               TINYINT NOT NULL CONSTRAINT DF_MR_status DEFAULT 0,
+    created_at           DATETIME2 NOT NULL CONSTRAINT DF_MR_created_at DEFAULT SYSDATETIME(),
+    completed_at         DATETIME2 NULL,
+
+    CONSTRAINT FK_MR_ROOMS
+        FOREIGN KEY (room_id) REFERENCES ROOMS(room_id),
+
+    CONSTRAINT FK_MR_TENANTS
+        FOREIGN KEY (tenant_id) REFERENCES TENANTS(tenant_id),
+
+    CONSTRAINT FK_MR_STAFF
+        FOREIGN KEY (handled_by_staff_id) REFERENCES STAFF(staff_id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT CK_MR_status CHECK (status IN (0,1,2,3)),
+    -- 0 = Submitted, 1 = In Progress, 2 = Completed, 3 = Rejected
+
+    CONSTRAINT CK_MR_dates CHECK (completed_at IS NULL OR completed_at >= created_at)
 );
 GO
 
-
-
-/* =========================
-   INSERT DATA
-   ========================= */
-
--- ROLES
-INSERT INTO ROLES(role_name) VALUES
-(N'ADMIN'), (N'MANAGER'), (N'TENANT');
-GO
-
--- PERMISSIONS (optional demo)
-INSERT INTO PERMISSIONS(permission_name, description) VALUES
-(N'ROOM_EDIT',    N'Sửa phòng'),
-(N'BILL_CREATE',  N'Tạo hóa đơn'),
-(N'MAINT_HANDLE', N'Xử lý bảo trì');
-GO
-
--- ACCOUNTS
-INSERT INTO ACCOUNTS(username, password_hash, email, status) VALUES
-(N'admin',   N'123456', N'admin@gmail.com',   1),
-(N'manager', N'123456', N'manager@gmail.com', 1),
-(N'tenant01',N'123456', N'tenant01@gmail.com',1),
-(N'tenant02',N'123456', N'tenant02@gmail.com',1);
-GO
-
--- USER_PROFILES
--- account_id 1..4 tương ứng với 4 account vừa insert
-INSERT INTO USER_PROFILES(account_id, full_name, identity_code, phone_number, address, date_of_birth, gender, avatar) VALUES
-(1, N'Admin Demo',   N'012345678901', N'0900000001', N'Hồ Chí Minh', '1995-01-01', 1, NULL),
-(2, N'Manager Demo', N'012345678902', N'0900000002', N'Hà Nội',      '1997-02-02', 2, NULL),
-(3, N'Tenant One',   N'012345678903', N'0900000003', N'Hồ Chí Minh', '2000-03-03', 1, NULL),
-(4, N'Tenant Two',   N'012345678904', N'0900000004', N'Hà Nội',      '2001-04-04', 2, NULL);
-GO
-
--- ACCOUNT_ROLES
--- role_id: 1=ADMIN, 2=MANAGER, 3=TENANT
-INSERT INTO ACCOUNT_ROLES(account_id, role_id, is_active) VALUES
-(1, 1, 1),  -- admin -> ADMIN
-(2, 2, 1),  -- manager -> MANAGER
-(3, 3, 1),  -- tenant01 -> TENANT
-(4, 3, 1);  -- tenant02 -> TENANT
-GO
-
--- HOUSES (2 nhà: HCM + Hà Nội)
-INSERT INTO HOUSES(house_name, city, address, num_of_rooms, description, status) VALUES
-(N'Nhà trọ Q1',     N'Hồ Chí Minh', N'123 Nguyễn Huệ, Q1', 10, N'Nhà trọ demo HCM', 1),
-(N'Nhà trọ Cầu Giấy',N'Hà Nội',     N'88 Trần Thái Tông, Cầu Giấy', 12, N'Nhà trọ demo Hà Nội', 1);
-GO
-
--- ROOMS (house_id = 1,2)
-INSERT INTO ROOMS(house_id, room_number, area, floor, max_tenants, price, room_image, is_mezzanine, description, status) VALUES
-(1, N'101', 22.5, 1, 2, 3500000, NULL, 0, N'Phòng 101 - HCM', 1),
-(1, N'102', 28.0, 1, 3, 4500000, NULL, 1, N'Phòng 102 gác lửng - HCM', 2),
-(2, N'201', 20.0, 2, 2, 3200000, NULL, 0, N'Phòng 201 - Hà Nội', 1),
-(2, N'202', 30.0, 2, 3, 4800000, NULL, 1, N'Phòng 202 gác lửng - Hà Nội', 1);
-GO
-
--- UTILITIES
-INSERT INTO UTILITIES(utility_name, unit, standard_price) VALUES
-(N'Điện', N'kWh', 4500),
-(N'Nước', N'm3', 18000),
-(N'Internet', N'tháng', 100000);
-GO
-
--- ROOM_UTILITY (đăng ký dịch vụ cho phòng 102 và 202)
-INSERT INTO ROOM_UTILITY(room_id, utility_id, start_date, custom_price, description) VALUES
-(2, 1, '2026-01-01', NULL,  N'Giá chuẩn'),
-(2, 2, '2026-01-01', 20000, N'Giá nước tùy chỉnh'),
-(2, 3, '2026-01-01', NULL,  N'Wifi'),
-
-(4, 1, '2026-01-01', NULL,  N'Giá chuẩn'),
-(4, 2, '2026-01-01', NULL,  N'Giá chuẩn'),
-(4, 3, '2026-01-01', NULL,  N'Wifi');
-GO
-
--- CONTRACTS (phòng 102 có hợp đồng active)
-INSERT INTO CONTRACTS(room_id, start_date, end_date, deposit, monthly_rent, start_water_index, start_electricity_index, status, note) VALUES
-(2, '2026-01-01', '2026-12-31', 2000000, 4500000, 10, 120, 1, N'Hợp đồng demo phòng 102');
-GO
-
--- CONTRACT_TENANTS (tenant01 leader, tenant02 member) -> contract_id = 1 nếu DB mới tinh
-INSERT INTO CONTRACT_TENANTS(contract_id, profile_id, move_in_date, move_out_date, tenant_role) VALUES
-(1, 3, '2026-01-01', NULL, 1),
-(1, 4, '2026-01-01', NULL, 2);
-GO
-
--- BILL (bill_id = 1) cho phòng 102 tháng 202601
-INSERT INTO BILL(room_id, bill_month, due_date, payment_date, total_amount, status, note) VALUES
-(2, 202601, '2026-01-10', NULL, 0, 0, N'Hóa đơn tháng 01/2026 - phòng 102');
-GO
-
--- BILL_DETAIL
-INSERT INTO BILL_DETAIL(bill_id, utility_id, old_index, new_index, quantity, unit_price) VALUES
-(1, 1, 120, 270, 150, 4500),
-(1, 2, 10,  16,  6, 20000),
-(1, 3, NULL, NULL, 1, 100000);
-GO
-
--- Update total_amount
-UPDATE BILL
-SET total_amount = (SELECT SUM(sub_total) FROM BILL_DETAIL WHERE bill_id = 1)
-WHERE bill_id = 1;
-GO
-
--- MAINTENANCE_REQUEST (1 cái HCM - submitted, 1 cái HN - in progress)
-INSERT INTO MAINTENANCE_REQUEST(room_id, submitted_by_profile_id, handled_by_account_id, description, image_url, status) VALUES
-(2, 3, NULL, N'Bóng đèn hành lang bị hỏng', NULL, 0),
-(4, 4, 2,    N'Vòi nước bị rò rỉ',         NULL, 1);
-GO
