@@ -349,3 +349,110 @@ CREATE TABLE MAINTENANCE_REQUEST (
 );
 GO
 
+/* =========================================================
+   1. INSERT HOUSES
+========================================================= */
+INSERT INTO HOUSES (house_name, city, address, description, num_of_rooms, status)
+VALUES 
+(N'Chung Cư Mini Sunshine', N'Hà Nội', N'123 Đường Láng, Đống Đa', N'Gần các trường đại học lớn, an ninh tốt', 10, 1),
+(N'Căn Hộ Dịch Vụ GreenLeaf', N'TP.Hồ Chí Minh', N'456 Lê Văn Sỹ, Quận 3', N'Full nội thất, giờ giấc tự do', 15, 1);
+GO
+
+/* =========================================================
+   2. INSERT ROOMS
+========================================================= */
+INSERT INTO ROOMS (house_id, room_number, price, area, floor, max_tenants, is_mezzanine, status, description)
+VALUES 
+-- Nhà 1 (Hà Nội)
+(1, N'P101', 3500000, 25.5, 1, 2, 0, 1, N'Phòng tầng 1, tiện đi lại'),
+(1, N'P201', 4000000, 30.0, 2, 3, 1, 1, N'Có gác lửng, ban công thoáng'),
+-- Nhà 2 (HCM)
+(2, N'A101', 5000000, 35.0, 1, 2, 0, 1, N'Studio cao cấp'),
+(2, N'A102', 5500000, 40.0, 1, 4, 1, 1, N'Phòng rộng, ở được nhóm bạn');
+GO
+
+/* =========================================================
+   3. INSERT UTILITY
+========================================================= */
+INSERT INTO UTILITY (utility_name, unit, standard_price, status)
+VALUES 
+(N'Điện', N'kWh', 3500, 1),
+(N'Nước sinh hoạt', N'Khối', 20000, 1),
+(N'Internet', N'Tháng', 100000, 1),
+(N'Vệ sinh chung', N'Người/Tháng', 50000, 1);
+GO
+
+/* =========================================================
+   4. INSERT ROOM_UTILITY
+========================================================= */
+INSERT INTO ROOM_UTILITY (room_id, utility_id, start_date, custom_price)
+VALUES 
+(1, 1, '2025-01-01', 3500),   -- Điện (ID 1)
+(1, 2, '2025-01-01', 20000),  -- Nước (ID 2)
+(1, 3, '2025-01-01', 100000); -- Mạng (ID 3)
+GO
+
+/* =========================================================
+   5. INSERT STAFF
+========================================================= */
+INSERT INTO STAFF (username, password_hash, full_name, phone_number, email, identity_code, staff_role, status, house_id)
+VALUES 
+-- Admin tổng (Role 1)
+(N'admin', N'123456', N'Nguyễn Quản Trị', N'0901111111', N'admin@sys.com', N'001090000001', 1, 1, NULL),
+-- Manager Hà Nội (Role 2)
+(N'manager_hn', N'123456', N'Trần Quản Lý HN', N'0902222222', N'manager.hn@sys.com', N'001090000002', 2, 1, 1),
+-- Manager HCM (Role 2)
+(N'manager_hcm', N'123456', N'Lê Quản Lý HCM', N'0903333333', N'manager.hcm@sys.com', N'001090000003', 2, 1, 2);
+GO
+
+/* =========================================================
+   6. INSERT TENANTS
+========================================================= */
+INSERT INTO TENANTS (username, password_hash, full_name, phone_number, email, identity_code, address, gender, date_of_birth, status)
+VALUES 
+(N'tenant_hn', N'123456', N'Phạm Văn Khách', N'0988888888', N'khach.hn@gmail.com', N'034090000888', N'Quê Thái Bình', 1, '1998-05-20', 1),
+(N'tenant_hcm', N'123456', N'Nguyễn Thị Thuê', N'0977777777', N'khach.hcm@gmail.com', N'079090000777', N'Quê Long An', 0, '2000-10-15', 1);
+GO
+
+/* =========================================================
+   7. INSERT CONTRACTS
+========================================================= */
+INSERT INTO CONTRACTS (room_id, start_date, end_date, deposit, monthly_rent, status, note)
+VALUES 
+(1, '2025-01-01', '2025-12-31', 3500000, 3500000, 1, N'Hợp đồng 1 năm, cọc 1 tháng');
+GO
+
+/* =========================================================
+   8. INSERT CONTRACT_TENANTS (ĐÃ SỬA: tenant_role -> note)
+========================================================= */
+INSERT INTO CONTRACT_TENANTS (contract_id, tenant_id, move_in_date, note)
+VALUES 
+(1, 1, '2025-01-01', N'Vai trò: Chủ hợp đồng chính');
+GO
+
+/* =========================================================
+   9. INSERT BILL
+========================================================= */
+INSERT INTO BILL (room_id, bill_month, due_date, status, old_water_number, new_water_number, old_electric_number, new_electric_number)
+VALUES 
+(1, 202501, '2025-02-05', 0, 100, 105, 500, 550); 
+GO
+
+/* =========================================================
+   10. INSERT BILL_DETAIL
+========================================================= */
+INSERT INTO BILL_DETAIL (bill_id, item_name, unit, quantity, unit_price)
+VALUES 
+(1, N'Tiền phòng tháng 01', N'Tháng', 1, 3500000),      
+(1, N'Tiền điện', N'kWh', 50, 3500),                    
+(1, N'Tiền nước', N'Khối', 5, 20000),                   
+(1, N'Tiền mạng', N'Tháng', 1, 100000);                 
+GO
+
+/* =========================================================
+   11. INSERT MAINTENANCE_REQUEST
+========================================================= */
+INSERT INTO MAINTENANCE_REQUEST (room_id, tenant_id, handled_by_staff_id, description, status)
+VALUES 
+(1, 1, NULL, N'Điều hòa không mát, kêu to', 0);
+GO
