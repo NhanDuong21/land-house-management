@@ -1,12 +1,13 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8" />
         <title>Login</title>
         <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/style.css">
     </head>
-    <body>
 
+    <body>
         <div class="login-page">
 
             <!-- NỀN SÓNG XANH -->
@@ -23,19 +24,23 @@
                 <h2>Welcome Back !</h2>
                 <p class="subtitle">Sign in to continue.</p>
 
-                <form action="login" method="post">
+                <form action="<%=request.getContextPath()%>/login" method="post">
 
                     <%
                         String error = (String) request.getAttribute("error");
-                        if (error != null) {
+                        String oldUsername = (String) request.getAttribute("username"); // LoginServlet có thể set lại
+                        if (oldUsername == null) oldUsername = "";
                     %>
-                    <p style="color:red; text-align:center; margin-bottom:10px;">
-                        <%= error%>
-                    </p>
-                    <% }%>
+
+                    <% if (error != null) { %>
+                        <p style="color:red; text-align:center; margin-bottom:10px;">
+                            <%= error %>
+                        </p>
+                    <% } %>
 
                     <label>Username</label>
-                    <input type="text" name="username" placeholder="Enter username" required>
+                    <input type="text" name="username" placeholder="Enter username" required
+                           value="<%= oldUsername %>">
 
                     <label>Password</label>
                     <input type="password" name="password" placeholder="Enter password" required>
@@ -52,13 +57,16 @@
 
                     <button type="submit">LOGIN</button>
 
+                    <%-- 
+                        REMEMBER ME (TODO LATER)
+                        - Nếu user tick remember => servlet sẽ tạo token + set cookie
+                        - Cookie path phải là request.getContextPath()
+                    --%>
                 </form>
-
-
 
                 <p class="switch">
                     Don't have an account?
-                    <a href="register">Sign up</a>
+                    <a href="<%=request.getContextPath()%>/register">Sign up</a>
                 </p>
 
             </div>
@@ -73,6 +81,5 @@
             </footer>
 
         </div>
-
     </body>
 </html>
