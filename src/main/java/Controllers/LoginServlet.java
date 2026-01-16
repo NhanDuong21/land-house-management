@@ -5,10 +5,10 @@
 package Controllers;
 
 import java.io.IOException;
-import java.util.List;
 
-import DALs.AccountDAO;
-import Models.Account;
+import DALs.StaffDAO;
+import DALs.TenantDAO;
+import Models.authentication.AuthUser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,20 +36,24 @@ public class LoginServlet extends HttpServlet {
         // basic validate
         if (username == null || password == null || username.isBlank() || password.isBlank()) {
             request.setAttribute("error", "Please enter your username and password!");
+            request.setAttribute("username", username);
             request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
             return;
         }
-        AccountDAO dao = new AccountDAO();
-        Account acc = dao.login(username.trim(), password);
+        StaffDAO sdao = new StaffDAO();
+        TenantDAO tdao = new TenantDAO();
 
-        if (acc == null) {
+        AuthUser authUser = sdao.login(username, password);
+        if (authUser == null) {
+            authUser = tdao.login(username, password);
+        }
+
+        if (authUser == null) {
             request.setAttribute("error", "Incorrect username/password or account locked.");
+            request.setAttribute("username", username); // login sai set lại username
             request.getRequestDispatcher("view/auth/login.jsp").forward(request, response);
             return;
         }
-
-        //load roles ( 1 acc nhiều role )
-        List<String> roles = dao.getRolesByAccountId(acc.getAccountId());
 
         // //Remember me
         // String remember = request.getParameter("remember");
@@ -68,17 +72,9 @@ public class LoginServlet extends HttpServlet {
         // System.out.println("PASSWORD = [" + acc.getPassword() + "]");
         // login ok -> set session
         HttpSession session = request.getSession();
-        session.setAttribute("account", acc); // account là name attribute do mình set
-        session.setAttribute("roles", roles);
+        session.setAttribute("auth", authUser); // auth là name attribute do mình set
 
-        if (roles.contains("ADMIN")) {
-            response.sendRedirect(request.getContextPath() + "/admin/dashboard");
-        } else if (roles.contains("MANAGER")) {
-            response.sendRedirect(request.getContextPath() + "/manager/dashboard");
-        } else if (roles.contains("TENANT")) {
-            response.sendRedirect(request.getContextPath() + "/tenant/dashboard");
-        } else {
-            response.sendRedirect(request.getContextPath() + "/home");
-        }
+        response.sendRedirect(request.getContextPath() + "/home");
+
     }
 }

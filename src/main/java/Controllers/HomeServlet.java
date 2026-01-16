@@ -7,6 +7,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ *
+ * @author Duong Thien Nhan - CE190741
+ */
 public class HomeServlet extends HttpServlet {
 
     @Override
@@ -14,7 +18,6 @@ public class HomeServlet extends HttpServlet {
             throws ServletException, IOException {
 
         // KHÔNG check session
-        // KHÔNG phân quyền
         request.getRequestDispatcher("view/auth/home.jsp").forward(request, response);
     }
 }
