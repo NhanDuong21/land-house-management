@@ -3,6 +3,9 @@ package Utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Author: Duong Thien Nhan - CE190741 Created on: 2026-01-12
+ */
 public class HashUtil {
 
     public static String md5(String input) {
