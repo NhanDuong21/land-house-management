@@ -17,7 +17,7 @@ import Utils.HashUtil;
 public class StaffDAO extends DBContext {
 
     public AuthUser login(String username, String password) {
-        String sql = "SELECT staff_id, full_name, staff_role, status "
+        String sql = "SELECT        staff_id, full_name, staff_role, status "
                 + "FROM STAFF WHERE username=? AND password_hash=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, username);
