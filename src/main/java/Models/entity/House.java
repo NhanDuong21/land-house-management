@@ -14,7 +14,7 @@ public class House {
     private String address;
     private String description;
     private byte status;
-    private int numOfRooms;
+    private int numOfRooms;                  
 
     public House() {
     }
