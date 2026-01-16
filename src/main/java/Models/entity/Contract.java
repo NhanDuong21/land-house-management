@@ -3,6 +3,12 @@ package Models.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * Description
+ *
+ * @author Duong Thien Nhan - CE190741
+ * @since 2026-01-16
+ */
 public class Contract {
 
     private int contractId;

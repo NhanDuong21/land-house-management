@@ -2,6 +2,12 @@ package Models.entity;
 
 import java.time.LocalDate;
 
+/**
+ * Description
+ *
+ * @author Duong Thien Nhan - CE190741
+ * @since 2026-01-16
+ */
 public class Bill {
 
     private int billId;

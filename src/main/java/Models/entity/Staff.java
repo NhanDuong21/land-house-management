@@ -3,6 +3,12 @@ package Models.entity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Description
+ *
+ * @author Duong Thien Nhan - CE190741
+ * @since 2026-01-16
+ */
 public class Staff {
 
     private int staffId;

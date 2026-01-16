@@ -2,6 +2,12 @@ package Models.entity;
 
 import java.math.BigDecimal;
 
+/**
+ * Description
+ *
+ * @author Duong Thien Nhan - CE190741
+ * @since 2026-01-16
+ */
 public class Utility {
 
     private int utilityId;

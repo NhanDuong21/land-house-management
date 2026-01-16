@@ -1,5 +1,11 @@
 package Models.entity;
 
+/**
+ * Description
+ *
+ * @author Duong Thien Nhan - CE190741
+ * @since 2026-01-16
+ */
 public class House {
 
     private int houseId;
