@@ -34,7 +34,7 @@ public class StaffDAO extends DBContext {
                     AuthUser authUser = new AuthUser();
                     authUser.setId(rs.getInt("staff_id"));
                     authUser.setFullName(rs.getString("full_name"));
-                    authUser.setRole(rs.getString(role));
+                    authUser.setRole(role);
                     return authUser;
                 }
             }
