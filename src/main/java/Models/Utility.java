@@ -1,27 +1,31 @@
 package Models;
 
+import java.math.BigDecimal;
+
 public class Utility {
 
-    private Integer utilityId;
+    private int utilityId;
     private String utilityName;
     private String unit;
-    private long standardPrice; //vnd
+    private BigDecimal standardPrice;
+    private byte status; // 0 1 2
 
     public Utility() {
     }
 
-    public Utility(Integer utilityId, String utilityName, String unit, long standardPrice) {
+    public Utility(int utilityId, String utilityName, String unit, BigDecimal standardPrice, byte status) {
         this.utilityId = utilityId;
         this.utilityName = utilityName;
         this.unit = unit;
         this.standardPrice = standardPrice;
+        this.status = status;
     }
 
-    public Integer getUtilityId() {
+    public int getUtilityId() {
         return utilityId;
     }
 
-    public void setUtilityId(Integer utilityId) {
+    public void setUtilityId(int utilityId) {
         this.utilityId = utilityId;
     }
 
@@ -41,12 +45,20 @@ public class Utility {
         this.unit = unit;
     }
 
-    public long getStandardPrice() {
+    public BigDecimal getStandardPrice() {
         return standardPrice;
     }
 
-    public void setStandardPrice(long standardPrice) {
+    public void setStandardPrice(BigDecimal standardPrice) {
         this.standardPrice = standardPrice;
+    }
+
+    public byte getStatus() {
+        return status;
+    }
+
+    public void setStatus(byte status) {
+        this.status = status;
     }
 
 }

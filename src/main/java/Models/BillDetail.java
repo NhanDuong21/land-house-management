@@ -1,34 +1,34 @@
 package Models;
 
+import java.math.BigDecimal;
+
 public class BillDetail {
 
-    private Integer billDetailId;
+    private int billDetailId;
     private int billId;
-    private int utilityId;
-    private Integer oldIndex; // nullable
-    private Integer newIndex; // nullable
-    private double quantity;  // DECIMAL(12,3)
-    private long unitPrice;
+    private String itemName;
+    private String unit;
+    private BigDecimal quantity;
+    private BigDecimal unitPrice;
 
     public BillDetail() {
     }
 
-    public BillDetail(Integer billDetailId, int billId, int utilityId, Integer oldIndex, Integer newIndex,
-            double quantity, long unitPrice) {
+    public BillDetail(int billDetailId, int billId, String itemName, String unit, BigDecimal quantity,
+            BigDecimal unitPrice) {
         this.billDetailId = billDetailId;
         this.billId = billId;
-        this.utilityId = utilityId;
-        this.oldIndex = oldIndex;
-        this.newIndex = newIndex;
+        this.itemName = itemName;
+        this.unit = unit;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
     }
 
-    public Integer getBillDetailId() {
+    public int getBillDetailId() {
         return billDetailId;
     }
 
-    public void setBillDetailId(Integer billDetailId) {
+    public void setBillDetailId(int billDetailId) {
         this.billDetailId = billDetailId;
     }
 
@@ -40,43 +40,35 @@ public class BillDetail {
         this.billId = billId;
     }
 
-    public int getUtilityId() {
-        return utilityId;
+    public String getItemName() {
+        return itemName;
     }
 
-    public void setUtilityId(int utilityId) {
-        this.utilityId = utilityId;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
-    public Integer getOldIndex() {
-        return oldIndex;
+    public String getUnit() {
+        return unit;
     }
 
-    public void setOldIndex(Integer oldIndex) {
-        this.oldIndex = oldIndex;
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 
-    public Integer getNewIndex() {
-        return newIndex;
-    }
-
-    public void setNewIndex(Integer newIndex) {
-        this.newIndex = newIndex;
-    }
-
-    public double getQuantity() {
+    public BigDecimal getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(double quantity) {
+    public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
     }
 
-    public long getUnitPrice() {
+    public BigDecimal getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(long unitPrice) {
+    public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
 

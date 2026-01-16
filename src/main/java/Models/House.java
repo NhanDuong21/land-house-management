@@ -2,33 +2,33 @@ package Models;
 
 public class House {
 
-    private Integer houseId;
+    private int houseId;
     private String houseName;
-    private String city; // nullable
+    private String city;
     private String address;
-    private Integer numOfRooms; // nullable
-    private String description; // nullable
-    private int status; // 0..3
+    private String description;
+    private byte status;
+    private int numOfRooms;
 
     public House() {
     }
 
-    public House(Integer houseId, String houseName, String city, String address, Integer numOfRooms, String description,
-            int status) {
+    public House(int houseId, String houseName, String city, String address, String description, byte status,
+            int numOfRooms) {
         this.houseId = houseId;
         this.houseName = houseName;
         this.city = city;
         this.address = address;
-        this.numOfRooms = numOfRooms;
         this.description = description;
         this.status = status;
+        this.numOfRooms = numOfRooms;
     }
 
-    public Integer getHouseId() {
+    public int getHouseId() {
         return houseId;
     }
 
-    public void setHouseId(Integer houseId) {
+    public void setHouseId(int houseId) {
         this.houseId = houseId;
     }
 
@@ -56,14 +56,6 @@ public class House {
         this.address = address;
     }
 
-    public Integer getNumOfRooms() {
-        return numOfRooms;
-    }
-
-    public void setNumOfRooms(Integer numOfRooms) {
-        this.numOfRooms = numOfRooms;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -72,12 +64,20 @@ public class House {
         this.description = description;
     }
 
-    public int getStatus() {
+    public byte getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(byte status) {
         this.status = status;
+    }
+
+    public int getNumOfRooms() {
+        return numOfRooms;
+    }
+
+    public void setNumOfRooms(int numOfRooms) {
+        this.numOfRooms = numOfRooms;
     }
 
 }

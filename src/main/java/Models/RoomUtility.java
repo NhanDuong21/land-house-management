@@ -1,5 +1,6 @@
 package Models;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class RoomUtility {
@@ -7,16 +8,19 @@ public class RoomUtility {
     private int roomId;
     private int utilityId;
     private LocalDate startDate;
-    private long customPrice;
+    private LocalDate endDate;
+    private BigDecimal customPrice;
     private String description;
 
     public RoomUtility() {
     }
 
-    public RoomUtility(int roomId, int utilityId, LocalDate startDate, long customPrice, String description) {
+    public RoomUtility(int roomId, int utilityId, LocalDate startDate, LocalDate endDate, BigDecimal customPrice,
+            String description) {
         this.roomId = roomId;
         this.utilityId = utilityId;
         this.startDate = startDate;
+        this.endDate = endDate;
         this.customPrice = customPrice;
         this.description = description;
     }
@@ -45,11 +49,19 @@ public class RoomUtility {
         this.startDate = startDate;
     }
 
-    public long getCustomPrice() {
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public BigDecimal getCustomPrice() {
         return customPrice;
     }
 
-    public void setCustomPrice(long customPrice) {
+    public void setCustomPrice(BigDecimal customPrice) {
         this.customPrice = customPrice;
     }
 

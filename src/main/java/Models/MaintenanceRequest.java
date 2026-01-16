@@ -4,25 +4,25 @@ import java.time.LocalDateTime;
 
 public class MaintenanceRequest {
 
-    private Integer requestId;
+    private int requestId;
     private int roomId;
-    private int submittedByProfileId;
-    private Integer handledByAccountId; // nullable
+    private int tenantId;
+    private Integer handledByStaffId;
     private String description;
-    private String imageUrl; // nullable
-    private int status; // 0..3
+    private String imageUrl;
+    private byte status;              // 0 to 3
     private LocalDateTime createdAt;
-    private LocalDateTime completedAt; // nullable
+    private LocalDateTime completedAt;
 
     public MaintenanceRequest() {
     }
 
-    public MaintenanceRequest(Integer requestId, int roomId, int submittedByProfileId, Integer handledByAccountId,
-            String description, String imageUrl, int status, LocalDateTime createdAt, LocalDateTime completedAt) {
+    public MaintenanceRequest(int requestId, int roomId, int tenantId, Integer handledByStaffId, String description,
+            String imageUrl, byte status, LocalDateTime createdAt, LocalDateTime completedAt) {
         this.requestId = requestId;
         this.roomId = roomId;
-        this.submittedByProfileId = submittedByProfileId;
-        this.handledByAccountId = handledByAccountId;
+        this.tenantId = tenantId;
+        this.handledByStaffId = handledByStaffId;
         this.description = description;
         this.imageUrl = imageUrl;
         this.status = status;
@@ -30,11 +30,11 @@ public class MaintenanceRequest {
         this.completedAt = completedAt;
     }
 
-    public Integer getRequestId() {
+    public int getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(Integer requestId) {
+    public void setRequestId(int requestId) {
         this.requestId = requestId;
     }
 
@@ -46,20 +46,20 @@ public class MaintenanceRequest {
         this.roomId = roomId;
     }
 
-    public int getSubmittedByProfileId() {
-        return submittedByProfileId;
+    public int getTenantId() {
+        return tenantId;
     }
 
-    public void setSubmittedByProfileId(int submittedByProfileId) {
-        this.submittedByProfileId = submittedByProfileId;
+    public void setTenantId(int tenantId) {
+        this.tenantId = tenantId;
     }
 
-    public Integer getHandledByAccountId() {
-        return handledByAccountId;
+    public Integer getHandledByStaffId() {
+        return handledByStaffId;
     }
 
-    public void setHandledByAccountId(Integer handledByAccountId) {
-        this.handledByAccountId = handledByAccountId;
+    public void setHandledByStaffId(Integer handledByStaffId) {
+        this.handledByStaffId = handledByStaffId;
     }
 
     public String getDescription() {
@@ -78,11 +78,11 @@ public class MaintenanceRequest {
         this.imageUrl = imageUrl;
     }
 
-    public int getStatus() {
+    public byte getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(byte status) {
         this.status = status;
     }
 

@@ -1,42 +1,44 @@
 package Models;
 
+import java.math.BigDecimal;
+
 public class Room {
 
-    private Integer roomId;
+    private int roomId;
     private int houseId;
     private String roomNumber;
-    private double area;        // m2
+    private BigDecimal price;
+    private BigDecimal area;
     private int floor;
     private int maxTenants;
-    private long price;         // VND (vd 3500000)
-    private String roomImage; // nullable -> bạn có thể để String bình thường
     private boolean isMezzanine;
+    private String roomImage;
+    private byte status; // 0-3
     private String description;
-    private int status;         // 0..3
 
     public Room() {
     }
 
-    public Room(Integer roomId, int houseId, String roomNumber, double area, int floor, int maxTenants, long price,
-            String roomImage, boolean isMezzanine, String description, int status) {
+    public Room(int roomId, int houseId, String roomNumber, BigDecimal price, BigDecimal area, int floor,
+            int maxTenants, boolean isMezzanine, String roomImage, byte status, String description) {
         this.roomId = roomId;
         this.houseId = houseId;
         this.roomNumber = roomNumber;
+        this.price = price;
         this.area = area;
         this.floor = floor;
         this.maxTenants = maxTenants;
-        this.price = price;
-        this.roomImage = roomImage;
         this.isMezzanine = isMezzanine;
-        this.description = description;
+        this.roomImage = roomImage;
         this.status = status;
+        this.description = description;
     }
 
-    public Integer getRoomId() {
+    public int getRoomId() {
         return roomId;
     }
 
-    public void setRoomId(Integer roomId) {
+    public void setRoomId(int roomId) {
         this.roomId = roomId;
     }
 
@@ -56,11 +58,19 @@ public class Room {
         this.roomNumber = roomNumber;
     }
 
-    public double getArea() {
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public BigDecimal getArea() {
         return area;
     }
 
-    public void setArea(double area) {
+    public void setArea(BigDecimal area) {
         this.area = area;
     }
 
@@ -80,12 +90,12 @@ public class Room {
         this.maxTenants = maxTenants;
     }
 
-    public long getPrice() {
-        return price;
+    public boolean isMezzanine() {
+        return isMezzanine;
     }
 
-    public void setPrice(long price) {
-        this.price = price;
+    public void setMezzanine(boolean isMezzanine) {
+        this.isMezzanine = isMezzanine;
     }
 
     public String getRoomImage() {
@@ -96,12 +106,12 @@ public class Room {
         this.roomImage = roomImage;
     }
 
-    public boolean isMezzanine() {
-        return isMezzanine;
+    public byte getStatus() {
+        return status;
     }
 
-    public void setMezzanine(boolean isMezzanine) {
-        this.isMezzanine = isMezzanine;
+    public void setStatus(byte status) {
+        this.status = status;
     }
 
     public String getDescription() {
@@ -110,14 +120,6 @@ public class Room {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
     }
 
 }

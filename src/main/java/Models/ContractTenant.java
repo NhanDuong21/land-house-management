@@ -4,31 +4,31 @@ import java.time.LocalDate;
 
 public class ContractTenant {
 
-    private Integer recordId;
+    private int recordId;
     private int contractId;
-    private int profileId;
+    private int tenantId;
     private LocalDate moveInDate;
-    private LocalDate moveOutDate; // nullable
-    private int tenantRole; // 1=Leader, 2=Member
+    private LocalDate moveOutDate;
+    private String note;
 
     public ContractTenant() {
     }
 
-    public ContractTenant(Integer recordId, int contractId, int profileId, LocalDate moveInDate, LocalDate moveOutDate,
-            int tenantRole) {
+    public ContractTenant(int recordId, int contractId, int tenantId, LocalDate moveInDate, LocalDate moveOutDate,
+            String note) {
         this.recordId = recordId;
         this.contractId = contractId;
-        this.profileId = profileId;
+        this.tenantId = tenantId;
         this.moveInDate = moveInDate;
         this.moveOutDate = moveOutDate;
-        this.tenantRole = tenantRole;
+        this.note = note;
     }
 
-    public Integer getRecordId() {
+    public int getRecordId() {
         return recordId;
     }
 
-    public void setRecordId(Integer recordId) {
+    public void setRecordId(int recordId) {
         this.recordId = recordId;
     }
 
@@ -40,12 +40,12 @@ public class ContractTenant {
         this.contractId = contractId;
     }
 
-    public int getProfileId() {
-        return profileId;
+    public int getTenantId() {
+        return tenantId;
     }
 
-    public void setProfileId(int profileId) {
-        this.profileId = profileId;
+    public void setTenantId(int tenantId) {
+        this.tenantId = tenantId;
     }
 
     public LocalDate getMoveInDate() {
@@ -64,12 +64,12 @@ public class ContractTenant {
         this.moveOutDate = moveOutDate;
     }
 
-    public int getTenantRole() {
-        return tenantRole;
+    public String getNote() {
+        return note;
     }
 
-    public void setTenantRole(int tenantRole) {
-        this.tenantRole = tenantRole;
+    public void setNote(String note) {
+        this.note = note;
     }
 
 }

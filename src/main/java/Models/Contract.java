@@ -5,22 +5,22 @@ import java.time.LocalDate;
 
 public class Contract {
 
-    private Integer contractId;
+    private int contractId;
     private int roomId;
     private LocalDate startDate;
-    private LocalDate endDate; // nullable
+    private LocalDate endDate;
     private BigDecimal deposit;
     private BigDecimal monthlyRent;
-    private int startWaterIndex;
-    private int startElectricityIndex;
-    private int status; // 0..3
+    private Integer startWaterIndex;
+    private Integer startElectricityIndex;
+    private byte status; // 0 1 2             
     private String note;
 
     public Contract() {
     }
 
-    public Contract(Integer contractId, int roomId, LocalDate startDate, LocalDate endDate, BigDecimal deposit,
-            BigDecimal monthlyRent, int startWaterIndex, int startElectricityIndex, int status, String note) {
+    public Contract(int contractId, int roomId, LocalDate startDate, LocalDate endDate, BigDecimal deposit,
+            BigDecimal monthlyRent, Integer startWaterIndex, Integer startElectricityIndex, byte status, String note) {
         this.contractId = contractId;
         this.roomId = roomId;
         this.startDate = startDate;
@@ -33,11 +33,11 @@ public class Contract {
         this.note = note;
     }
 
-    public Integer getContractId() {
+    public int getContractId() {
         return contractId;
     }
 
-    public void setContractId(Integer contractId) {
+    public void setContractId(int contractId) {
         this.contractId = contractId;
     }
 
@@ -81,27 +81,27 @@ public class Contract {
         this.monthlyRent = monthlyRent;
     }
 
-    public int getStartWaterIndex() {
+    public Integer getStartWaterIndex() {
         return startWaterIndex;
     }
 
-    public void setStartWaterIndex(int startWaterIndex) {
+    public void setStartWaterIndex(Integer startWaterIndex) {
         this.startWaterIndex = startWaterIndex;
     }
 
-    public int getStartElectricityIndex() {
+    public Integer getStartElectricityIndex() {
         return startElectricityIndex;
     }
 
-    public void setStartElectricityIndex(int startElectricityIndex) {
+    public void setStartElectricityIndex(Integer startElectricityIndex) {
         this.startElectricityIndex = startElectricityIndex;
     }
 
-    public int getStatus() {
+    public byte getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(byte status) {
         this.status = status;
     }
 

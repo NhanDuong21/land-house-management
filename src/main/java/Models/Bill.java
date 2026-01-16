@@ -4,35 +4,43 @@ import java.time.LocalDate;
 
 public class Bill {
 
-    private Integer billId;
+    private int billId;
     private int roomId;
     private int billMonth; // yyyymm
     private LocalDate dueDate;
     private LocalDate paymentDate; // nullable
-    private long totalAmount;
-    private int status; // 0..3
-    private String note; // nullable
+    private byte status;           // 0..3
+    private String note;           // nullable
+
+    private Integer oldWaterNumber;    // nullable
+    private Integer newWaterNumber;    // nullable
+    private Integer oldElectricNumber; // nullable
+    private Integer newElectricNumber; // nullable
 
     public Bill() {
     }
 
-    public Bill(Integer billId, int roomId, int billMonth, LocalDate dueDate, LocalDate paymentDate, long totalAmount,
-            int status, String note) {
+    public Bill(int billId, int roomId, int billMonth, LocalDate dueDate, LocalDate paymentDate, byte status,
+            String note, Integer oldWaterNumber, Integer newWaterNumber, Integer oldElectricNumber,
+            Integer newElectricNumber) {
         this.billId = billId;
         this.roomId = roomId;
         this.billMonth = billMonth;
         this.dueDate = dueDate;
         this.paymentDate = paymentDate;
-        this.totalAmount = totalAmount;
         this.status = status;
         this.note = note;
+        this.oldWaterNumber = oldWaterNumber;
+        this.newWaterNumber = newWaterNumber;
+        this.oldElectricNumber = oldElectricNumber;
+        this.newElectricNumber = newElectricNumber;
     }
 
-    public Integer getBillId() {
+    public int getBillId() {
         return billId;
     }
 
-    public void setBillId(Integer billId) {
+    public void setBillId(int billId) {
         this.billId = billId;
     }
 
@@ -68,19 +76,11 @@ public class Bill {
         this.paymentDate = paymentDate;
     }
 
-    public long getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(long totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public int getStatus() {
+    public byte getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(byte status) {
         this.status = status;
     }
 
@@ -90,6 +90,38 @@ public class Bill {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public Integer getOldWaterNumber() {
+        return oldWaterNumber;
+    }
+
+    public void setOldWaterNumber(Integer oldWaterNumber) {
+        this.oldWaterNumber = oldWaterNumber;
+    }
+
+    public Integer getNewWaterNumber() {
+        return newWaterNumber;
+    }
+
+    public void setNewWaterNumber(Integer newWaterNumber) {
+        this.newWaterNumber = newWaterNumber;
+    }
+
+    public Integer getOldElectricNumber() {
+        return oldElectricNumber;
+    }
+
+    public void setOldElectricNumber(Integer oldElectricNumber) {
+        this.oldElectricNumber = oldElectricNumber;
+    }
+
+    public Integer getNewElectricNumber() {
+        return newElectricNumber;
+    }
+
+    public void setNewElectricNumber(Integer newElectricNumber) {
+        this.newElectricNumber = newElectricNumber;
     }
 
 }
