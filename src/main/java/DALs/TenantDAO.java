@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import Models.authentication.AuthUser;
+import Models.entity.Tenant;
 import Utils.DBContext;
 import Utils.HashUtil;
 
@@ -81,5 +82,39 @@ public class TenantDAO extends DBContext {
         } catch (SQLException e) {
             System.out.println("CLEAR REMEMBER TOKEN ERROR: " + e.getMessage());
         }
+    }
+
+    public Tenant getById(int tenantId) {
+        String sql = "SELECT tenant_id, username, password_hash, full_name, phone_number, email, identity_code, address, gender, date_of_birth, avatar, created_at, updated_at "
+                + "FROM TENANTS "
+                + "WHERE tenant_id = 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Tenant tenant = new Tenant();
+                    tenant.setTenantId(rs.getInt("tenant_id"));
+                    tenant.setUsername(rs.getString("username"));
+                    tenant.setPasswordHash(rs.getString("password_hash"));
+                    tenant.setFullName(rs.getString("full_name"));
+                    tenant.setPhoneNumber(rs.getString("phone_number"));
+                    tenant.setEmail(rs.getString("email"));
+                    tenant.setIdentityCode(rs.getString("identity_code"));
+                    tenant.setAddress(rs.getString("address"));
+                    tenant.setGender(rs.getByte("gender"));
+                    tenant.setDateOfBirth(rs.getDate("date_of_birth") != null ? rs.getDate("date_of_birth").toLocalDate() : null);
+                    tenant.setAvatar(rs.getString("avatar"));
+                    tenant.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                    tenant.setUpdatedAt(rs.getTimestamp("updated_at") != null ? rs.getTimestamp("updated_at").toLocalDateTime() : null);
+                    return tenant;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Database Error: " + e.getMessage());
+            System.err.println("Tenant ID attempted: " + tenantId);
+        } catch (Exception e) {
+            System.err.println("General Error: " + e.getMessage());
+        }
+        return null;
     }
 }
