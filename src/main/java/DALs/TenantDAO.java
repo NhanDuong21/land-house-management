@@ -87,7 +87,7 @@ public class TenantDAO extends DBContext {
     public Tenant getById(int tenantId) {
         String sql = "SELECT tenant_id, username, password_hash, full_name, phone_number, email, identity_code, address, gender, date_of_birth, avatar, created_at, updated_at "
                 + "FROM TENANTS "
-                + "WHERE tenant_id = 1";
+                + "WHERE tenant_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, tenantId);
             try (ResultSet rs = ps.executeQuery()) {
