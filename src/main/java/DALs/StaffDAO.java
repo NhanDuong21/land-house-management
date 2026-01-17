@@ -43,4 +43,52 @@ public class StaffDAO extends DBContext {
         }
         return null;
     }
+
+    //remember me
+    public void saveRemember(int staffId, String token) {
+        String sql = "UPDATE STAFF SET token = ? WHERE staff_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, token);
+            ps.setInt(2, staffId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("SAVE REMEMBER TOKEN ERROR: " + e.getMessage());
+        }
+    }
+
+    //muốn biết cookie token này thuộc về staff nào trong DB thì phải có method này
+    //login select theo username + password
+    //findByRememberToken select theo token
+    public AuthUser findByRememberToken(String token) {
+        String sql = "SELECT staff_id, full_name, staff_role FROM STAFF WHERE token = ? AND status = 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, token);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    byte staffRole = rs.getByte("staff_role");
+                    String role = (staffRole == 1) ? "ADMIN" : "MANAGER";
+
+                    AuthUser authUser = new AuthUser();
+                    authUser.setId(rs.getInt("staff_id"));
+                    authUser.setFullName(rs.getString("full_name"));
+                    authUser.setRole(role);
+                    return authUser;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("FIND BY REMEMBER TOKEN ERROR: " + e.getMessage());
+        }
+        return null;
+    }
+
+    //set token lại thành null 
+    public void clearRememberToken(int staffId) {
+        String sql = "UPDATE STAFF SET token = NULL WHERE staff_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, staffId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("CLEAR REMEMBER TOKEN ERROR: " + e.getMessage());
+        }
+    }
 }
