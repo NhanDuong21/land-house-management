@@ -2,9 +2,11 @@
 <!DOCTYPE html>
 <html>
     <head>
+     
         <meta charset="UTF-8" />
         <title>Login</title>
         <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/style.css">
+        <link rel="icon" type="image/png" href="<%=request.getContextPath()%>/assets/images/logo.png">
     </head>
 
     <body>
