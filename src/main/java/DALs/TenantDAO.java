@@ -40,4 +40,46 @@ public class TenantDAO extends DBContext {
         }
         return null;
     }
+
+    //remember me
+    public void saveRemember(int tenantId, String token) {
+        String sql = "UPDATE TENANTS SET token = ? WHERE tenant_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, token);
+            ps.setInt(2, tenantId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("SAVE REMEMBER TOKEN ERROR: " + e.getMessage());
+        }
+    }
+
+    public AuthUser findByRememberToken(String token) {
+        String sql = "SELECT tenant_id, full_name FROM TENANTS WHERE token = ? AND status = 1";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, token);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    AuthUser authUser = new AuthUser();
+                    authUser.setId(rs.getInt("tenant_id"));
+                    authUser.setFullName(rs.getString("full_name"));
+                    authUser.setRole("TENANT");
+                    return authUser;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("FIND BY REMEMBER TOKEN ERROR: " + e.getMessage());
+        }
+        return null;
+    }
+
+    //set token lại thành null 
+    public void clearRememberToken(int tenantId) {
+        String sql = "UPDATE TENANTS SET token = NULL WHERE staff_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("CLEAR REMEMBER TOKEN ERROR: " + e.getMessage());
+        }
+    }
 }
