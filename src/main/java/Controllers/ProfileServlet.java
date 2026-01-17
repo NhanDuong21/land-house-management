@@ -42,7 +42,7 @@ public class ProfileServlet extends HttpServlet {
             request.setAttribute("p_email", staff == null ? "" : staff.getEmail());
             request.setAttribute("p_full_name", staff == null ? "" : staff.getFullName());
             request.setAttribute("p_phone", staff == null ? "" : staff.getPhoneNumber());
-            request.setAttribute("p_identity_code", staff == null ? "" : staff.getIdentityCode());
+            request.setAttribute("p_identity", staff == null ? "" : staff.getIdentityCode());
         } else {
             TenantDAO tdao = new TenantDAO();
             Tenant t = tdao.getById(authUser.getId());
@@ -52,7 +52,7 @@ public class ProfileServlet extends HttpServlet {
             request.setAttribute("p_phone", t != null ? t.getPhoneNumber() : "");
             request.setAttribute("p_identity", t != null ? t.getIdentityCode() : "");
         }
-        request.getRequestDispatcher("view/auth/profile/profile.jsp").forward(request, response);
+        request.getRequestDispatcher("view/auth/profile.jsp").forward(request, response);
     }
 
     @Override
