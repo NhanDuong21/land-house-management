@@ -5,11 +5,13 @@
 package Controllers;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import DALs.StaffDAO;
 import DALs.TenantDAO;
 import Models.authentication.AuthUser;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,18 +57,28 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
-        // //Remember me
-        // String remember = request.getParameter("remember");
-        // if (remember != null) {
-        //     String token = UUID.randomUUID().toString(); //toString để chuyển uuid v4 thành String để lưu db ( varchar )
-        //     //save token to DB
-        //     dao.saveRemember(acc.getAccountId(), token);
-        //     Cookie cookie = new Cookie("Remember_me", token);
-        //     cookie.setMaxAge(60 * 60 * 24 * 7); // 7 ngày
-        //     cookie.setHttpOnly(true);
-        //     cookie.setPath(request.getContextPath()); // quy định cookie send request đến url của contexpath
-        //     response.addCookie(cookie); // send cookie from server to client (Set-Cookie: Remember_me=abc123; Path=/LandHouseManagement; HttpOnly)
-        // }
+        //Remember me
+        String remember = request.getParameter("remember");
+        if (remember != null) {
+            String token = UUID.randomUUID().toString(); //toString để chuyển uuid v4 thành String để lưu db ( varchar )
+            //save token to DB
+            if ("ADMIN".equalsIgnoreCase(authUser.getRole()) || "MANAGER".equalsIgnoreCase(authUser.getRole())) {
+                sdao.saveRemember(authUser.getId(), token);
+                Cookie cookie = new Cookie("Remember_me", token);
+                cookie.setMaxAge(60 * 60 * 24 * 7); // 7 ngày
+                cookie.setHttpOnly(true);
+                cookie.setPath(request.getContextPath()); // quy định cookie send request đến url của contexpath
+                response.addCookie(cookie); // send cookie from server to client (Set-Cookie: Remember_me=abc123; Path=/LandHouseManagement; HttpOnly)
+            } else {
+                tdao.saveRemember(authUser.getId(), token);
+                Cookie cookie = new Cookie("Remember_me", token);
+                cookie.setMaxAge(60 * 60 * 24 * 7);
+                cookie.setHttpOnly(true);
+                cookie.setPath(request.getContextPath());
+                response.addCookie(cookie);
+            }
+
+        }
         //Debug lộ pass khi gắn pass vào object
         // System.out.println("USERNAME = [" + acc.getUsername() + "]");
         // System.out.println("PASSWORD = [" + acc.getPassword() + "]");
