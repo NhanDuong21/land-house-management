@@ -93,6 +93,7 @@ public class StaffDAO extends DBContext {
         }
     }
 
+    // input staffId -> output object Staff
     public Staff getById(int staffId) {
         String sql = "SELECT staff_id, username, password_hash, full_name, phone_number, "
                 + " email, identity_code, staff_role, status, created_at, updated_at, avatar,gender, date_of_birth, house_id "
@@ -113,11 +114,24 @@ public class StaffDAO extends DBContext {
                     staff.setStaffRole(rs.getByte("staff_role"));
                     staff.setStatus(rs.getByte("status"));
 
-                    staff.setCreatedAt(rs.getTimestamp("created_at"));
+                    staff.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                    staff.setUpdatedAt(rs.getTimestamp("updated_at") != null ? rs.getTimestamp("updated_at").toLocalDateTime() : null); //tránh lỗi NullPointerException
+                    staff.setAvatar(rs.getString("avatar"));
+                    staff.setGender(rs.getByte("gender"));
+                    staff.setDateOfBirth(rs.getDate("date_of_birth") != null ? rs.getDate("date_of_birth").toLocalDate() : null);
+
+                    // không get int vì sẽ return 0 nếu db null
+                    Integer houseIdInteger = (Integer) rs.getObject("house_id");
+                    staff.setHouseId(houseIdInteger);
+                    return staff;
                 }
             }
+        } catch (SQLException e) {
+            // Thông báo rõ ràng: Lỗi gì? Ở đâu? Với dữ liệu nào?
+            System.err.println("Database Error: " + e.getMessage());
+            System.err.println("Staff ID attempted: " + staffId);
         } catch (Exception e) {
-
+            System.err.println("General Error: " + e.getMessage());
         }
         return null;
     }
