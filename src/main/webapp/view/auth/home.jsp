@@ -6,10 +6,8 @@
     <head>
         <meta charset="UTF-8">
         <title>Home</title>
-
-         <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/home.css"> 
-
- 
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/home.css"> 
+        <link rel="icon" type="image/png" href="<%=request.getContextPath()%>/assets/images/logo.png">
     </head>
 
     <body>
