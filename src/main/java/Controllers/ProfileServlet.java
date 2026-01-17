@@ -7,8 +7,10 @@ package Controllers;
 import java.io.IOException;
 
 import DALs.StaffDAO;
+import DALs.TenantDAO;
 import Models.authentication.AuthUser;
 import Models.entity.Staff;
+import Models.entity.Tenant;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,14 +37,22 @@ public class ProfileServlet extends HttpServlet {
         // load detail từ DB để show username/email/phone/cccd
         if ("ADMIN".equalsIgnoreCase(authUser.getRole()) || "MANAGER".equalsIgnoreCase(authUser.getRole()) == true) {
             StaffDAO sdao = new StaffDAO();
-            Staff staff = sdao.get;
+            Staff staff = sdao.getById(authUser.getId());
+            request.setAttribute("p_username", staff == null ? "" : staff.getUsername());
+            request.setAttribute("p_email", staff == null ? "" : staff.getEmail());
+            request.setAttribute("p_full_name", staff == null ? "" : staff.getFullName());
+            request.setAttribute("p_phone", staff == null ? "" : staff.getPhoneNumber());
+            request.setAttribute("p_identity_code", staff == null ? "" : staff.getIdentityCode());
+        } else {
+            TenantDAO tdao = new TenantDAO();
+            Tenant tenant = 
         }
-    }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        @Override
+        protected void doPost
+        (HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-    }
+        }
 
-}
+    }
