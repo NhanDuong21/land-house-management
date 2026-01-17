@@ -58,5 +58,62 @@ public class ProfileServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("auth") == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+        AuthUser authUser = (AuthUser) session.getAttribute("auth");
+
+        String oldPass = request.getParameter("oldPassword");
+        String newPass = request.getParameter("newPassword");
+        String confirm = request.getParameter("confirmPassword");
+        if (oldPass == null || newPass == null || confirm == null
+                || oldPass.isBlank() || newPass.isBlank() || confirm.isBlank()) {
+            request.setAttribute("error", "Please fill in all the fields to change your password!");
+            doGet(request, response);
+            return;
+        }
+
+        if (!newPass.equals(confirm)) {
+            request.setAttribute("error", "The new password and the re-entered new password do not match!");
+            doGet(request, response);
+            return;
+        } 
+
+        //    if (newPass.length() < 6) {
+        //     request.setAttribute("error", "The new password must be 6 characters or more!");
+        //     doGet(request, response);
+        //     return;
+        // }
+        // Verify old password theo đúng logic login hiện tại (khỏi đoán hash)
+        boolean oldOk = false;
+        if ("ADMIN".equalsIgnoreCase(authUser.getRole()) || "MANAGER".equalsIgnoreCase(authUser.getRole()) == true) {
+            StaffDAO sdao = new StaffDAO();
+            Staff staff = sdao.getById(authUser.getId());
+            if (staff != null) {
+                // Reuse login() để verify old password
+                AuthUser au = sdao.login(staff.getUsername(), oldPass);
+                oldOk = (au != null && au.getId() == authUser.getId());
+            }
+
+            if (!oldOk) {
+                request.setAttribute("error", "The old password is incorrect!");
+                doGet(request, response);
+                return;
+            }
+            // Update password
+            boolean updated = sdao.updatePassword(authUser.getId(), newPass);
+            if (!updated) {
+                request.setAttribute("error", "Unable to change password. Try again later!");
+                doGet(request, response);
+                return;
+            }
+        } else { // tenant
+            //mai làm
+        }
+        // PRG pattern: đổi pass xong redirect về GET
+        response.sendRedirect(request.getContextPath() + "/profile?changed=1");
     }
 }
