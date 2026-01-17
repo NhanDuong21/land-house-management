@@ -36,7 +36,7 @@ public class TenantDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("LOGIN SQL ERROR, username=" + username + ": " + e.getMessage());
         }
         return null;
     }
