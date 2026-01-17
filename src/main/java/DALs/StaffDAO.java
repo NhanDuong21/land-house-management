@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import Models.authentication.AuthUser;
+import Models.entity.Staff;
 import Utils.DBContext;
 import Utils.HashUtil;
 
@@ -90,5 +91,34 @@ public class StaffDAO extends DBContext {
         } catch (SQLException e) {
             System.out.println("CLEAR REMEMBER TOKEN ERROR: " + e.getMessage());
         }
+    }
+
+    public Staff getById(int staffId) {
+        String sql = "SELECT staff_id, username, password_hash, full_name, phone_number, "
+                + " email, identity_code, staff_role, status, created_at, updated_at, avatar,gender, date_of_birth, house_id "
+                + "FROM Staff "
+                + "WHERE staff_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, staffId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Staff staff = new Staff();
+                    staff.setStaffId(rs.getInt("staff_id"));
+                    staff.setUsername(rs.getString("username"));
+                    staff.setPasswordHash(rs.getString("password_hash"));
+                    staff.setFullName(rs.getString("full_name"));
+                    staff.setPhoneNumber(rs.getString("phone_number"));
+                    staff.setEmail(rs.getString("email"));
+                    staff.setIdentityCode(rs.getString("identity_code"));
+                    staff.setStaffRole(rs.getByte("staff_role"));
+                    staff.setStatus(rs.getByte("status"));
+
+                    staff.setCreatedAt(rs.getTimestamp("created_at"));
+                }
+            }
+        } catch (Exception e) {
+
+        }
+        return null;
     }
 }
