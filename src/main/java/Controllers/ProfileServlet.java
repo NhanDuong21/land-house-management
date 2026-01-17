@@ -45,14 +45,18 @@ public class ProfileServlet extends HttpServlet {
             request.setAttribute("p_identity_code", staff == null ? "" : staff.getIdentityCode());
         } else {
             TenantDAO tdao = new TenantDAO();
-            Tenant tenant = 
+            Tenant t = tdao.getById(authUser.getId());
+            request.setAttribute("p_username", t != null ? t.getUsername() : "");
+            request.setAttribute("p_email", t != null ? t.getEmail() : "");
+            request.setAttribute("p_full_name", t != null ? t.getFullName() : "");
+            request.setAttribute("p_phone", t != null ? t.getPhoneNumber() : "");
+            request.setAttribute("p_identity", t != null ? t.getIdentityCode() : "");
         }
-
-        @Override
-        protected void doPost
-        (HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        }
-
+        request.getRequestDispatcher("view/auth/profile/profile.jsp").forward(request, response);
     }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+    }
+}
