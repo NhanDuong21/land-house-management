@@ -1,89 +1,45 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="Models.authentication.AuthUser"%>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<%@taglib prefix="c" uri="jakarta.tags.core"%>
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Home</title>
-        <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/home.css"> 
-        <link rel="icon" type="image/png" href="<%=request.getContextPath()%>/assets/images/logo.png">
-    </head>
+<t:layout title="Home" active="home">
+    <c:set var="auth" value="${sessionScope.auth}" />
+    <c:set var="role" value="${auth.role}" />
+    <c:set var="fullName" value="${empty auth.fullName ? 'Guest' : auth.fullName}" />
 
-    <body>
-        <%
-            String ctx = request.getContextPath();
+    <div class="card" style="margin-top:30px;">
+        <div class="card-title">Trang chủ</div>
 
-            AuthUser auth = null;
-            if (session != null) {
-                auth = (AuthUser) session.getAttribute("auth");
-            }
+        <div style="margin-top:28px;">
+            <c:if test="${empty auth}">
+                <p>👋 Xin chào! Bạn chưa đăng nhập.</p>
+                <p>Hãy bấm nút <b>Login</b> để vào hệ thống.</p>
+                <a class="btn" href="${pageContext.request.contextPath}/login">Login</a>
+            </c:if>
 
-            String fullName = "Guest";
-            String role = "";
+            <c:if test="${not empty auth}">
+                <p>✅ Xin chào: <b>${fullName}</b></p>
+                <p>Vai trò: <b>${role}</b></p>
 
-            if (auth != null) {
-                if (auth.getFullName() != null && !auth.getFullName().trim().isEmpty()) {
-                    fullName = auth.getFullName().trim();
-                }
-                if (auth.getRole() != null) {
-                    role = auth.getRole().trim();
-                }
-            }
-        %>
+                <div style="margin-top:18px;">
+                    <h3 style="margin:0 0 12px 0;">🔧 Trang quản lý</h3>
 
-        <div class="wrap">
-
-            <div class="top">
-                <h2>🏠 Land House Management System</h2>
-
-                <%-- Nếu chưa login --%>
-                <% if (auth == null) {%>
-                <div>
-                    <a class="btn" href="<%=ctx%>/login">Login</a>
+                    <c:choose>
+                        <c:when test="${role eq 'TENANT'}">
+                            <a class="btn" href="${pageContext.request.contextPath}/tenant/dashboard">Vào trang Tenant</a>
+                        </c:when>
+                        <c:when test="${role eq 'MANAGER'}">
+                            <a class="btn" href="${pageContext.request.contextPath}/manager/dashboard">Vào trang Manager</a>
+                        </c:when>
+                        <c:when test="${role eq 'ADMIN'}">
+                            <a class="btn" href="${pageContext.request.contextPath}/admin/dashboard">Vào trang Admin</a>
+                        </c:when>
+                        <c:otherwise>
+                            <p style="color:red; font-weight:700;">⚠ Không xác định role</p>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
-                <% } else {%>
-                <div>
-                    <a class="btn gray" href="<%=ctx%>/profile">Profile</a>
-                    <a class="btn red" href="<%=ctx%>/logout">Logout</a>
-                </div>
-                <% } %>
-            </div>
-
-            <hr>
-
-            <%-- GUEST --%>
-            <% if (auth == null) { %>
-            <p>👋 Xin chào! Bạn chưa đăng nhập.</p>
-            <p>Hãy bấm nút <b>Login</b> để vào hệ thống.</p>
-
-            <%-- LOGGED IN --%>
-            <% } else {%>
-            <p>✅ Xin chào: <b><%=fullName%></b></p>
-            <p>Vai trò: <b><%=role%></b></p>
-
-            <div class="rolebox">
-                <h3>🔧 Trang quản lý</h3>
-
-                <% if ("TENANT".equalsIgnoreCase(role)) {%>
-                <a class="btn" href="<%=ctx%>/tenant/dashboard">Vào trang Tenant</a>
-
-                <% } else if ("MANAGER".equalsIgnoreCase(role)) {%>
-                <a class="btn" href="<%=ctx%>/manager/dashboard">Vào trang Manager</a>
-
-                <% } else if ("ADMIN".equalsIgnoreCase(role)) {%>
-                <a class="btn" href="<%=ctx%>/admin/dashboard">Vào trang Admin</a>
-
-                <% } else { %>
-                <p style="color:red;">
-                    ⚠ Không xác định role, kiểm tra lại auth.getRole()
-                </p>
-                <% } %>
-            </div>
-
-            <% }%>
-
+            </c:if>
         </div>
-
-    </body>
-</html>
+    </div>
+</t:layout>
