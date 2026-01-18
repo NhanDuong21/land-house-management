@@ -26,6 +26,13 @@ public class ProfileServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        // Kiểm tra xem có phải vừa redirect từ đổi pass thành công qua không
+        String changed = request.getParameter("changed");
+        if ("1".equals(changed)) {
+            request.setAttribute("msg", "Password changed successfully!");
+        }
+
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("auth") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
@@ -80,7 +87,7 @@ public class ProfileServlet extends HttpServlet {
             request.setAttribute("error", "The new password and the re-entered new password do not match!");
             doGet(request, response);
             return;
-        } 
+        }
 
         //    if (newPass.length() < 6) {
         //     request.setAttribute("error", "The new password must be 6 characters or more!");
@@ -111,9 +118,26 @@ public class ProfileServlet extends HttpServlet {
                 return;
             }
         } else { // tenant
-            //mai làm
+            TenantDAO tdao = new TenantDAO();
+            Tenant tenant = tdao.getById(authUser.getId());
+            if (tenant != null) {
+                AuthUser au = tdao.login(tenant.getUsername(), oldPass);
+                oldOk = (au != null && au.getId() == authUser.getId());
+            }
+            if (!oldOk) {
+                request.setAttribute("error", "The old password is incorrect!");
+                doGet(request, response);
+                return;
+            }
+
+            boolean updated = tdao.updatePassword(authUser.getId(), newPass);
+            if (!updated) {
+                request.setAttribute("error", "Unable to change password. Try again later!");
+                doGet(request, response);
+                return;
+            }
         }
-        // PRG pattern: đổi pass xong redirect về GET
+        //đổi pass xong redirect về get
         response.sendRedirect(request.getContextPath() + "/profile?changed=1");
     }
 }
