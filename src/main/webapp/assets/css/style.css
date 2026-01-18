@@ -171,3 +171,23 @@ footer a {
 .options-row .forgot:hover {
   text-decoration: underline;
 }
+
+/*============================================================================================*/
+/* 1. Thiết lập Sidebar mặc định */
+#mySidebar {
+  /* Đảm bảo chiều rộng cố định */
+  width: 250px;
+  /* Hiệu ứng trượt mượt mà trong 0.3 giây */
+  transition: margin-left 0.3s ease;
+}
+
+/* 2. Class dùng để ẩn Sidebar */
+#mySidebar.hidden {
+  /* Đẩy sidebar sang trái 250px để khuất khỏi màn hình */
+  margin-left: -250px;
+}
+
+/* 3. Tùy chọn: Làm con trỏ chuột thành hình bàn tay khi chỉ vào nút 3 gạch */
+#toggleBtn {
+  cursor: pointer;
+}
