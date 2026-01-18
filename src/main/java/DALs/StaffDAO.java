@@ -137,15 +137,8 @@ public class StaffDAO extends DBContext {
     }
 
     public boolean updatePassword(int staffId, String newPassword) {
-
         String newHash = HashUtil.md5(newPassword);
-
-        String sql = """
-        UPDATE STAFF
-        SET password_hash = ?, updated_at = SYSDATETIME()
-        WHERE staff_id = ?
-    """;
-
+        String sql = "UPDATE STAFF SET password_hash = ?, updated_at = SYSDATETIME() WHERE staff_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, newHash);
             ps.setInt(2, staffId);
