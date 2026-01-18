@@ -4,7 +4,7 @@
 <%@taglib prefix="fn" uri="jakarta.tags.functions"%>
 
 <t:layout title="Profile" active="profile">
-    
+
     <%-- Hiển thị thông báo Success --%>
     <c:if test="${not empty msg}">
         <div class="alert success">${msg}</div>
@@ -14,7 +14,8 @@
     <c:if test="${not empty error}">
         <div class="alert error">${error}</div>
     </c:if>
-
+    <%-- Lấy context path nếu chưa có --%>
+    <c:set var="ctx" value="${pageContext.request.contextPath}" />
     <section class="card">
         <div class="card-title">Thông tin tài khoản</div>
 
@@ -66,18 +67,27 @@
         <form method="post" action="${pageContext.request.contextPath}/profile" class="pw-form">
             <div class="field full">
                 <label>Mật khẩu cũ</label>
-                <input type="password" name="oldPassword" placeholder="Nhập mật khẩu cũ" required>
+                <div style="position: relative; display: flex; align-items: center;">
+                    <input type="password" name="oldPassword" id="oldPassword" placeholder="Nhập mật khẩu cũ" required style="width: 100%; padding-right: 40px;">
+                    <img src="${ctx}/assets/images/eye-close.png" id="icon-oldPassword" onclick="togglePass('oldPassword')" style="position: absolute; right: 10px; width: 20px; cursor: pointer; opacity: 0.6;">
+                </div>
             </div>
 
             <div class="pw-row">
                 <div class="field">
                     <label>Nhập mật khẩu mới</label>
-                    <input type="password" name="newPassword" placeholder="Nhập mật khẩu mới" required>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <input type="password" name="newPassword" id="newPassword" placeholder="Nhập mật khẩu mới" required style="width: 100%; padding-right: 40px;">
+                        <img src="${ctx}/assets/images/eye-close.png" id="icon-newPassword" onclick="togglePass('newPassword')" style="position: absolute; right: 10px; width: 20px; cursor: pointer; opacity: 0.6;">
+                    </div>
                 </div>
 
                 <div class="field">
                     <label>Nhập lại mật khẩu mới</label>
-                    <input type="password" name="confirmPassword" placeholder="Nhập lại mật khẩu mới" required>
+                    <div style="position: relative; display: flex; align-items: center;">
+                        <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Nhập lại mật khẩu mới" required style="width: 100%; padding-right: 40px;">
+                        <img src="${ctx}/assets/images/eye-close.png" id="icon-confirmPassword" onclick="togglePass('confirmPassword')" style="position: absolute; right: 10px; width: 20px; cursor: pointer; opacity: 0.6;">
+                    </div>
                 </div>
             </div>
 
@@ -86,4 +96,5 @@
             </div>
         </form>
     </section>
+    <script src="${ctx}/assets/js/hidePassword.js"></script>
 </t:layout>
