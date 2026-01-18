@@ -41,13 +41,14 @@
     <meta charset="UTF-8">
     <title><%=_title%></title>
     <link rel="stylesheet" href="<%=_css%>">
+    <link rel="stylesheet" href="<%=ctx%>/assets/css/style.css">
     <link rel="icon" type="image/png" href="<%=ctx%>/assets/images/logo.png">
 </head>
 
 <body>
 <div class="layout">
 
-    <aside class="sidebar">
+    <aside class="sidebar" id="mySidebar">
         <div class="logo-box">
             <img src="<%=ctx%>/assets/images/logo.png" alt="LANDHOUSE" class="logo">
         </div>
@@ -82,7 +83,7 @@
 
     <main class="main">
         <div class="topbar">
-            <div class="hamburger" title="menu">☰</div>
+           <div class="hamburger" id="toggleBtn" title="menu">☰</div>
 
             <div class="user-card">
                 <div class="avatar"><%=first%></div>
@@ -98,9 +99,9 @@
                 <% } %>
             </div>
         </div>
-
         <jsp:doBody />
     </main>
+    <script src="<%=ctx%>/assets/js/hideMenu.js"></script>
 </div>
 </body>
 </html>
