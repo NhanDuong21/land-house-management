@@ -4,60 +4,58 @@
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%@taglib prefix="fn" uri="jakarta.tags.functions"%>
 
-<%-- Sử dụng profile.css làm base để không mất sidebar/topbar --%>
-<t:layout title="Trang Chủ" active="home" cssFile="${pageContext.request.contextPath}/assets/css/home.css">
+<t:layout title="Home - LandHouse" active="home" cssFile="${pageContext.request.contextPath}/assets/css/home.css">
 
     <div class="home-wrapper">
         <c:forEach items="${roomList}" var="r">
-            <%-- Dùng lại class .card của bạn để có cái khung trắng đẹp --%>
             <div class="card room-card-horizontal">
 
                 <div class="room-gallery">
-                    <%-- Ảnh chính lấy từ Database --%>
                     <img src="${pageContext.request.contextPath}/assets/images/rooms/${not empty r.roomImage ? r.roomImage : 'logo.png'}" 
                          class="img-main" 
-                         alt="Phòng ${r.roomNumber}">
+                         alt="Room ${r.roomNumber}">
 
                     <div class="img-thumbs">
-                        <%-- Tạm thời cho 3 ảnh nhỏ là ảnh chính để lấp đầy giao diện cho đẹp --%>
-                        <img src="${pageContext.request.contextPath}/assets/images/rooms/${not empty r.roomImage ? r.roomImage : 'logo.png'}" alt="thumb">
-                        <img src="${pageContext.request.contextPath}/assets/images/rooms/${not empty r.roomImage ? r.roomImage : 'logo.png'}" alt="thumb">
-                        <img src="${pageContext.request.contextPath}/assets/images/rooms/${not empty r.roomImage ? r.roomImage : 'logo.png'}" alt="thumb">
+                        <img src="${pageContext.request.contextPath}/assets/images/rooms/${not empty r.roomImage ? r.roomImage : 'logo.png'}" alt="thumbnail">
+                        <img src="${pageContext.request.contextPath}/assets/images/rooms/${not empty r.roomImage ? r.roomImage : 'logo.png'}" alt="thumbnail">
+                        <img src="${pageContext.request.contextPath}/assets/images/rooms/${not empty r.roomImage ? r.roomImage : 'logo.png'}" alt="thumbnail">
                     </div>
                 </div>
 
                 <div class="room-details">
-                    <div class="room-title-label">PHÒNG TRỌ CAO CẤP SỐ ${r.roomNumber} - LANDHOUSE</div>
+                    <div class="room-title-label">PREMIUM ROOM #${r.roomNumber} - LANDHOUSE</div>
 
                     <div class="blue-stripe">
-                        <span class="s-label">Giá:</span>
-                        <span class="s-value"><fmt:formatNumber value="${r.price}" type="currency" currencySymbol="" maxFractionDigits="0"/> VNĐ</span>
+                        <span class="s-label">Monthly Rent:</span>
+                        <span class="s-value">
+                            <fmt:formatNumber value="${r.price}" type="currency" currencySymbol="" maxFractionDigits="0"/> VND
+                        </span>
                     </div>
 
                     <div class="blue-stripe">
-                        <span class="s-label">Diện tích:</span>
+                        <span class="s-label">Acreage:</span>
                         <span class="s-value">${r.area} m²</span>
                     </div>
 
                     <div class="blue-stripe">
-                        <span class="s-label">Tầng:</span>
+                        <span class="s-label">Floor Level:</span>
                         <span class="s-value">${r.floor}</span>
                     </div>
 
                     <div class="stripe-space"></div>
 
                     <div class="blue-stripe dark">
-                        <span class="s-label">Số người tối đa:</span>
-                        <span class="s-value">${r.maxTenants} người</span>
+                        <span class="s-label">Max Capacity:</span>
+                        <span class="s-value">${r.maxTenants} persons</span>
                     </div>
 
                     <div class="blue-stripe dark">
-                        <span class="s-label">Gác lửng:</span>
-                        <span class="s-value">${r.mezzanine ? 'Có gác' : 'Không gác'}</span>
+                        <span class="s-label">Mezzanine:</span>
+                        <span class="s-value">${r.mezzanine ? 'Available' : 'Not Available'}</span>
                     </div>
 
                     <div class="blue-stripe dark">
-                        <span class="s-label">Mô tả:</span>
+                        <span class="s-label">Description:</span>
                         <span class="s-value">${r.description}</span>
                     </div>
                 </div>
