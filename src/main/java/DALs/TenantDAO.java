@@ -130,4 +130,64 @@ public class TenantDAO extends DBContext {
         }
         return false;
     }
+
+    //reg 
+    public boolean registerTenant(String username, String email, String fullName,
+            String passwordHash, Byte gender) {
+
+        String sql = "INSERT INTO TENANTS (username, email, full_name, password_hash, gender, phone_number, identity_code, address) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        String tmpPhone = "TMP_" + java.util.UUID.randomUUID();     // đảm bảo unique
+        String tmpCccd = "TMP_" + java.util.UUID.randomUUID();     // đảm bảo unique
+        String tmpAddr = "Chưa cập nhật";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, username);
+            ps.setString(2, email);
+            ps.setString(3, fullName);
+            ps.setString(4, passwordHash);
+
+            if (gender == null) {
+                ps.setNull(5, java.sql.Types.TINYINT); 
+            }else {
+                ps.setByte(5, gender);
+            }
+
+            ps.setString(6, tmpPhone);
+            ps.setString(7, tmpCccd);
+            ps.setString(8, tmpAddr);
+
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean existsUsername(String username) {
+        String sql = "SELECT 1 FROM TENANTS WHERE username = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean existsEmail(String email) {
+        String sql = "SELECT 1 FROM TENANTS WHERE email = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
