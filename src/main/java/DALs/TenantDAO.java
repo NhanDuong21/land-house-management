@@ -135,12 +135,8 @@ public class TenantDAO extends DBContext {
     public boolean registerTenant(String username, String email, String fullName,
             String passwordHash, Byte gender) {
 
-        String sql = "INSERT INTO TENANTS (username, email, full_name, password_hash, gender, phone_number, identity_code, address) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-        String tmpPhone = "TMP_" + java.util.UUID.randomUUID();     // đảm bảo unique
-        String tmpCccd = "TMP_" + java.util.UUID.randomUUID();     // đảm bảo unique
-        String tmpAddr = "Chưa cập nhật";
+        String sql = "INSERT INTO TENANTS (username, email, full_name, password_hash, gender, created_at) "
+                + "VALUES (?, ?, ?, ?, ?, GETDATE())";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, username);
@@ -149,16 +145,17 @@ public class TenantDAO extends DBContext {
             ps.setString(4, passwordHash);
 
             if (gender == null) {
-                ps.setNull(5, java.sql.Types.TINYINT); 
-            }else {
+                ps.setNull(5, java.sql.Types.TINYINT);
+            } else {
                 ps.setByte(5, gender);
             }
 
-            ps.setString(6, tmpPhone);
-            ps.setString(7, tmpCccd);
-            ps.setString(8, tmpAddr);
-
             return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("SQLState=" + e.getSQLState());
+            System.out.println("ErrorCode=" + e.getErrorCode());
+            System.out.println("Message=" + e.getMessage());
+            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
