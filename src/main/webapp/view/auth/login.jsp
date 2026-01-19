@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-     
+
         <meta charset="UTF-8" />
         <title>Login</title>
         <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/style.css">
@@ -31,18 +31,27 @@
                     <%
                         String error = (String) request.getAttribute("error");
                         String oldUsername = (String) request.getAttribute("username"); // LoginServlet có thể set lại
-                        if (oldUsername == null) oldUsername = "";
-                    %>
+                        if (oldUsername == null) {
+                            oldUsername = "";
+                        }
 
-                    <% if (error != null) { %>
-                        <p style="color:red; text-align:center; margin-bottom:10px;">
-                            <%= error %>
-                        </p>
+                        String registered = request.getParameter("registered");
+                        boolean showRegisteredMsg = "1".equals(registered);
+                    %>
+                    <% if (showRegisteredMsg) { %>
+                    <div style="background:#d4edda; border:1px solid #c3e6cb; padding:10px; border-radius:8px; color:#155724; font-weight:700; text-align:center; margin-bottom:10px;">
+                        Register success! Please login.
+                    </div>
                     <% } %>
+                    <% if (error != null) {%>
+                    <p style="color:red; text-align:center; margin-bottom:10px;">
+                        <%= error%>
+                    </p>
+                    <% }%>
 
                     <label>Username</label>
                     <input type="text" name="username" placeholder="Enter username" required
-                           value="<%= oldUsername %>">
+                           value="<%= oldUsername%>">
 
                     <label>Password</label>
                     <input type="password" name="password" placeholder="Enter password" required>
