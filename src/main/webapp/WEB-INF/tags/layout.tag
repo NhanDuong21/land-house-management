@@ -21,7 +21,7 @@
         auth = (AuthUser) session.getAttribute("auth");
     }
 
-    // 3. Xử lý logic hiển thị (Giữ nguyên logic của bạn nhưng dùng biến an toàn hơn)
+    // 3. Xử lý logic hiển thị
     String fullName = (auth != null && auth.getFullName() != null && !auth.getFullName().isBlank())
             ? auth.getFullName().trim() : "Guest";
 
