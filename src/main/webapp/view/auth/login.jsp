@@ -23,7 +23,7 @@
                     <img src="<%=request.getContextPath()%>/assets/images/logo.png" alt="Logo">
                 </div>
 
-                <h2>Welcome Back !</h2>
+                <h2>Welcome to LandHouse</h2>
                 <p class="subtitle">Sign in to continue.</p>
 
                 <form action="<%=request.getContextPath()%>/login" method="post">
