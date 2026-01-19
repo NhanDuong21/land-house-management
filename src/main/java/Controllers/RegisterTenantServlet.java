@@ -58,13 +58,13 @@ public class RegisterTenantServlet extends HttpServlet {
         TenantDAO tdao = new TenantDAO();
         if (tdao.existsUsername(username.trim())) {
             request.setAttribute("error", "The username already exists.");
-            request.getRequestDispatcher("view/auth/register.jsp");
+            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
             return;
         }
 
         if (tdao.existsEmail(email.trim())) {
             request.setAttribute("error", "The email already exists.");
-            request.getRequestDispatcher("view/auth/register.jsp");
+            request.getRequestDispatcher("view/auth/register.jsp").forward(request, response);
             return;
         }
 
