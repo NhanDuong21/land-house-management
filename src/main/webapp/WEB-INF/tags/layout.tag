@@ -62,48 +62,48 @@
                         boolean isTenant = "TENANT".equalsIgnoreCase(role);
                         boolean isGuest = (role == null || role.isBlank());
                     %>
-                    <a class="<%="profile".equals(_active) ? "active" : ""%>" href="<%=ctx%>/profile">Thông tin tài khoản</a>
+                    <a class="<%="profile".equals(_active) ? "active" : ""%>" href="<%=ctx%>/profile">Account information</a>
                     <%-- TENANT menu (Hiển thị cho Tenant HOẶC Guest) --%>
                     <%-- Manager và Admin sẽ không thấy menu này (vì isTenant và isGuest đều false) --%>
                     <% if (isTenant || isGuest) {%>
                     <a class="<%="tenant-room".equals(_active) ? "active" : ""%>" 
                        href="<%= isTenant ? ctx + "/tenant/room" : ctx + "/login"%>">
-                        Phòng của bạn
+                        Your room
                     </a>
 
                     <a class="<%="tenant-contract".equals(_active) ? "active" : ""%>" 
                        href="<%= isTenant ? ctx + "/tenant/contract" : ctx + "/login"%>">
-                        Hợp đồng thuê
+                        Contracts
                     </a>
 
                     <a class="<%="tenant-bill".equals(_active) ? "active" : ""%>" 
                        href="<%= isTenant ? ctx + "/tenant/bill" : ctx + "/login"%>">
-                        Hóa đơn
+                        Bill
                     </a>
 
                     <a class="<%="tenant-history".equals(_active) ? "active" : ""%>" 
                        href="<%= isTenant ? ctx + "/tenant/payment-history" : ctx + "/login"%>">
-                        Lịch sử thanh toán
+                        Payment history
                     </a>
 
                     <a class="<%="tenant-utility".equals(_active) ? "active" : ""%>" 
                        href="<%= isTenant ? ctx + "/tenant/utility" : ctx + "/login"%>">
-                        Dịch vụ
+                        Utility
                     </a>
 
                     <a class="<%="tenant-rules".equals(_active) ? "active" : ""%>" 
                        href="<%= isTenant ? ctx + "/tenant/rules" : ctx + "/login"%>">
-                        Quy định nhà trọ
+                        Regulations for lodging houses
                     </a>
 
                     <a class="<%="tenant-notification".equals(_active) ? "active" : ""%>" 
                        href="<%= isTenant ? ctx + "/tenant/notification" : ctx + "/login"%>">
-                        Thông báo
+                        Notification
                     </a>
 
                     <a class="<%="tenant-contact".equals(_active) ? "active" : ""%>" 
                        href="<%= isTenant ? ctx + "/tenant/contact" : ctx + "/login"%>">
-                        Liên hệ
+                        Contact
                     </a>
                     <% } %>
 
