@@ -2,6 +2,7 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@taglib prefix="c" uri="jakarta.tags.core"%>
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt"%>
+<%@taglib prefix="fn" uri="jakarta.tags.functions"%>
 
 <%-- Sử dụng profile.css làm base để không mất sidebar/topbar --%>
 <t:layout title="Trang Chủ" active="home" cssFile="${pageContext.request.contextPath}/assets/css/home.css">
