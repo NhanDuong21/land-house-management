@@ -148,4 +148,45 @@ public class StaffDAO extends DBContext {
         }
         return false;
     }
+
+    //regster STAFF (temp)
+    public boolean registerStaff(String username, String email, String fullName,
+            String passwordHash, String phoneNumber,
+            String identityCode, byte staffRole, byte status,
+            Integer houseId, Byte gender) {
+
+        String sql = "INSERT INTO STAFF (username, password_hash, full_name, phone_number, email, identity_code, staff_role, status, house_id, gender) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, username);
+            ps.setString(2, passwordHash);
+            ps.setString(3, fullName);
+            ps.setString(4, phoneNumber);
+            ps.setString(5, email);
+            ps.setString(6, identityCode);
+            ps.setByte(7, staffRole);
+            ps.setByte(8, status);
+
+            if (houseId == null) {
+                ps.setNull(9, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(9, houseId);
+            }
+
+            if (gender == null) {
+                ps.setNull(10, java.sql.Types.TINYINT);
+            } else {
+                ps.setByte(10, gender);
+            }
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
