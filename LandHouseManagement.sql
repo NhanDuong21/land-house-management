@@ -89,33 +89,46 @@ GO
 CREATE TABLE TENANTS (
     tenant_id     INT IDENTITY(1,1) PRIMARY KEY,
     username      NVARCHAR(80)  NOT NULL,
-    password_hash NVARCHAR(255) NOT NULL,  
+    password_hash NVARCHAR(255) NOT NULL,
     full_name     NVARCHAR(200) NOT NULL,
-    phone_number  NVARCHAR(30)  NOT NULL,
+
+    -- optional at register, required when signing contract -> allow NULL
+    phone_number  NVARCHAR(30)  NULL,
     email         NVARCHAR(120) NULL,
-    identity_code NVARCHAR(30)  NOT NULL,
-    address       NVARCHAR(300) NOT NULL,
+    identity_code NVARCHAR(30)  NULL,
+    address       NVARCHAR(300) NULL,
+
     gender        TINYINT NULL,
+-- 0=unknown, 1=male, 2=female, 3=other
     date_of_birth DATE NULL,
     avatar        NVARCHAR(500) NULL,
-    status        TINYINT NOT NULL CONSTRAINT DF_TENANTS_status DEFAULT 1,
+
+    status        TINYINT  NOT NULL CONSTRAINT DF_TENANTS_status DEFAULT 1,
+-- 0=inactive, 1=active, 2=locked
     created_at    DATETIME2 NOT NULL CONSTRAINT DF_TENANTS_created_at DEFAULT SYSDATETIME(),
     updated_at    DATETIME2 NULL,
 
     CONSTRAINT UQ_TENANTS_username UNIQUE(username),
-    CONSTRAINT UQ_TENANTS_phone    UNIQUE(phone_number),
-    CONSTRAINT UQ_TENANTS_identity UNIQUE(identity_code),
 
     CONSTRAINT CK_TENANTS_status CHECK (status IN (0,1,2)),
-    -- 0=inactive, 1=active, 2=locked
-
     CONSTRAINT CK_TENANTS_gender CHECK (gender IS NULL OR gender IN (0,1,2,3))
-    -- 0=unknown, 1=male, 2=female, 3=other
 );
 GO
 
-CREATE UNIQUE INDEX UX_TENANTS_email 
-ON TENANTS(email) WHERE email IS NOT NULL;
+/* Unique phone/identity/email only when user has filled them */
+CREATE UNIQUE INDEX UX_TENANTS_phone_notnull
+ON TENANTS(phone_number)
+WHERE phone_number IS NOT NULL;
+GO
+
+CREATE UNIQUE INDEX UX_TENANTS_identity_notnull
+ON TENANTS(identity_code)
+WHERE identity_code IS NOT NULL;
+GO
+
+CREATE UNIQUE INDEX UX_TENANTS_email_notnull
+ON TENANTS(email)
+WHERE email IS NOT NULL;
 GO
 
 /* =========================================================
@@ -348,12 +361,7 @@ CREATE TABLE MAINTENANCE_REQUEST (
     CONSTRAINT CK_MR_dates CHECK (completed_at IS NULL OR completed_at >= created_at)
 );
 GO
-ALTER TABLE TENANTS ALTER COLUMN phone_number NVARCHAR(30) NULL;
-GO
-ALTER TABLE TENANTS ALTER COLUMN identity_code NVARCHAR(30) NULL;
-GO
-ALTER TABLE TENANTS ALTER COLUMN address NVARCHAR(300) NULL;
-GO
+
 
 /* =========================================================
    1. INSERT HOUSES
