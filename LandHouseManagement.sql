@@ -348,6 +348,12 @@ CREATE TABLE MAINTENANCE_REQUEST (
     CONSTRAINT CK_MR_dates CHECK (completed_at IS NULL OR completed_at >= created_at)
 );
 GO
+ALTER TABLE TENANTS ALTER COLUMN phone_number NVARCHAR(30) NULL;
+GO
+ALTER TABLE TENANTS ALTER COLUMN identity_code NVARCHAR(30) NULL;
+GO
+ALTER TABLE TENANTS ALTER COLUMN address NVARCHAR(300) NULL;
+GO
 
 /* =========================================================
    1. INSERT HOUSES
