@@ -1,193 +1,245 @@
-/* ===== RESET & GLOBAL ===== */
+/* =========================================
+   1. GLOBAL RESET & LAYOUT
+   ========================================= */
 * {
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
+    box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  background: #f4f6fb;
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif; /* Font chữ hiện đại hơn chút */
+    background: #f4efe6;
+    color: #333;
 }
 
-/* ===== PAGE WRAPPER ===== */
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.layout {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
 }
 
-/* ===== TOP WAVE (BACKGROUND ONLY) ===== */
-.top-wave {
-  width: 100%;
-  height: 280px;
-  background: #2d3e73;
-  border-bottom-left-radius: 50% 30%;
-  border-bottom-right-radius: 50% 30%;
+/* =========================================
+   2. SIDEBAR (THANH MENU TRÁI)
+   ========================================= */
+.sidebar {
+    width: 280px;
+    background: #1f3853;
+    color: #fff;
+    padding: 20px 0;
+    flex-shrink: 0; /* QUAN TRỌNG: Giữ sidebar không bị co lại */
+    transition: margin-left 0.3s ease;
 }
 
-/* ===== LOGIN CARD ===== */
-.login-card {
-  background: #ffffff;
-  width: 420px;
-  margin-top: -140px; /* card đè lên sóng */
-  padding: 32px 36px;
-  border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-  text-align: center;
-  position: relative;
-}
-
-/* ===== LOGO (INSIDE CARD) ===== */
-.logo {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 12px;
-}
-
-.logo img {
-  width: 105px;
-  height: auto;
-}
-
-/* ===== TITLES ===== */
-.login-card h2 {
-  margin: 0;
-}
-
-.subtitle {
-  margin-top: 6px;
-  margin-bottom: 20px;
-  font-size: 13px;
-  color: #888;
-}
-
-/* ===== FORM ===== */
-.login-card form {
-  text-align: left;
-}
-
-.login-card label {
-  display: block;
-  margin-top: 14px;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.login-card input[type="text"],
-.login-card input[type="password"] {
-  width: 100%;
-  padding: 11px 12px;
-  margin-top: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-}
-
-.login-card input:focus {
-  outline: none;
-  border-color: #6c63ff;
-}
-
-.forgot {
-  font-size: 13px;
-  color: #6c63ff;
-  text-decoration: none;
-}
-
-/* ===== REMEMBER ME ===== */
-.remember {
-  margin-top: 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-}
-
-.remember input {
-  margin: 0;
-}
-
-/* ===== BUTTON ===== */
-.login-card button {
-  width: 100%;
-  margin-top: 22px;
-  padding: 13px;
-  background: #00b894;
-  border: none;
-  border-radius: 6px;
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.login-card button:hover {
-  background: #019874;
-}
-
-/* ===== SWITCH ===== */
-.switch {
-  margin-top: 18px;
-  font-size: 14px;
-  text-align: center;
-}
-
-.switch a {
-  color: #6c63ff;
-  text-decoration: none;
-}
-
-/* ===== FOOTER ===== */
-footer {
-  margin-top: auto;
-  padding: 16px;
-  font-size: 13px;
-  color: #777;
-}
-
-footer a {
-  color: inherit;
-  text-decoration: none;
-}
-/* ===== REMEMBER + FORGOT ROW ===== */
-.options-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 14px;
-}
-
-.options-row .remember {
-  margin: 0;
-}
-
-.options-row .forgot {
-  font-size: 13px;
-  color: #6c63ff;
-  text-decoration: none;
-}
-
-.options-row .forgot:hover {
-  text-decoration: underline;
-}
-
-/*============================================================================================*/
-/* 1. Thiết lập Sidebar mặc định */
-#mySidebar {
-  /* Đảm bảo chiều rộng cố định */
-  width: 250px;
-  /* Hiệu ứng trượt mượt mà trong 0.3 giây */
-  transition: margin-left 0.3s ease;
-}
-
-/* 2. Class dùng để ẩn Sidebar */
+/* Class để JS ẩn sidebar */
 #mySidebar.hidden {
-  /* Đẩy sidebar sang trái 250px để khuất khỏi màn hình */
-  margin-left: -250px;
+    margin-left: -280px;
 }
 
-/* 3. Tùy chọn: Làm con trỏ chuột thành hình bàn tay khi chỉ vào nút 3 gạch */
-#toggleBtn {
-  cursor: pointer;
+.logo-box {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 20px;
+}
+
+.logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    background: #fff;
+    object-fit: contain;
+    padding: 10px;
+}
+
+.menu-title {
+    padding: 12px 18px;
+    font-weight: 700;
+    opacity: 0.8;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu a {
+    padding: 16px 18px;
+    color: #dbe7f5;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.menu a:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.menu a.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border-left: 4px solid #f2d487; /* Điểm nhấn cho menu đang chọn */
+}
+
+/* =========================================
+   3. MAIN CONTENT AREA (KHUNG PHẢI)
+   ========================================= */
+.main {
+    flex: 1; /* Chiếm hết phần còn lại */
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    width: 0; /* Mẹo Flexbox: Tránh vỡ giao diện ngang */
+    min-width: 0;
+}
+
+/* Topbar */
+.topbar {
+    height: 90px;
+    background: #f3ede2;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    flex-shrink: 0;
+}
+
+.hamburger {
+    font-size: 28px;
+    cursor: pointer;
+    color: #1f3853;
+}
+
+/* User Card trên Topbar */
+.user-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #1f3853;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    min-width: 200px;
+}
+
+.avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+}
+
+.user-name .name {
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.user-name .sub {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.logout {
+    margin-left: auto;
+    color: #ffcccc;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 6px 12px;
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 4px;
+}
+
+.logout:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* Wrapper để chứa nội dung từng trang (Home/Profile...) */
+.content-wrapper {
+    flex: 1; /* Đẩy footer xuống dưới */
+    padding: 0 30px 40px;
+    width: 100%;
+}
+
+/* =========================================
+   4. FOOTER (MỚI & ĐẸP)
+   ========================================= */
+/* ===== LAYOUT FOOTER STYLE ===== */
+.main-footer {
+    padding: 20px 0;
+    text-align: center;
+    width: 100%;
+    margin-top: auto; /* Đẩy footer xuống đáy nếu dùng flexbox layout */
+    background-color: transparent;
+}
+
+/* Đường kẻ ngang trang trí */
+.footer-line {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+    width: 80%;
+    margin: 0 auto 15px auto;
+}
+
+.main-footer a {
+    color: #6c757d; /* Màu xám trung tính */
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.main-footer a:hover {
+    color: #1abc9c; /* Màu xanh ngọc giống nút bấm khi hover */
+    text-decoration: underline;
+}
+
+/* Đảm bảo trang luôn đủ chiều cao để footer không bị bay lơ lửng */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* =========================================
+   5. GLOBAL UTILS (ALERTS)
+   ========================================= */
+.alert {
+    margin: 18px 0;
+    padding: 15px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+.alert.success {
+    background: #d7f5db;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.alert.error {
+    background: #ffd6d6;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive cơ bản */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 240px;
+    }
+    .topbar {
+        padding: 0 15px;
+    }
+    .content-wrapper {
+        padding: 0 15px 20px;
+    }
 }
