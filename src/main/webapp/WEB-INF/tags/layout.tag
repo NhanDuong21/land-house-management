@@ -138,7 +138,15 @@
                     </div>
                 </div>
                 <jsp:doBody />
+                <footer class="main-footer">
+                    <div class="footer-line"></div> <a href="https://github.com/NhanDuong21/land-house-management"
+                                                       target="_blank"
+                                                       rel="noopener noreferrer">
+                        2026 © SWP391 - Group 4 - LandHouseManagement
+                    </a>
+                </footer>
             </main>
+
             <script src="<%=ctx%>/assets/js/hideMenu.js"></script>
         </div>
     </body>
