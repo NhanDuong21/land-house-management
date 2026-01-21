@@ -20,6 +20,8 @@
                         <img src="${pageContext.request.contextPath}/assets/images/rooms/${not empty r.roomImage ? r.roomImage : 'logo.png'}" alt="thumbnail">
                         <img src="${pageContext.request.contextPath}/assets/images/rooms/${not empty r.roomImage ? r.roomImage : 'logo.png'}" alt="thumbnail">
                     </div>
+                     View room details
+                    
                 </div>
 
                 <div class="room-details">
