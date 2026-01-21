@@ -91,6 +91,11 @@
                         Utility
                     </a>
 
+                    <a class="<%="tenant-request".equals(_active) ? "active" : ""%>" 
+                       href="<%= isTenant ? ctx + "/tenant/request" : ctx + "/login"%>">
+                        Mantain Request
+                    </a>
+
                     <a class="<%="tenant-rules".equals(_active) ? "active" : ""%>" 
                        href="<%= isTenant ? ctx + "/tenant/rules" : ctx + "/login"%>">
                         Regulations for lodging houses
