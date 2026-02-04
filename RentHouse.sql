@@ -74,7 +74,7 @@ CREATE TABLE dbo.[STAFF] (
     date_of_birth   DATE NULL,
     gender          TINYINT NULL,            -- optional: 0/1
     staff_role      NVARCHAR(20) NOT NULL,   -- MANAGER/ADMIN
-    password_hash   VARCHAR(64) NOT NULL,    -- MD5 hex 32 chars (để 64 cũng OK)
+    password_hash   VARCHAR(64) NOT NULL,    
     avatar          NVARCHAR(255) NULL,
     [status]        NVARCHAR(20) NOT NULL,   -- ACTIVE/INACTIVE
     created_at      DATETIME2(0) NOT NULL CONSTRAINT DF_STAFF_created_at DEFAULT(SYSDATETIME()),
