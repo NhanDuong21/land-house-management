@@ -2,21 +2,21 @@ package Controllers;
 
 import java.io.IOException;
 
-import DALs.StaffDAO;
-import DALs.TenantDAO;
-import Models.entity.Staff;
-import Models.entity.Tenant;
-import Utils.HashUtil;
+import Models.authentication.AuthResult;
+import Services.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+/**
+ *
+ * @author Duong Thien Nhan - CE190741
+ */
 public class LoginController extends HttpServlet {
 
-    private final StaffDAO staffDAO = new StaffDAO();
-    private final TenantDAO tenantDAO = new TenantDAO();
+    private final AuthService authService = new AuthService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -37,75 +37,15 @@ public class LoginController extends HttpServlet {
             return;
         }
 
-        email = email.trim();
-        String inputHash = HashUtil.md5(password);
-
-        // 1) Ưu tiên check STAFF trước
-        Staff s = staffDAO.findByEmail(email);
-        if (s != null) {
-            // staff tồn tại -> check status + password
-            if (!"ACTIVE".equalsIgnoreCase(s.getStatus())) {
-                request.setAttribute("error", "Tài khoản đã bị vô hiệu hóa.");
-                request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
-                return;
-            }
-
-            if (s.getPasswordHash() == null || !inputHash.equalsIgnoreCase(s.getPasswordHash())) {
-                request.setAttribute("error", "Sai email hoặc mật khẩu.");
-                request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
-                return;
-            }
-
-            HttpSession session = request.getSession(true);
-            session.setAttribute("staff", s);
-            session.removeAttribute("tenant");
-
-            // redirect theo role
-            if ("MANAGER".equalsIgnoreCase(s.getStaffRole())) {
-                response.sendRedirect(request.getContextPath() + "/manager/home");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/admin/home");
-            }
-            return;
-        }
-
-        // 2) Không phải staff -> check TENANT
-        Tenant t = tenantDAO.findByEmail(email);
-        if (t == null) {
-            request.setAttribute("error", "Sai email hoặc mật khẩu.");
+        AuthResult authResult = authService.login(email, password);
+        if (authResult == null) {
+            request.setAttribute("error", "Sai thông tin đăng nhập hoặc tài khoản chưa set mật khẩu (hãy dùng OTP lần đầu).");
             request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
             return;
         }
-
-        // Tenant chưa set password -> bắt đi OTP flow
-        if (t.getPasswordHash() == null) {
-            request.setAttribute("error", "Tài khoản chưa set mật khẩu. Hãy đăng nhập lần đầu bằng OTP.");
-            request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
-            return;
-        }
-
-        if (!inputHash.equalsIgnoreCase(t.getPasswordHash())) {
-            request.setAttribute("error", "Sai email hoặc mật khẩu.");
-            request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
-            return;
-        }
-
-        // Login ok
         HttpSession session = request.getSession(true);
-        session.setAttribute("tenant", t);
-        session.removeAttribute("staff");
+        session.setAttribute("auth", authResult);
 
-        // must_set_password -> ép đổi pass
-        if (t.isMustSetPassword()) {
-            response.sendRedirect(request.getContextPath() + "/tenant/set-password");
-            return;
-        }
-
-        // status điều hướng
-        if ("ACTIVE".equalsIgnoreCase(t.getAccountStatus())) {
-            response.sendRedirect(request.getContextPath() + "/tenant/home");
-        } else {
-            response.sendRedirect(request.getContextPath() + "/tenant/contract");
-        }
+        response.sendRedirect(request.getContextPath() + "/home");
     }
 }
