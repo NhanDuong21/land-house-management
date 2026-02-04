@@ -44,7 +44,6 @@
     <div class="row g-4">
         <div class="col-lg-6">
             <h1 class="fw-bold">Trang chủ</h1>
-            <p class="text-muted">Các nút sẽ thay đổi theo role sau khi đăng nhập.</p>
 
             <% if ("GUEST".equals(role)) { %>
                 <a class="btn btn-primary" href="<%=request.getContextPath()%>/login">Đăng nhập ngay</a>
@@ -90,16 +89,7 @@
         </div>
 
         <div class="col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Chức năng</h5>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Phòng / Hợp đồng</li>
-                        <li class="list-group-item">Hóa đơn / Thanh toán</li>
-                        <li class="list-group-item">Maintenance Request</li>
-                    </ul>
-                </div>
-            </div>
+           
         </div>
     </div>
 </div>
