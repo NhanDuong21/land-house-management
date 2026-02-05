@@ -1,4 +1,4 @@
-package Services;
+package Services.auth;
 
 import DALs.StaffDAO;
 import DALs.TenantDAO;

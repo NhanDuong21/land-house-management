@@ -1,9 +1,9 @@
-package Controllers;
+package Controllers.auth;
 
 import java.io.IOException;
 
 import Models.authentication.AuthResult;
-import Services.AuthService;
+import Services.auth.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
