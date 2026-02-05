@@ -1,3 +1,8 @@
+<%-- 
+    Document   : layout
+    Created on : 02/06/2026, 4:22:57 AM
+    Author     : Duong Thien Nhan - CE190741
+--%>
 <%@tag pageEncoding="UTF-8" body-content="scriptless"%>
 <%@tag import="Models.authentication.AuthResult"%>
 <%@tag import="Models.entity.Tenant"%>
