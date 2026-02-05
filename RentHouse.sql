@@ -39,6 +39,7 @@ CREATE TABLE dbo.[ROOM] (
     floor           INT NULL,
     max_tenants     INT NULL,
     is_mezzanine    BIT NOT NULL CONSTRAINT DF_ROOM_is_mezzanine DEFAULT(0),
+    has_air_conditioning BIT NOT NULL CONSTRAINT DF_ROOM_has_ac DEFAULT(0),
     room_image      NVARCHAR(255) NULL,
     [description]   NVARCHAR(255) NULL,
 
