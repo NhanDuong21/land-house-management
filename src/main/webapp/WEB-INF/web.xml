@@ -10,7 +10,7 @@
 
     <servlet>
         <servlet-name>HomeController</servlet-name>
-        <servlet-class>Controllers.HomeController</servlet-class>
+        <servlet-class>Controllers.guest.HomeController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>HomeController</servlet-name>
@@ -19,7 +19,7 @@
 
     <servlet>
         <servlet-name>LoginController</servlet-name>
-        <servlet-class>Controllers.LoginController</servlet-class>
+        <servlet-class>Controllers.auth.LoginController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginController</servlet-name>
