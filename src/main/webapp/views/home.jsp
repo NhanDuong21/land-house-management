@@ -1,100 +1,191 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@page import="Models.authentication.AuthResult"%>
-<%@page import="Models.entity.Tenant"%>
-<%@page import="Models.entity.Staff"%>
-<!doctype html>
-<html lang="vi">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home - RentHouse</title>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-    <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/style.css">
-</head>
-<body class="bg-light">
+<%@taglib prefix="c" uri="jakarta.tags.core"%>
+<%@taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 
-<%
-    AuthResult auth = (AuthResult) session.getAttribute("auth");
-    String role = (auth == null) ? "GUEST" : auth.getRole();
-    Tenant tenant = (auth == null) ? null : auth.getTenant();
-    Staff staff = (auth == null) ? null : auth.getStaff();
-%>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="<%=request.getContextPath()%>/home">RentHouse</a>
+<t:layout title="Home - RentHouse" active="home" cssFile="${pageContext.request.contextPath}/assets/css/home.css">
 
-        <div class="d-flex gap-2">
-            <% if ("GUEST".equals(role)) { %>
-                <a class="btn btn-outline-light" href="<%=request.getContextPath()%>/login">Đăng nhập</a>
-            <% } else { %>
-                <span class="navbar-text text-white-50">
-                    Xin chào
-                    <%= (tenant != null) ? tenant.getFullName() : staff.getFullName() %>
-                    (<%= role %>)
-                </span>
-                <a class="btn btn-outline-light" href="<%=request.getContextPath()%>/logout">Đăng xuất</a>
-            <% } %>
+    <c:set var="ctx" value="${pageContext.request.contextPath}" />
+
+    <!-- defaults -->
+    <c:set var="PRICE_MIN" value="0" />
+    <c:set var="PRICE_MAX" value="10000000" />
+    <c:set var="AREA_MIN" value="0" />
+    <c:set var="AREA_MAX" value="50" />
+
+    <c:set var="minPrice" value="${empty minPrice ? PRICE_MIN : minPrice}" />
+    <c:set var="maxPrice" value="${empty maxPrice ? PRICE_MAX : maxPrice}" />
+    <c:set var="minArea"  value="${empty minArea  ? AREA_MIN  : minArea}" />
+    <c:set var="maxArea"  value="${empty maxArea  ? AREA_MAX  : maxArea}" />
+
+    <div class="home-head">
+        <div>
+            <h1 class="home-title">Available Rooms</h1>
+            <div class="home-sub">Browse our collection of available rooms and find your perfect home</div>
+        </div>
+
+        <div class="home-actions">
+            <div class="home-count">
+                <c:choose>
+                    <c:when test="${empty rooms}">0 rooms</c:when>
+                    <c:otherwise>${rooms.size()} rooms</c:otherwise>
+                </c:choose>
+            </div>
+
+            <button class="home-filter-btn" type="button" id="btnOpenFilter">
+                🔎 Filter
+            </button>
         </div>
     </div>
-</nav>
 
-<div class="container py-5">
-    <div class="row g-4">
-        <div class="col-lg-6">
-            <h1 class="fw-bold">Trang chủ</h1>
-
-            <% if ("GUEST".equals(role)) { %>
-                <a class="btn btn-primary" href="<%=request.getContextPath()%>/login">Đăng nhập ngay</a>
-            <% } %>
-
-            <%-- TENANT --%>
-            <% if ("TENANT".equals(role) && tenant != null) { %>
-
-                <% if (tenant.isMustSetPassword()) { %>
-                    <div class="alert alert-warning mt-3">
-                        Bạn cần đặt mật khẩu trước khi dùng đầy đủ chức năng.
-                    </div>
-                    <a class="btn btn-warning" href="<%=request.getContextPath()%>/tenant/set-password">
-                        Đặt mật khẩu
-                    </a>
-                <% } else { %>
-                    <div class="mt-3 d-flex gap-2 flex-wrap">
-                        <a class="btn btn-primary" href="<%=request.getContextPath()%>/tenant/contract">Hợp đồng của tôi</a>
-                        <a class="btn btn-outline-primary" href="<%=request.getContextPath()%>/maintenance">Yêu cầu sửa chữa</a>
-                    </div>
-
-                    <% if ("LOCKED".equalsIgnoreCase(tenant.getAccountStatus())) { %>
-                        <div class="alert alert-info mt-3">
-                            Tài khoản đang LOCKED (chưa active). Bạn chỉ dùng được một số chức năng.
+    <!-- ROOMS GRID -->
+    <c:choose>
+        <c:when test="${empty rooms}">
+            <div class="home-empty">
+                Không tìm thấy phòng phù hợp.
+            </div>
+        </c:when>
+        <c:otherwise>
+            <div class="room-grid">
+                <c:forEach var="r" items="${rooms}">
+                    <div class="room-card">
+                        <div class="room-img">
+                            <c:choose>
+                                <c:when test="${not empty r.roomImage}">
+                                    <img src="${ctx}/assets/images/rooms/${r.roomImage}" alt="Room">
+                                </c:when>
+                                <c:otherwise>
+                                    <div class="room-img-placeholder">No Image</div>
+                                </c:otherwise>
+                            </c:choose>
+                            <div class="room-badge">AVAILABLE</div>
                         </div>
-                    <% } %>
-                <% } %>
-            <% } %>
 
-            <%-- MANAGER --%>
-            <% if ("MANAGER".equals(role)) { %>
-                <div class="mt-3">
-                    <a class="btn btn-success" href="<%=request.getContextPath()%>/manager/home">Manager Dashboard</a>
+                        <div class="room-body">
+                            <div class="room-name">${r.roomNumber}</div>
+                            <div class="room-meta">
+                                <span>Area: ${r.area} m²</span>
+                                <c:if test="${not empty r.floor}">
+                                    <span>• Floor: ${r.floor}</span>
+                                </c:if>
+                                <span>• Max ${r.maxTenants}</span>
+                            </div>
+
+                            <div class="room-tags">
+                                <c:if test="${r.airConditioning}">
+                                    <span class="tag">AC</span>
+                                </c:if>
+                                <c:if test="${r.mezzanine}">
+                                    <span class="tag">Mezzanine</span>
+                                </c:if>
+                            </div>
+
+                            <div class="room-price">
+                                <fmt:formatNumber value="${r.price}" type="number" groupingUsed="true"/> đ / month
+                            </div>
+
+                            <c:if test="${not empty r.description}">
+                                <div class="room-desc">${r.description}</div>
+                            </c:if>
+
+                            <a class="room-btn" href="${ctx}/room?id=${r.roomId}">Xem chi tiết</a>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+        </c:otherwise>
+    </c:choose>
+
+    <!-- FILTER MODAL (UI tượng trưng, submit GET đúng HomeController) -->
+    <div class="rh-modal" id="filterModal" aria-hidden="true">
+        <div class="rh-modal-backdrop" id="filterBackdrop"></div>
+
+        <div class="rh-modal-dialog" role="dialog" aria-modal="true">
+            <div class="rh-modal-header">
+                <div>
+                    <div class="rh-modal-title">Filter Rooms</div>
+                    <div class="rh-modal-sub">Set your preferences to find the perfect room</div>
                 </div>
-            <% } %>
+                <button class="rh-modal-close" type="button" id="btnCloseFilter">✕</button>
+            </div>
 
-            <%-- ADMIN --%>
-            <% if ("ADMIN".equals(role)) { %>
-                <div class="mt-3">
-                    <a class="btn btn-danger" href="<%=request.getContextPath()%>/admin/home">Admin Dashboard</a>
+            <form method="get" action="${ctx}/home" class="rh-modal-body">
+
+                <!-- Price -->
+                <div class="filter-block">
+                    <div class="filter-row">
+                        <div class="filter-label">Price Range</div>
+                        <div class="filter-value">
+                            <span id="priceMinText"></span> - <span id="priceMaxText"></span>
+                        </div>
+                    </div>
+
+                    <div class="dual-range">
+                        <input type="range" id="priceMin" min="${PRICE_MIN}" max="${PRICE_MAX}" step="50000" value="${minPrice}">
+                        <input type="range" id="priceMax" min="${PRICE_MIN}" max="${PRICE_MAX}" step="50000" value="${maxPrice}">
+                    </div>
+
+                    <input type="hidden" name="minPrice" id="minPriceHidden" value="${minPrice}">
+                    <input type="hidden" name="maxPrice" id="maxPriceHidden" value="${maxPrice}">
                 </div>
-            <% } %>
-        </div>
 
-        <div class="col-lg-6">
-           
+                <!-- Area -->
+                <div class="filter-block">
+                    <div class="filter-row">
+                        <div class="filter-label">Area (m²)</div>
+                        <div class="filter-value">
+                            <span id="areaMinText"></span> - <span id="areaMaxText"></span>
+                        </div>
+                    </div>
+
+                    <div class="dual-range">
+                        <input type="range" id="areaMin" min="${AREA_MIN}" max="${AREA_MAX}" step="1" value="${minArea}">
+                        <input type="range" id="areaMax" min="${AREA_MIN}" max="${AREA_MAX}" step="1" value="${maxArea}">
+                    </div>
+
+                    <input type="hidden" name="minArea" id="minAreaHidden" value="${minArea}">
+                    <input type="hidden" name="maxArea" id="maxAreaHidden" value="${maxArea}">
+                </div>
+
+                <!-- AC -->
+                <div class="filter-block">
+                    <div class="filter-label">Has Air Conditioning</div>
+                    <div class="choice-group" data-target="hasAC">
+                        <button type="button" class="choice" data-value="any">Any</button>
+                        <button type="button" class="choice" data-value="yes">Yes</button>
+                        <button type="button" class="choice" data-value="no">No</button>
+                    </div>
+                    <input type="hidden" name="hasAC" id="hasACHidden" value="${empty hasAC ? 'any' : hasAC}">
+                </div>
+
+                <!-- Mezz -->
+                <div class="filter-block">
+                    <div class="filter-label">Has Mezzanine</div>
+                    <div class="choice-group" data-target="hasMezzanine">
+                        <button type="button" class="choice" data-value="any">Any</button>
+                        <button type="button" class="choice" data-value="yes">Yes</button>
+                        <button type="button" class="choice" data-value="no">No</button>
+                    </div>
+                    <input type="hidden" name="hasMezzanine" id="hasMezzHidden" value="${empty hasMezzanine ? 'any' : hasMezzanine}">
+                </div>
+
+                <div class="rh-modal-footer">
+                    <a class="btn-reset" href="${ctx}/home">Reset</a>
+                    <button class="btn-apply" type="submit">Apply Filters</button>
+                </div>
+            </form>
         </div>
     </div>
-</div>
 
-<script src="<%=request.getContextPath()%>/assets/js/bootstrap.bundle.min.js"></script>
-<script src="<%=request.getContextPath()%>/assets/js/main.js"></script>
-</body>
-</html>
+    <!-- init for js -->
+    <script>
+        window.RH_INIT = {
+            ctx: "${ctx}",
+            hasAC: "${empty hasAC ? 'any' : hasAC}",
+            hasMezzanine: "${empty hasMezzanine ? 'any' : hasMezzanine}"
+        };
+    </script>
+    <script src="${ctx}/assets/js/home.js"></script>
+</t:layout>
