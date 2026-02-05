@@ -7,6 +7,12 @@ import java.sql.SQLException;
 import Models.entity.Staff;
 import Utils.DBContext;
 
+/**
+ * Description
+ *
+ * @author Duong Thien Nhan - CE190741
+ * @since 2026-02-05
+ */
 public class StaffDAO extends DBContext {
 
     @SuppressWarnings("CallToPrintStackTrace")
