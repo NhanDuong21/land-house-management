@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import Models.entity.Tenant;
+import Utils.DBContext;
 
 /**
  * Description
@@ -12,7 +13,7 @@ import Models.entity.Tenant;
  * @author Duong Thien Nhan - CE190741
  * @since 2026-02-05
  */
-public class TenantDAO extends DBContextDAO {
+public class TenantDAO extends DBContext {
 
     @SuppressWarnings("CallToPrintStackTrace")
     public Tenant findByEmail(String email) {

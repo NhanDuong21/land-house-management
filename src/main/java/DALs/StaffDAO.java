@@ -5,8 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import Models.entity.Staff;
+import Utils.DBContext;
 
-public class StaffDAO extends DBContextDAO {
+public class StaffDAO extends DBContext {
 
     @SuppressWarnings("CallToPrintStackTrace")
     public Staff findByEmail(String email) {
