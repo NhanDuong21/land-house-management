@@ -18,6 +18,7 @@ public class Room {
     private String status;        // AVAILABLE/OCCUPIED/MAINTENANCE/INACTIVE
     private Integer floor;
     private Integer maxTenants;
+    private boolean airConditioning;
     private boolean isMezzanine;
     private String roomImage;
     private String description;
@@ -26,7 +27,7 @@ public class Room {
     }
 
     public Room(int roomId, int blockId, String roomNumber, BigDecimal area, BigDecimal price, String status,
-            Integer floor, Integer maxTenants, boolean isMezzanine, String roomImage, String description) {
+            Integer floor, Integer maxTenants, boolean airConditioning, boolean isMezzanine, String roomImage, String description) {
         this.roomId = roomId;
         this.blockId = blockId;
         this.roomNumber = roomNumber;
@@ -35,6 +36,7 @@ public class Room {
         this.status = status;
         this.floor = floor;
         this.maxTenants = maxTenants;
+        this.airConditioning = airConditioning;
         this.isMezzanine = isMezzanine;
         this.roomImage = roomImage;
         this.description = description;
@@ -126,6 +128,14 @@ public class Room {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean isAirConditioning() {
+        return airConditioning;
+    }
+
+    public void setAirConditioning(boolean airConditioning) {
+        this.airConditioning = airConditioning;
     }
 
 }
