@@ -49,7 +49,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title><%=_title%></title>
         <link rel="icon" type="image/png"
-              href="${pageContext.request.contextPath}/assets/images/favicon_logo.png">
+              href="${pageContext.request.contextPath}/assets/images/logo/favicon_logo.png">
 
 
         <link rel="stylesheet" href="<%=ctx%>/assets/css/layout.css">
@@ -65,7 +65,7 @@
             <aside class="rh-sidebar" id="rhSidebar">
                 <div class="rh-logo">
                     <a href="<%=ctx%>/home">
-                        <img src="<%=ctx%>/assets/images/logo.png" alt="RentHouse">
+                        <img src="<%=ctx%>/assets/images/logo/logo.png" alt="RentHouse">
                     </a>
                 </div>
 
