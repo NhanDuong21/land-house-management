@@ -49,7 +49,7 @@
             <div class="rd-card-title">Basic Information</div>
             <div class="rd-row"><span>Room:</span><b>${r.roomNumber}</b></div>
             <div class="rd-row"><span>Block:</span><b>${r.blockName}</b></div>
-            <div class="rd-row"><span>Area:</span><b>${r.area} mÂ²</b></div>
+            <div class="rd-row"><span>Area:</span><b>${r.area} m²</b></div>
             <div class="rd-row"><span>Floor:</span><b><c:out value="${r.floor}"/></b></div>
             <div class="rd-row"><span>Maximum occupancy:</span><b><c:out value="${r.maxTenants}"/></b></div>
         </div>
@@ -69,7 +69,7 @@
 
         <div class="rd-price">
             <div class="rd-price-value">
-            <fmt:formatNumber value="${r.price}" type="number" groupingUsed="true"/> Ä/month
+            <fmt:formatNumber value="${r.price}" type="number" groupingUsed="true"/> đ/month
         </div>
 
     </div>

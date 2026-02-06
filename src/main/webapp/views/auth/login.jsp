@@ -1,38 +1,40 @@
-<%-- 
-    Document   : login
-    Created on : 02/06/2026, 4:22:57 AM
-    Author     : Duong Thien Nhan - CE190741
---%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-        <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/bootstrap.min.css">
-        <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/login.css">
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/login.css">
 </head>
 <body>
-<div class="login-box">
-    <h2>Đăng nhập</h2>
 
-    <% String error = (String) request.getAttribute("error"); %>
-    <% if (error != null) { %>
-        <p style="color:red;"><%= error %></p>
-    <% } %>
+  <!-- overlay -->
+  <div class="login-overlay">
+    <div class="login-card">
+      <h2 class="login-title">Login to RentHouse</h2>
+      <p class="login-sub">Enter your credentials to access your account</p>
 
-    <form action="<%=request.getContextPath()%>/login" method="post">
-        <div>
-            <label>Email:</label>
-            <input type="text" name="email"/>
+      <% String error = (String) request.getAttribute("error"); %>
+      <% if (error != null) { %>
+        <div class="login-error"><%= error %></div>
+      <% } %>
+
+      <form action="<%=request.getContextPath()%>/login" method="post" class="login-form">
+        <div class="form-group">
+          <label class="login-label">Email</label>
+          <input class="login-input form-control" type="text" name="email" placeholder="your.email@example.com" required>
         </div>
-        <div>
-            <label>Mật khẩu:</label>
-            <input type="password" name="password"/>
+
+        <div class="form-group">
+          <label class="login-label">Password</label>
+          <input class="login-input form-control" type="password" name="password" placeholder="Enter your password" required>
         </div>
-        <button type="submit">Login</button>
-    </form>
-</div>
+
+        <button class="login-btn" type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+
 </body>
-
 </html>

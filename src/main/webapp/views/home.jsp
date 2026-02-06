@@ -92,7 +92,7 @@
                             </div>
 
                             <div class="room-price">
-                                <fmt:formatNumber value="${r.price}" type="number" groupingUsed="true"/> đ / month
+                                <fmt:formatNumber value="${r.price}" type="number" groupingUsed="true"/> đ/month
                             </div>
 
                             <c:if test="${not empty r.description}">
