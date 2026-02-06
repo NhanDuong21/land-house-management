@@ -1,6 +1,7 @@
 package Models.entity;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Description
@@ -12,6 +13,7 @@ public class Room {
 
     private int roomId;
     private int blockId;
+    private String blockName;
     private String roomNumber;
     private BigDecimal area;
     private BigDecimal price;
@@ -22,14 +24,16 @@ public class Room {
     private boolean isMezzanine;
     private String roomImage;
     private String description;
+    private List<RoomImage> images;
 
     public Room() {
     }
 
-    public Room(int roomId, int blockId, String roomNumber, BigDecimal area, BigDecimal price, String status,
+    public Room(int roomId, int blockId, String blockName, String roomNumber, BigDecimal area, BigDecimal price, String status,
             Integer floor, Integer maxTenants, boolean airConditioning, boolean isMezzanine, String roomImage, String description) {
         this.roomId = roomId;
         this.blockId = blockId;
+        this.blockName = blockName;
         this.roomNumber = roomNumber;
         this.area = area;
         this.price = price;
@@ -136,6 +140,22 @@ public class Room {
 
     public void setAirConditioning(boolean airConditioning) {
         this.airConditioning = airConditioning;
+    }
+
+    public String getBlockName() {
+        return blockName;
+    }
+
+    public void setBlockName(String blockName) {
+        this.blockName = blockName;
+    }
+
+    public List<RoomImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<RoomImage> images) {
+        this.images = images;
     }
 
 }
