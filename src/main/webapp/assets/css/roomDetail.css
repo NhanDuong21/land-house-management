@@ -1,0 +1,204 @@
+.rd-head {
+  margin-bottom: 12px;
+}
+.rd-title {
+  font-size: 28px;
+  margin: 0;
+  font-weight: 800;
+}
+.rd-sub {
+  margin-top: 6px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.rd-image {
+  margin: 14px 0 18px;
+  position: relative;
+}
+.rd-image img {
+  width: 100%;
+  max-width: 100%; /* ✅ không vượt khung */
+  height: auto;
+  display: block;
+  border-radius: 16px;
+}
+.rd-image-placeholder {
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f3f3;
+  border-radius: 16px;
+  color: #777;
+}
+
+.rd-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #111;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.rd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 820px) {
+  .rd-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rd-card {
+  border: 1px solid #eee;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.rd-card-title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.rd-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px dashed #eee;
+}
+.rd-row:last-child {
+  border-bottom: none;
+}
+
+.rd-price {
+  margin-top: 14px;
+}
+.rd-price-value {
+  font-size: 32px;
+  font-weight: 900;
+}
+.rd-price-sub {
+  color: #666;
+  margin-top: 4px;
+}
+
+.rd-desc {
+  margin-top: 14px;
+  border: 1px solid #eee;
+  border-radius: 16px;
+  padding: 16px;
+  line-height: 1.6;
+}
+
+/* overlay */
+.rh-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+}
+.rh-modal.show {
+  display: flex;
+}
+
+/* dialog: KHÔNG scroll ở đây */
+.room-detail-dialog {
+  width: min(980px, 94vw);
+  max-height: 90vh; /* ⭐ giới hạn chiều cao */
+  background: #fff;
+  border-radius: 18px;
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden; /* ⭐ chặn scroll ở dialog */
+}
+
+/* body: SCROLL Ở ĐÂY */
+.room-detail-body {
+  flex: 1; /* ⭐ chiếm phần còn lại */
+  overflow-y: auto; /* ⭐ lăn chuột xuống */
+  overflow-x: hidden;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Ảnh lớn */
+.rd-main {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+}
+
+/* thanh thumbnail */
+.rd-thumbs {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+/* thumbnail phải nhỏ, không được full width */
+.rd-thumb {
+  width: 90px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+  cursor: pointer;
+  flex: 0 0 auto; /* ✅ không giãn thành ảnh bự */
+}
+
+.rd-thumbs .rd-thumb {
+  width: 90px !important;
+  height: 64px !important;
+}
+
+/* đảm bảo dialog là mốc */
+#roomDetailModal .room-detail-dialog {
+  position: relative;
+}
+
+/* ghim nút X góc phải trên */
+#roomDetailModal #roomDetailClose {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 999;
+
+  width: 36px;
+  height: 36px;
+  padding: 0;
+
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* chừa chỗ để X không đè nội dung */
+#roomDetailModal .room-detail-body {
+  padding-top: 60px;
+}
