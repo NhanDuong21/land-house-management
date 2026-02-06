@@ -59,8 +59,12 @@
                         <div class="room-img">
                             <c:choose>
                                 <c:when test="${not empty r.roomImage}">
-                                    <img src="${ctx}/assets/images/rooms/${r.roomImage}" alt="Room">
+                                    <img
+                                        src="${ctx}/assets/images/rooms/${r.roomImage}"
+                                        alt="Room"
+                                        onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div class=&quot;room-img-placeholder&quot;>No Image</div>';">
                                 </c:when>
+
                                 <c:otherwise>
                                     <div class="room-img-placeholder">No Image</div>
                                 </c:otherwise>
@@ -95,7 +99,10 @@
                                 <div class="room-desc">${r.description}</div>
                             </c:if>
 
-                            <a class="room-btn" href="${ctx}/room?id=${r.roomId}">Xem chi tiết</a>
+                            <button class="room-btn js-room-detail" type="button" data-room-id="${r.roomId}">
+                                Xem chi tiết
+                            </button>
+
                         </div>
                     </div>
                 </c:forEach>
@@ -181,6 +188,18 @@
                     <button class="btn-apply" type="submit">Apply Filters</button>
                 </div>
             </form>
+        </div>
+    </div>
+    <div class="rh-modal" id="roomDetailModal" aria-hidden="true">
+        <div class="rh-modal-backdrop" id="roomDetailBackdrop"></div>
+
+        <div class="rh-modal-dialog room-detail-dialog" role="dialog" aria-modal="true">
+            <button class="rh-modal-close" type="button" id="roomDetailClose">✕</button>
+
+            <!-- nội dung detail sẽ được load vào đây -->
+            <div id="roomDetailBody" class="room-detail-body">
+                <div class="room-detail-loading">Loading...</div>
+            </div>
         </div>
     </div>
 
