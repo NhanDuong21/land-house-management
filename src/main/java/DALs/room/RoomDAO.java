@@ -8,7 +8,6 @@ import java.util.List;
 
 import Models.dto.RoomFilterDTO;
 import Models.entity.Room;
-import Models.entity.RoomImage;
 import Utils.DBContext;
 
 /**
@@ -119,32 +118,4 @@ WHERE   ROOM.room_id = ?
             return null;
         }
     }
-
-    public List<RoomImage> findImagesByRoomId(int roomId) {
-        List<RoomImage> list = new ArrayList<>();
-        String sql
-                = "SELECT image_id, room_id, image_url, is_cover, sort_order "
-                + "FROM ROOM_IMAGE "
-                + "WHERE room_id = ? "
-                + "ORDER BY is_cover DESC, sort_order ASC, image_id ASC";
-
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, roomId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    RoomImage img = new RoomImage();
-                    img.setImageId(rs.getInt("image_id"));
-                    img.setRoomId(rs.getInt("room_id"));
-                    img.setImageUrl(rs.getString("image_url"));
-                    img.setCover(rs.getBoolean("is_cover"));
-                    img.setSortOrder(rs.getInt("sort_order"));
-                    list.add(img);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
 }
