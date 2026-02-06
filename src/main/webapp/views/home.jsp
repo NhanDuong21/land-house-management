@@ -100,7 +100,7 @@
                             </c:if>
 
                             <button class="room-btn js-room-detail" type="button" data-room-id="${r.roomId}">
-                                Xem chi tiết
+                               View Details
                             </button>
 
                         </div>
