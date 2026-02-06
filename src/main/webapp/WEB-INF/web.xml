@@ -18,6 +18,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>RoomDetailController</servlet-name>
+        <servlet-class>Controllers.guest.RoomDetailController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RoomDetailController</servlet-name>
+        <url-pattern>/room-detail</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>LoginController</servlet-name>
         <servlet-class>Controllers.auth.LoginController</servlet-class>
     </servlet>
