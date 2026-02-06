@@ -5,8 +5,12 @@
   const closeBtn = document.getElementById("btnCloseFilter");
   const backdrop = document.getElementById("filterBackdrop");
 
-  function openModal() { if (modal) modal.classList.add("show"); }
-  function closeModal() { if (modal) modal.classList.remove("show"); }
+  function openModal() {
+    if (modal) modal.classList.add("show");
+  }
+  function closeModal() {
+    if (modal) modal.classList.remove("show");
+  }
 
   if (openBtn) openBtn.addEventListener("click", openModal);
   if (closeBtn) closeBtn.addEventListener("click", closeModal);
@@ -20,8 +24,11 @@
   }
 
   function formatVND(n) {
-    try { return Number(n).toLocaleString("vi-VN") + " đ"; }
-    catch { return n + " đ"; }
+    try {
+      return Number(n).toLocaleString("vi-VN") + " đ";
+    } catch {
+      return n + " đ";
+    }
   }
 
   // price
@@ -74,12 +81,12 @@
 
     function setActive(val) {
       hidden.value = val;
-      group.querySelectorAll(".choice").forEach(btn => {
+      group.querySelectorAll(".choice").forEach((btn) => {
         btn.classList.toggle("active", btn.dataset.value === val);
       });
     }
 
-    group.querySelectorAll(".choice").forEach(btn => {
+    group.querySelectorAll(".choice").forEach((btn) => {
       btn.addEventListener("click", () => setActive(btn.dataset.value));
     });
 
@@ -87,8 +94,69 @@
   }
 
   const init = window.RH_INIT || {};
-  initChoiceGroup('.choice-group[data-target="hasAC"]', "hasACHidden", init.hasAC);
-  initChoiceGroup('.choice-group[data-target="hasMezzanine"]', "hasMezzHidden", init.hasMezzanine);
+  initChoiceGroup(
+    '.choice-group[data-target="hasAC"]',
+    "hasACHidden",
+    init.hasAC,
+  );
+  initChoiceGroup(
+    '.choice-group[data-target="hasMezzanine"]',
+    "hasMezzHidden",
+    init.hasMezzanine,
+  );
 
   // IMPORTANT: KHÔNG auto-open modal sau khi apply
 })();
+
+//fect fram
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".js-room-detail");
+  if (!btn) return;
+
+  const roomId = btn.dataset.roomId;
+  const ctx = window.RH_INIT?.ctx || "";
+
+  openRoomModal();
+
+  const body = document.getElementById("roomDetailBody");
+  if (body)
+    body.innerHTML = `<div class="room-detail-loading">Loading...</div>`;
+
+  try {
+    const url = `${ctx}/room-detail?id=${encodeURIComponent(roomId)}`;
+    const res = await fetch(url, {
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+    });
+    if (!res.ok) throw new Error(res.status);
+
+    const html = await res.text();
+    if (body) body.innerHTML = html;
+  } catch (err) {
+    if (body)
+      body.innerHTML = `<div class="room-detail-error">Không load được chi tiết phòng.</div>`;
+    console.error("detail error:", err);
+  }
+});
+
+function openRoomModal() {
+  const m = document.getElementById("roomDetailModal");
+  if (!m) return;
+  m.classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function closeRoomModal() {
+  const m = document.getElementById("roomDetailModal");
+  if (!m) return;
+  m.classList.remove("show");
+  document.body.style.overflow = "";
+}
+
+
+const bd = document.getElementById("roomDetailBackdrop");
+const cl = document.getElementById("roomDetailClose");
+if (bd) bd.addEventListener("click", closeRoomModal);
+if (cl) cl.addEventListener("click", closeRoomModal);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeRoomModal();
+});
