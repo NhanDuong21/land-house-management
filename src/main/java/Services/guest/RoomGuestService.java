@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import DALs.room.RoomDAO;
+import DALs.room.RoomImageDAO;
 import Models.dto.RoomFilterDTO;
 import Models.entity.Room;
 
@@ -16,6 +17,7 @@ import Models.entity.Room;
 public class RoomGuestService {
 
     private final RoomDAO rdao = new RoomDAO();
+    private final RoomImageDAO imgDao = new RoomImageDAO();
 
     //phễu lọc (browser nhận string db nhận bigdec)
     public List<Room> searchAvailable(String minPrice, String maxPrice, String minArea, String maxArea,
@@ -53,5 +55,36 @@ public class RoomGuestService {
             return false;
         }
         return null; // any
+    }
+
+    public Room getRoomDetailForGuest(int roomId) {
+
+        if (roomId <= 0) {
+            return null;
+        }
+
+        Room room = rdao.findById(roomId);
+        if (room == null) {
+            return null;
+        }
+
+        // only allowed view room available
+        if (!"AVAILABLE".equalsIgnoreCase(room.getStatus())) {
+            return null;
+        }
+
+        room.setImages(imgDao.findByRoomId(roomId));
+        return room;
+    }
+
+    //role staff
+    public Room getRoomDetailForStaff(int roomId) {
+
+        if (roomId <= 0) {
+            return null;
+        }
+        Room r = rdao.findById(roomId);
+        r.setImages(imgDao.findByRoomId(roomId));
+        return r;
     }
 }
