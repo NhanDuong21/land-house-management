@@ -32,10 +32,12 @@
                         <label class="login-label">Password</label>
                         <input class="login-input form-control" type="password" name="password" placeholder="Enter your password" required>
                     </div>
-                    <label>
-                        <input type="checkbox" name="remember" value="on">
-                        Remember me
-                    </label>
+                    <div class="remember-row remember-right">
+                        <label for="remember">Remember me</label>
+                        <input type="checkbox" id="remember" name="remember" value="on">
+                    </div>
+
+
 
                     <button class="login-btn" type="submit">Login</button>
                 </form>

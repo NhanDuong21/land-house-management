@@ -37,3 +37,26 @@ button {
     padding: 8px;
     cursor: pointer;
 }
+
+
+.remember-row{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0 15px;
+}
+
+.remember-row input[type="checkbox"]{
+    width: auto;          /* quan trọng: không bị width:100% */
+    padding: 0;
+    margin: 0;
+    transform: scale(1.05); /* optional: checkbox to hơn chút */
+}
+
+.remember-row label{
+    margin: 0;            /* bỏ margin-bottom của label block */
+    display: inline;      /* không xuống dòng */
+    cursor: pointer;
+}
+
+.remember-right{ justify-content: space-between; }
