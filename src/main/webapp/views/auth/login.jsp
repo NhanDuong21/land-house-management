@@ -4,6 +4,8 @@
     <head>
         <meta charset="UTF-8">
         <title>Login</title>
+        <link rel="icon" type="image/png"
+              href="${pageContext.request.contextPath}/assets/images/logo/favicon_logo.png">
         <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/bootstrap.min.css">
         <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/login.css">
     </head>
