@@ -6,8 +6,8 @@ package Controllers.auth;
 
 import java.io.IOException;
 
-import DALs.StaffDAO;
-import DALs.TenantDAO;
+import DALs.auth.StaffDAO;
+import DALs.auth.TenantDAO;
 import Models.authentication.AuthResult;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;

@@ -2,8 +2,8 @@ package Controllers.auth;
 
 import java.io.IOException;
 
-import DALs.StaffDAO;
-import DALs.TenantDAO;
+import DALs.auth.StaffDAO;
+import DALs.auth.TenantDAO;
 import Models.authentication.AuthResult;
 import Services.auth.AuthService;
 import Utils.security.TokenUtil;

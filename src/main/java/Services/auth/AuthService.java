@@ -1,7 +1,7 @@
 package Services.auth;
 
-import DALs.StaffDAO;
-import DALs.TenantDAO;
+import DALs.auth.StaffDAO;
+import DALs.auth.TenantDAO;
 import Models.authentication.AuthResult;
 import Models.entity.Staff;
 import Models.entity.Tenant;
