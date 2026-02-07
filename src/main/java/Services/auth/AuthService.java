@@ -47,10 +47,10 @@ public class AuthService {
         if (tenant.getPasswordHash() == null) {
             return null;
         }
-        if (!"ACTIVE".equalsIgnoreCase(tenant.getAccountStatus())
-                && !"LOCKED".equalsIgnoreCase(tenant.getAccountStatus())) {
+        if (!"ACTIVE".equalsIgnoreCase(tenant.getAccountStatus())) {
             return null;
         }
+
         if (!HashUtil.md5(rawPass).equalsIgnoreCase(tenant.getPasswordHash())) {
             return null;
         }
