@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Models.entity.RoomImage;
-import Utils.DBContext;
+import Utils.database.DBContext;
 
 /**
  * Description

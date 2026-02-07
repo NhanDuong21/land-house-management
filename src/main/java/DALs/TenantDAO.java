@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import Models.entity.Tenant;
-import Utils.DBContext;
+import Utils.database.DBContext;
 
 /**
  * Description

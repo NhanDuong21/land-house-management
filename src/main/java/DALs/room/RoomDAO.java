@@ -8,7 +8,7 @@ import java.util.List;
 
 import Models.dto.RoomFilterDTO;
 import Models.entity.Room;
-import Utils.DBContext;
+import Utils.database.DBContext;
 
 /**
  * Description

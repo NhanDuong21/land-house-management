@@ -5,7 +5,7 @@ import DALs.TenantDAO;
 import Models.authentication.AuthResult;
 import Models.entity.Staff;
 import Models.entity.Tenant;
-import Utils.HashUtil;
+import Utils.security.HashUtil;
 
 /**
  * Description
