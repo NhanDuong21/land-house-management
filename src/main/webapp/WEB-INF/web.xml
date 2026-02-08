@@ -8,6 +8,15 @@
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
 
+    <!-- context param dẫn tới contact.properties ( file giống json )-->
+    <context-param>
+        <param-name>contact_props_path</param-name>
+        <param-value>
+        C:/Users/LENOVO/OneDrive/Desktop/Ky-5/SWP391/LandHouseManagement/renthouse-config/contact.properties
+    </param-value>
+    </context-param>
+
+
     <servlet>
         <servlet-name>HomeController</servlet-name>
         <servlet-class>Controllers.guest.HomeController</servlet-class>

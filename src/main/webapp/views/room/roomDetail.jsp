@@ -1,3 +1,8 @@
+<%-- 
+    Document   : detail room 
+    Created on : 02/06/2026, 6:22:57 AM
+    Author     : Duong Thien Nhan - CE190741
+--%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
