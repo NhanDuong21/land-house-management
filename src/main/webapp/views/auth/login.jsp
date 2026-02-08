@@ -43,6 +43,6 @@
                 </form>
             </div>
         </div>
-
+<script src="${ctx}/assets/js/vendor/bootstrap.bundle.min.js"></script>
     </body>
 </html>

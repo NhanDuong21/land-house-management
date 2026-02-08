@@ -212,4 +212,5 @@
         };
     </script>
     <script src="${ctx}/assets/js/pages/home.js"></script>
+    <script src="${ctx}/assets/js/vendor/bootstrap.bundle.min.js"></script>
 </t:layout>
