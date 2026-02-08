@@ -76,15 +76,4 @@ public class RoomGuestService {
         room.setImages(imgDao.findByRoomId(roomId));
         return room;
     }
-
-    //role staff
-    public Room getRoomDetailForStaff(int roomId) {
-
-        if (roomId <= 0) {
-            return null;
-        }
-        Room r = rdao.findById(roomId);
-        r.setImages(imgDao.findByRoomId(roomId));
-        return r;
-    }
 }
