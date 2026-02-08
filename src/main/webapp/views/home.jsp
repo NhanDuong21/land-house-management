@@ -69,7 +69,7 @@
                                     <div class="room-img-placeholder">No Image</div>
                                 </c:otherwise>
                             </c:choose>
-                            <div class="room-badge">AVAILABLE</div>
+                            <div class="room-badge">${r.status}</div>
                         </div>
 
                         <div class="room-body">
