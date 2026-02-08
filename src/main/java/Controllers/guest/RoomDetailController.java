@@ -6,12 +6,15 @@ package Controllers.guest;
  */
 import java.io.IOException;
 
+import Models.authentication.AuthResult;
 import Models.entity.Room;
 import Services.guest.RoomGuestService;
+import Services.staff.RoomStaffService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -20,6 +23,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RoomDetailController extends HttpServlet {
 
     private final RoomGuestService roomGuestService = new RoomGuestService();
+    private final RoomStaffService roomStaffService = new RoomStaffService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -33,7 +37,21 @@ public class RoomDetailController extends HttpServlet {
             return;
         }
 
-        Room room = roomGuestService.getRoomDetailForGuest(id); // service check AVAILABLE...
+        // --- lấy role từ session ---
+        String role = null;
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            Object object = session.getAttribute("auth");
+            if (!(object instanceof AuthResult)) {
+            } else {
+                role = ((AuthResult) object).getRole();
+            }
+        }
+
+        boolean isStaff = role != null && (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("MANAGER"));
+
+        Room room = isStaff ? roomStaffService.getRoomDetailForStaff(id) : roomGuestService.getRoomDetailForGuest(id);
+
         if (room == null) {
             response.sendError(404, "Not found");
             return;
@@ -41,7 +59,9 @@ public class RoomDetailController extends HttpServlet {
 
         request.setAttribute("room", room);
 
-        // trả về 1 JSP fragment, KHÔNG phải full layout
+        // để fragment dùng ${ctx} (ảnh) không bị null
+        request.setAttribute("ctx", request.getContextPath());
+
         request.getRequestDispatcher("/views/room/roomDetail.jsp").forward(request, response);
     }
 }
