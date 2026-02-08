@@ -121,7 +121,7 @@
                             <% if (auth == null) {%>
                             <a class="rh-btn primary" href="<%=ctx%>/login">Login</a>
                             <% } else {%>
-                            <a class="rh-btn outline" href="<%=ctx%>/logout">Logout</a>
+                            <a class="rh-btn outline js-logout" href="<%=ctx%>/logout">Logout</a>
                             <% }%>
                         </div>
                     </div>
@@ -144,6 +144,6 @@
             </main>
         </div>
 
-        <script src="<%=ctx%>/assets/js/layout.js"></script>
+        <script src="<%=ctx%>/assets/js/core/layout.js"></script>
     </body>
 </html>

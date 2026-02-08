@@ -1,7 +1,13 @@
-/* layout.css */
 * {
   box-sizing: border-box;
 }
+
+/* ===== GLOBAL ===== */
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   font-family:
@@ -12,13 +18,18 @@ body {
     Arial;
   background: #f6f7fb;
   color: #111;
+
+  overflow: hidden; /* ❗ chặn scroll toàn trang */
 }
 
+/* ===== LAYOUT ===== */
 .rh-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh; /* ❗ cố định theo viewport */
+  overflow: hidden; /* ❗ chặn tràn */
 }
 
+/* ===== SIDEBAR ===== */
 .rh-sidebar {
   width: 260px;
   background: #173a5e;
@@ -26,7 +37,10 @@ body {
   padding: 18px 14px;
   display: flex;
   flex-direction: column;
+
+  overflow-y: auto; /* ✅ sidebar scroll riêng */
 }
+
 /* ===== Sidebar logo ===== */
 .rh-logo {
   display: flex;
@@ -36,14 +50,14 @@ body {
 }
 
 .rh-logo a {
-  width: 84px; /* chỉnh size vòng tròn */
+  width: 84px;
   height: 84px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: #fff; /* vòng tròn trắng */
-  overflow: hidden; /* crop gọn nếu ảnh lòi */
+  background: #fff;
+  overflow: hidden;
   text-decoration: none;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
@@ -52,8 +66,6 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-
-  /* QUAN TRỌNG: bỏ padding + background để tránh double circle */
   padding: 0;
   background: transparent;
   border-radius: 0;
@@ -66,6 +78,7 @@ body {
   padding-top: 16px;
   height: 100%;
 }
+
 .rh-section {
   margin-top: 10px;
   font-size: 12px;
@@ -73,6 +86,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+
 .rh-link {
   display: flex;
   align-items: center;
@@ -83,9 +97,11 @@ body {
   text-decoration: none;
   background: transparent;
 }
+
 .rh-link:hover {
   background: rgba(255, 255, 255, 0.08);
 }
+
 .rh-link.active {
   background: rgba(255, 255, 255, 0.14);
   font-weight: 600;
@@ -104,22 +120,28 @@ body {
   color: #fff;
   background: rgba(255, 255, 255, 0.12);
 }
+
 .rh-dashboard.manager {
   background: rgba(255, 255, 255, 0.14);
 }
+
 .rh-dashboard.admin {
   background: #6b2b3b;
 }
 
+/* ===== MAIN ===== */
 .rh-main {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-width: 0;
+  overflow: hidden; /* ❗ để con bên trong scroll */
 }
 
+/* ===== HEADER ===== */
 .rh-topbar {
   height: 72px;
+  flex: 0 0 auto;
   background: #fff;
   border-bottom: 1px solid #e7e9f0;
   display: flex;
@@ -127,6 +149,7 @@ body {
   justify-content: space-between;
   padding: 0 18px;
 }
+
 .rh-icon-btn {
   border: 1px solid #e7e9f0;
   background: #fff;
@@ -134,6 +157,7 @@ body {
   padding: 10px 12px;
   cursor: pointer;
 }
+
 .rh-icon-btn:hover {
   background: #f4f6fb;
 }
@@ -149,6 +173,7 @@ body {
   align-items: center;
   gap: 10px;
 }
+
 .rh-avatar {
   width: 38px;
   height: 38px;
@@ -159,9 +184,11 @@ body {
   justify-content: center;
   font-weight: 700;
 }
+
 .rh-user-meta {
   line-height: 1.1;
 }
+
 .rh-user-name {
   font-weight: 700;
   max-width: 160px;
@@ -169,11 +196,13 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .rh-user-role {
   font-size: 12px;
   color: #6b7280;
 }
 
+/* ===== BUTTON ===== */
 .rh-btn {
   text-decoration: none;
   display: inline-block;
@@ -181,64 +210,138 @@ body {
   border-radius: 10px;
   font-weight: 600;
 }
+
 .rh-btn.primary {
   background: #111827;
   color: #fff;
 }
+
 .rh-btn.outline {
   border: 1px solid #111827;
   color: #111827;
 }
 
+/* ===== CONTENT (SCROLL RIÊNG) ===== */
 .rh-content {
   padding: 20px;
+  flex: 1 1 auto;
+  overflow-y: auto; /* ✅ content scroll riêng */
+  min-height: 0; /* ❗ cực quan trọng cho flex */
+  overscroll-behavior: contain; /* không cho scroll lan sang vùng khác */
+  -webkit-overflow-scrolling: touch;
 }
+
 /* ===== FOOTER ===== */
-.rh-footer{
-  margin-top:auto;
-  padding:14px 16px;
-  text-align:center;
-
-  background:#ffffff;
-  border-top:1px solid #e6e9ef;
-
-  color:#1f2937;          /* chữ đậm */
-  font-size:13px;
-  font-weight:500;
-
-  box-shadow: 0 -8px 20px rgba(0,0,0,0.06);
-}
-.rh-footer a{
-  color:#1f2937;
-  text-decoration:none;
-  font-weight:600;
-}
-.rh-footer a:hover{
-  text-decoration:underline;
+.rh-footer {
+  flex: 0 0 auto;
+  padding: 14px 16px;
+  text-align: center;
+  background: #ffffff;
+  border-top: 1px solid #e6e9ef;
+  color: #1f2937;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.06);
 }
 
-
-.rh-dot{
-  margin:0 6px;
-  opacity:.6;
+.rh-footer a {
+  color: #1f2937;
+  text-decoration: none;
+  font-weight: 600;
 }
 
+.rh-footer a:hover {
+  text-decoration: underline;
+}
 
+.rh-dot {
+  margin: 0 6px;
+  opacity: 0.6;
+}
 
-/* responsive: sidebar collapse */
+/* ===== RESPONSIVE SIDEBAR ===== */
 @media (max-width: 992px) {
   .rh-sidebar {
     position: fixed;
     left: -280px;
     top: 0;
     bottom: 0;
+    height: 100vh;
     z-index: 50;
     transition: 0.25s;
   }
+
   .rh-sidebar.open {
     left: 0;
   }
+
   .rh-main {
     margin-left: 0;
   }
+}
+/* ===== FORCE: KHÔNG CHO BODY SCROLL ===== */
+html,
+body {
+  height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important; /* <- nếu còn scroll là do rule này chưa ăn */
+}
+
+/* ===== WRAPPER CHỈ CAO MÀN HÌNH ===== */
+.rh-layout {
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
+/* ===== MAIN KHÔNG SCROLL, CHỈ CON SCROLL ===== */
+.rh-main {
+  overflow: hidden !important;
+}
+
+/* ===== 2 VÙNG SCROLL RIÊNG ===== */
+.rh-sidebar,
+.rh-content {
+  overflow-y: auto !important;
+  min-height: 0 !important;
+  overscroll-behavior: contain;
+}
+
+/* ===== Desktop: ẩn/hiện sidebar (không ảnh hưởng mobile off-canvas) ===== */
+/* ===== Desktop animation: collapse sidebar smoothly ===== */
+.rh-sidebar {
+  transition:
+    width 0.25s ease,
+    transform 0.25s ease;
+  will-change: width, transform;
+}
+
+.rh-main {
+  transition: margin-left 0.25s ease;
+  will-change: margin-left;
+}
+
+/* Desktop only */
+@media (min-width: 993px) {
+  /* Sidebar đang ở layout flex nên chỉ cần thu width */
+  .rh-layout.sidebar-hidden .rh-sidebar {
+    width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    transform: translateX(-100%);
+    overflow: hidden; /* tránh lòi content menu */
+  }
+
+  /* Main tự giãn vì sidebar width về 0 (flex), không cần set width */
+}
+
+@media (min-width: 993px) {
+  .rh-layout.sidebar-hidden .rh-menu,
+  .rh-layout.sidebar-hidden .rh-logo {
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+}
+
+.rh-layout.sidebar-hidden .rh-main {
+  flex: 1;
 }
