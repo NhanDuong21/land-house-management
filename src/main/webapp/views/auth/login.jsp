@@ -6,8 +6,8 @@
         <title>Login</title>
         <link rel="icon" type="image/png"
               href="${pageContext.request.contextPath}/assets/images/logo/favicon_logo.png">
-        <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/bootstrap.min.css">
-        <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/login.css">
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/base/bootstrap.min.css">
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/views/login.css">
     </head>
     <body>
 

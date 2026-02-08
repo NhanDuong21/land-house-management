@@ -10,7 +10,7 @@
 
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-<t:layout title="Home - RentHouse" active="home" cssFile="${pageContext.request.contextPath}/assets/css/home.css">
+<t:layout title="Home - RentHouse" active="home" cssFile="${pageContext.request.contextPath}/assets/css/views/home.css">
 
     <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
@@ -211,5 +211,5 @@
             hasMezzanine: "${empty hasMezzanine ? 'any' : hasMezzanine}"
         };
     </script>
-    <script src="${ctx}/assets/js/home.js"></script>
+    <script src="${ctx}/assets/js/pages/home.js"></script>
 </t:layout>

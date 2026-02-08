@@ -52,7 +52,7 @@
               href="${pageContext.request.contextPath}/assets/images/logo/favicon_logo.png">
 
 
-        <link rel="stylesheet" href="<%=ctx%>/assets/css/layout.css">
+        <link rel="stylesheet" href="<%=ctx%>/assets/css/layout/layout.css">
         <% if (pageCss != null) {%>
         <link rel="stylesheet" href="<%=pageCss%>">
         <% }%>

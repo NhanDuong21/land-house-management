@@ -8,7 +8,7 @@
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-<t:layout-fragment cssFile="${pageContext.request.contextPath}/assets/css/roomDetail.css">
+<t:layout-fragment cssFile="${pageContext.request.contextPath}/assets/css/views/roomDetail.css">
     <c:set var="r" value="${room}" />
     <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
