@@ -3,12 +3,15 @@ package Controllers.guest;
 import java.io.IOException;
 import java.util.List;
 
+import Models.authentication.AuthResult;
 import Models.entity.Room;
 import Services.guest.RoomGuestService;
+import Services.staff.RoomStaffService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  *
@@ -16,20 +19,46 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class HomeController extends HttpServlet {
 
-    private final RoomGuestService roomService = new RoomGuestService();
+    private final RoomGuestService guestService = new RoomGuestService();
+    private final RoomStaffService staffService = new RoomStaffService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // lấy filter
         String minPrice = request.getParameter("minPrice");
         String maxPrice = request.getParameter("maxPrice");
         String minArea = request.getParameter("minArea");
         String maxArea = request.getParameter("maxArea");
         String hasAC = request.getParameter("hasAC");
         String hasMezzanine = request.getParameter("hasMezzanine");
-        List<Room> listRooms = roomService.searchAvailable(minPrice, maxPrice, minArea, maxArea, hasAC, hasMezzanine);
+
+        // lấy role từ session
+        HttpSession session = request.getSession(false);
+        String role = null;
+        if (session != null) {
+            Object object = session.getAttribute("auth");
+            if (!(object instanceof AuthResult ar)) {
+                if (object instanceof String str) {
+                    role = str;
+                }
+            } else {
+                role = ar.getRole();
+            }
+        }
+
+        boolean isStaff = role != null && (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("MANAGER"));
+
+        List<Room> listRooms;
+        if (isStaff) {
+            listRooms = staffService.searchForStaff(minPrice, maxPrice, minArea, maxArea, hasAC, hasMezzanine);
+        } else {
+            listRooms = guestService.searchAvailable(minPrice, maxPrice, minArea, maxArea, hasAC, hasMezzanine);
+        }
+
         request.setAttribute("rooms", listRooms);
+
         // giữ lại filter
         request.setAttribute("minPrice", minPrice);
         request.setAttribute("maxPrice", maxPrice);
