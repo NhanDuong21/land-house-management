@@ -18,7 +18,7 @@
     <section class="login-brand">
       <div class="brand-top">
         <div class="brand-mark">
-          <img src="<%=request.getContextPath()%>/assets/images/logo/logo.jpg" alt="RentHouse"/>
+          <img src="<%=request.getContextPath()%>/assets/images/logo/logo.png" alt="RentHouse"/>
         </div>
         <div class="brand-name">RentHouse</div>
         <div class="brand-tagline">Quản lý nhà trọ • Hợp đồng • Hóa đơn • Bảo trì</div>
