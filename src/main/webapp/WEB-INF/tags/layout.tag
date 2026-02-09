@@ -83,18 +83,65 @@
                     <a class="rh-link" href="<%=ctx%>/profile">Profile</a>
                     <% } %>
 
-                    <% if (isManager || isAdmin) {%>
-                    <div class="rh-section">Staff</div>
-                    <a class="rh-link" href="<%=ctx%>/profile">Profile</a>
-                    <% } %>
-
-                    <div class="rh-spacer"></div>
+                    <%-- STAFF / MANAGER / ADMIN --%>
 
                     <% if (isManager) {%>
+                    <div class="rh-section">Manager</div>
+
+                    <a class="rh-link <%= "m_profile".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/profile">Manager Profile</a>
+
+                    <a class="rh-link <%= "m_rooms".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/manager/rooms">Manager Rooms</a>
+
+                    <a class="rh-link <%= "m_tenants".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/manager/tenants">Manager Tenants</a>
+
+                    <a class="rh-link <%= "m_utilities".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/manager/utilities">Utilities</a>
+
+                    <a class="rh-link <%= "m_contracts".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/manager/contracts">Manager Contracts</a>
+
+                    <a class="rh-link <%= "m_billing".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/manager/billing">Manage Billing</a>
+
+                    <a class="rh-link <%= "m_maintenance".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/manager/maintenance">Manage Maintenance</a>
+
+                    <a class="rh-link <%= "m_accounts".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/manager/accounts">Manage Accounts</a>
+
+                    <div class="rh-spacer"></div>
                     <a class="rh-dashboard manager" href="<%=ctx%>/manager/home">Manager Dashboard</a>
-                    <% } else if (isAdmin) {%>
+                    <% } %>
+
+
+                    <% if (isAdmin) {%>
+                    <div class="rh-section">Admin</div>
+
+                    <a class="rh-link <%= "a_home".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/home">Home</a>
+
+                    <a class="rh-link <%= "a_dashboard".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/admin/home">Admin Dashboard</a>
+
+                    <a class="rh-link <%= "a_accounts".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/admin/accounts">Manage Accounts</a>
+
+                    <a class="rh-link <%= "a_settings".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/admin/settings">Configure System Settings</a>
+
+                    <a class="rh-link <%= "a_contracts".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/admin/contracts">View All Contracts</a>
+
+                    <a class="rh-link <%= "a_rooms".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/admin/rooms">Room Administration</a>
+
+                    <div class="rh-spacer"></div>
                     <a class="rh-dashboard admin" href="<%=ctx%>/admin/home">Admin Dashboard</a>
                     <% }%>
+
                 </nav>
             </aside>
 
