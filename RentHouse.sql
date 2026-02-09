@@ -116,7 +116,7 @@ CREATE TABLE dbo.[TENANT] (
     CONSTRAINT UQ_TENANT_email UNIQUE (email),
     CONSTRAINT UQ_TENANT_phone UNIQUE (phone_number),
 
-    CONSTRAINT CK_TENANT_account_status CHECK (account_status IN ('LOCKED','ACTIVE')),
+    CONSTRAINT CK_TENANT_account_status CHECK (account_status IN ('LOCKED','ACTIVE','PENDING')),
     CONSTRAINT CK_TENANT_gender CHECK (gender IS NULL OR gender IN (0,1))
 );
 GO
