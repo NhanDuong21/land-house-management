@@ -1,4 +1,4 @@
-/* home.css */
+/* ================= HOME ================= */
 .home-head {
   display: flex;
   align-items: flex-start;
@@ -6,11 +6,13 @@
   gap: 16px;
   margin-bottom: 18px;
 }
+
 .home-title {
   margin: 0;
   font-size: 42px;
   letter-spacing: -0.02em;
 }
+
 .home-sub {
   color: #6b7280;
   margin-top: 6px;
@@ -19,10 +21,12 @@
 .home-actions {
   text-align: right;
 }
+
 .home-count {
   color: #6b7280;
   font-size: 13px;
 }
+
 .home-filter-btn {
   margin-top: 10px;
   border: 1px solid #e7e9f0;
@@ -32,6 +36,7 @@
   cursor: pointer;
   font-weight: 600;
 }
+
 .home-filter-btn:hover {
   background: #f4f6fb;
 }
@@ -44,44 +49,52 @@
   border-radius: 12px;
 }
 
+/* ================= GRID ================= */
 .room-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
 }
+
 @media (max-width: 1200px) {
   .room-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
 @media (max-width: 900px) {
   .room-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
 @media (max-width: 560px) {
   .room-grid {
     grid-template-columns: 1fr;
   }
 }
 
+/* ================= ROOM CARD ================= */
 .room-card {
   background: #fff;
   border: 1px solid #e7e9f0;
   border-radius: 16px;
   overflow: hidden;
 }
+
 .room-img {
   position: relative;
   height: 170px;
   background: #f2f4f8;
 }
+
 .room-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
+
 .room-img-placeholder {
   height: 100%;
   display: flex;
@@ -89,26 +102,69 @@
   justify-content: center;
   color: #6b7280;
 }
+
+/* ================= STATUS BADGE – GLASSMORPHISM ================= */
 .room-badge {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: #111827;
-  color: #fff;
-  font-weight: 800;
-  font-size: 12px;
-  padding: 6px 10px;
+
+  padding: 6px 12px;
   border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+
+  color: #fff;
+
+  /* glass effect */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.25),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
+/* AVAILABLE */
+.room-badge.status-available {
+  background: rgba(34, 197, 94, 0.7);
+}
+
+/* OCCUPIED */
+.room-badge.status-occupied {
+  background: rgba(239, 68, 68, 0.7);
+}
+
+/* MAINTENANCE */
+.room-badge.status-maintenance {
+  background: rgba(245, 158, 11, 0.7);
+}
+
+/* RESERVED */
+.room-badge.status-reserved {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+/* fallback */
+.room-badge:not([class*="status-"]) {
+  background: rgba(107, 114, 128, 0.7);
+}
+
+/* ================= BODY ================= */
 .room-body {
   padding: 14px;
 }
+
 .room-name {
   font-size: 22px;
   font-weight: 800;
   margin-bottom: 6px;
 }
+
 .room-meta {
   color: #6b7280;
   font-size: 13px;
@@ -116,12 +172,14 @@
   flex-wrap: wrap;
   gap: 6px;
 }
+
 .room-tags {
   margin-top: 10px;
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
+
 .tag {
   border: 1px solid #e7e9f0;
   background: #fff;
@@ -135,6 +193,7 @@
   margin-top: 12px;
   font-weight: 900;
 }
+
 .room-desc {
   margin-top: 8px;
   color: #6b7280;
@@ -155,26 +214,30 @@
   padding: 10px 12px;
   border-radius: 12px;
 }
+
 .room-btn:hover {
   background: #111827;
   color: #fff;
 }
 
-/* modal */
+/* ================= MODAL ================= */
 .rh-modal {
   display: none;
   position: fixed;
   inset: 0;
   z-index: 80;
 }
+
 .rh-modal.show {
   display: block;
 }
+
 .rh-modal-backdrop {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
 }
+
 .rh-modal-dialog {
   position: relative;
   width: min(680px, calc(100% - 24px));
@@ -184,20 +247,24 @@
   overflow: hidden;
   box-shadow: 0 18px 70px rgba(0, 0, 0, 0.25);
 }
+
 .rh-modal-header {
   padding: 18px 18px 8px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
+
 .rh-modal-title {
   font-size: 22px;
   font-weight: 900;
 }
+
 .rh-modal-sub {
   color: #6b7280;
   margin-top: 4px;
 }
+
 .rh-modal-close {
   border: 0;
   background: transparent;
@@ -209,17 +276,22 @@
 .rh-modal-body {
   padding: 14px 18px 18px;
 }
+
+/* ================= FILTER ================= */
 .filter-block {
   margin-top: 14px;
 }
+
 .filter-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .filter-label {
   font-weight: 800;
 }
+
 .filter-value {
   color: #6b7280;
   font-size: 13px;
@@ -230,6 +302,7 @@
   height: 36px;
   margin-top: 10px;
 }
+
 .dual-range input[type="range"] {
   position: absolute;
   left: 0;
@@ -243,6 +316,7 @@
   gap: 10px;
   margin-top: 10px;
 }
+
 .choice {
   flex: 1;
   padding: 10px 12px;
@@ -252,6 +326,7 @@
   font-weight: 800;
   cursor: pointer;
 }
+
 .choice.active {
   background: #111827;
   color: #fff;
@@ -264,6 +339,7 @@
   gap: 12px;
   justify-content: space-between;
 }
+
 .btn-reset {
   flex: 1;
   text-align: center;
@@ -274,6 +350,7 @@
   color: #111827;
   font-weight: 800;
 }
+
 .btn-apply {
   flex: 1;
   padding: 12px;
@@ -284,4 +361,3 @@
   font-weight: 900;
   cursor: pointer;
 }
-

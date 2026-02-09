@@ -7,8 +7,8 @@
 
 <%@taglib prefix="c" uri="jakarta.tags.core"%>
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt"%>
-
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <t:layout title="Home - RentHouse" active="home" cssFile="${pageContext.request.contextPath}/assets/css/views/home.css">
 
@@ -69,7 +69,10 @@
                                     <div class="room-img-placeholder">No Image</div>
                                 </c:otherwise>
                             </c:choose>
-                            <div class="room-badge">${r.status}</div>
+                            <div class="room-badge status-${fn:toLowerCase(r.status)}">
+                                ${r.status}
+                            </div>
+
                         </div>
 
                         <div class="room-body">
@@ -100,7 +103,7 @@
                             </c:if>
 
                             <button class="room-btn js-room-detail" type="button" data-room-id="${r.roomId}">
-                               View Details
+                                View Details
                             </button>
 
                         </div>
