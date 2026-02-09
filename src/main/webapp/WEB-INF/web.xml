@@ -53,4 +53,13 @@
         <url-pattern>/logout</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ManagerHomeController</servlet-name>
+        <servlet-class>Controllers.manager.ManagerHomeController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManagerHomeController</servlet-name>
+        <url-pattern>/manager/home</url-pattern>
+    </servlet-mapping>
+
 </web-app>
