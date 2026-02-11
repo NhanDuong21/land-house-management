@@ -59,6 +59,10 @@
                 <input type="date" name="startDate" class="form-control" required>
             </div>
 
+            <div class="mb-3">
+                <label class="form-label">End Date</label>
+                <input type="date" name="endDate" class="form-control" required>
+            </div>
             <button class="btn btn-dark">Create Contract & Send OTP</button>
 
         </form>
