@@ -5,7 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
+import Models.dto.ManagerContractRowDTO;
 import Models.entity.Contract;
 import Utils.database.DBContext;
 
@@ -45,5 +48,75 @@ public class ContractDAO extends DBContext {
             }
         }
         return -1;
+    }
+
+    //get list manage contract
+    @SuppressWarnings("CallToPrintStackTrace")
+    public List<ManagerContractRowDTO> getManagerContracts() {
+        List<ManagerContractRowDTO> list = new ArrayList<>();
+
+        String sql = """
+SELECT CONTRACT.contract_id, ROOM.room_number, TENANT.full_name as tenant_name , CONTRACT.start_date, CONTRACT.monthly_rent, CONTRACT.status
+FROM     CONTRACT INNER JOIN
+                  ROOM ON CONTRACT.room_id = ROOM.room_id INNER JOIN
+                  TENANT ON CONTRACT.tenant_id = TENANT.tenant_id
+            ORDER BY CONTRACT.created_at DESC
+        """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                ManagerContractRowDTO contractRowDTO = new ManagerContractRowDTO();
+                contractRowDTO.setContractId(rs.getInt("contract_id"));
+                contractRowDTO.setRoomNumber(rs.getString("room_number"));
+                contractRowDTO.setTenantName(rs.getString("tenant_name"));
+                contractRowDTO.setStartDate(rs.getDate("start_date"));
+                contractRowDTO.setMonthlyRent(rs.getBigDecimal("monthly_rent"));
+                contractRowDTO.setStatus(rs.getString("status"));
+                list.add(contractRowDTO);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    //get contract theo tenantId
+    //sort theo status, pending gan 0,active gan 1, uu tien pending len dau
+    @SuppressWarnings("CallToPrintStackTrace")
+    public List<Contract> findByTenantId(int tenantId) {
+        List<Contract> listContractsByTenant = new ArrayList<>();
+        String sql = """
+            SELECT contract_id, room_id, tenant_id, created_by_staff_id, start_date, end_date, monthly_rent, deposit,
+                   payment_qr_data, status, created_at, updated_at  
+            FROM CONTRACT 
+            WHERE tenant_id = ? 
+            ORDER BY CASE status WHEN 'PENDING' THEN 0 WHEN 'ACTIVE' THEN 1 ELSE 2 END, created_at DESC
+                """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Contract contract = new Contract();
+                    contract.setContractId(rs.getInt("contract_id"));
+                    contract.setRoomId(rs.getInt("room_id"));
+                    contract.setTenantId(rs.getInt("tenant_id"));
+                    contract.setCreatedByStaffId(rs.getInt("created_by_staff_id"));
+                    contract.setStartDate(rs.getDate("start_date"));
+                    contract.setEndDate(rs.getDate("end_date") != null ? rs.getDate("end_date") : null);
+                    contract.setMonthlyRent(rs.getBigDecimal("monthly_rent"));
+                    contract.setDeposit(rs.getBigDecimal("deposit"));
+                    contract.setPaymentQrData(rs.getString("payment_qr_data"));
+                    contract.setStatus(rs.getString("status"));
+                    contract.setCreatedAt(rs.getTimestamp("created_at"));
+                    contract.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    listContractsByTenant.add(contract);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listContractsByTenant;
     }
 }
