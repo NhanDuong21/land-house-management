@@ -57,7 +57,7 @@ public class CreateContractController extends HttpServlet {
         c.setEndDate(java.sql.Date.valueOf(endDate));
         c.setMonthlyRent(rent);
         c.setDeposit(deposit);
-        c.setPaymentQrData("QR_DATA_PLACEHOLDER");
+        c.setPaymentQrData("/assets/images/qr/myqr.png");
 
         Tenant t = new Tenant();
         t.setFullName(tenantName);

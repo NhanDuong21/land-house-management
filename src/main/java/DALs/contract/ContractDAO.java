@@ -82,7 +82,7 @@ FROM     CONTRACT INNER JOIN
         return list;
     }
 
-    //get contract theo tenantId
+    //get list contract theo tenantId
     //sort theo status, pending gan 0,active gan 1, uu tien pending len dau
     @SuppressWarnings("CallToPrintStackTrace")
     public List<Contract> findByTenantId(int tenantId) {
@@ -118,5 +118,42 @@ FROM     CONTRACT INNER JOIN
             e.printStackTrace();
         }
         return listContractsByTenant;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public Contract findByIdForTenant(int contractId, int tenantId) {
+        String sql = """
+        SELECT contract_id, room_id, tenant_id, created_by_staff_id,
+               start_date, end_date, monthly_rent, deposit,
+               payment_qr_data, status, created_at, updated_at
+        FROM CONTRACT
+        WHERE contract_id = ? AND tenant_id = ?
+    """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, contractId);
+            ps.setInt(2, tenantId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Contract contract = new Contract();
+                    contract.setContractId(rs.getInt("contract_id"));
+                    contract.setRoomId(rs.getInt("room_id"));
+                    contract.setTenantId(rs.getInt("tenant_id"));
+                    contract.setCreatedByStaffId(rs.getInt("created_by_staff_id"));
+                    contract.setStartDate(rs.getDate("start_date"));
+                    contract.setEndDate(rs.getDate("end_date") != null ? rs.getDate("end_date") : null);
+                    contract.setMonthlyRent(rs.getBigDecimal("monthly_rent"));
+                    contract.setDeposit(rs.getBigDecimal("deposit"));
+                    contract.setPaymentQrData(rs.getString("payment_qr_data"));
+                    contract.setStatus(rs.getString("status"));
+                    contract.setCreatedAt(rs.getTimestamp("created_at"));
+                    contract.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    return contract;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
