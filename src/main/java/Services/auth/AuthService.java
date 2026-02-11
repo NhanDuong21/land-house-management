@@ -1,8 +1,10 @@
 package Services.auth;
 
+import DALs.auth.OtpCodeDAO;
 import DALs.auth.StaffDAO;
 import DALs.auth.TenantDAO;
 import Models.authentication.AuthResult;
+import Models.entity.OtpCode;
 import Models.entity.Staff;
 import Models.entity.Tenant;
 import Utils.security.HashUtil;
@@ -17,6 +19,7 @@ public class AuthService {
 
     private final StaffDAO staffDAO = new StaffDAO();
     private final TenantDAO tenantDAO = new TenantDAO();
+    private final OtpCodeDAO otpDAO = new OtpCodeDAO();
 
     public AuthResult login(String email, String rawPass) {
         if (email == null || rawPass == null) {
@@ -55,5 +58,38 @@ public class AuthService {
             return null;
         }
         return new AuthResult("TENANT", tenant, null);
+    }
+
+    public AuthResult loginByOtp(String email, String otpPlain) {
+        Tenant t = tenantDAO.findByEmail(email.trim());
+        if (t == null) {
+            return null;
+        }
+
+        // LOCKED không cho login
+        if ("LOCKED".equalsIgnoreCase(t.getAccountStatus())) {
+            return null;
+        }
+
+        // chỉ cho OTP login nếu tenant chưa set password hoặc đang PENDING
+        boolean noPassword = (t.getPasswordHash() == null || t.getPasswordHash().isBlank());
+        boolean isPending = "PENDING".equalsIgnoreCase(t.getAccountStatus());
+        if (!noPassword && !isPending) {
+            return null;
+        }
+
+        OtpCode otp = otpDAO.findValidLatestOtp(t.getTenantId(), "FIRST_LOGIN");
+        if (otp == null) {
+            return null;
+        }
+
+        String inputHash = HashUtil.md5(otpPlain);
+        if (!inputHash.equalsIgnoreCase(otp.getOtpHash())) {
+            return null;
+        }
+
+        otpDAO.markUsed(otp.getOtpId());
+
+        return new AuthResult("TENANT", t, null);
     }
 }
