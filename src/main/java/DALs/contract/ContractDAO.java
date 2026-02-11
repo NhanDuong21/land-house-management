@@ -120,6 +120,7 @@ FROM     CONTRACT INNER JOIN
         return listContractsByTenant;
     }
 
+    //get contract theo id de tenant ko xem contract cua ngkhac
     @SuppressWarnings("CallToPrintStackTrace")
     public Contract findByIdForTenant(int contractId, int tenantId) {
         String sql = """
