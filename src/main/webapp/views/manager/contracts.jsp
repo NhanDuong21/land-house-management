@@ -1,5 +1,7 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="layout" tagdir="/WEB-INF/tags"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <layout:layout title="Manage Contracts"
                active="m_contracts"
@@ -29,7 +31,9 @@
         </div>
 
         <div class="mc-card">
-            <div class="mc-card-title">All Contracts (2)</div>
+            <div class="mc-card-title">
+                All Contracts (<c:out value="${empty contracts ? 0 : contracts.size()}"/>)
+            </div>
 
             <div class="mc-table-wrap">
                 <table class="mc-table">
@@ -46,39 +50,44 @@
                     </thead>
 
                     <tbody>
-                        <tr>
-                            <td class="mc-mono">000001</td>
-                            <td>A101</td>
-                            <td>John Doe</td>
-                            <td>January 1, 2025</td>
-                            <td class="mc-money">3.500.000 đ</td>
-                            <td>
-                                <span class="mc-badge active">ACTIVE</span>
-                            </td>
-                            <td class="mc-td-action">
-                                <a class="mc-view-btn" href="#" onclick="return false;">
-                                    <span class="mc-eye">👁️</span>
-                                    <span>View</span>
-                                </a>
-                            </td>
-                        </tr>
+                        <c:if test="${empty contracts}">
+                            <tr>
+                                <td colspan="7" style="padding:18px 12px;color:#64748b;font-weight:700;">
+                                    No contracts found.
+                                </td>
+                            </tr>
+                        </c:if>
 
-                        <tr>
-                            <td class="mc-mono">000002</td>
-                            <td>A102</td>
-                            <td>Nguyễn Văn A</td>
-                            <td>February 1, 2026</td>
-                            <td class="mc-money">2.800.000 đ</td>
-                            <td>
-                                <span class="mc-badge pending">PENDING</span>
-                            </td>
-                            <td class="mc-td-action">
-                                <a class="mc-view-btn" href="#" onclick="return false;">
-                                    <span class="mc-eye">👁️</span>
-                                    <span>View</span>
-                                </a>
-                            </td>
-                        </tr>
+                        <c:forEach var="c" items="${contracts}">
+                            <tr>
+                                <td class="mc-mono">${c.displayId}</td>
+                                <td>${c.roomNumber}</td>
+                                <td>${c.tenantName}</td>
+                                <td>
+                                    <fmt:formatDate value="${c.startDate}" pattern="MMMM d, yyyy"/>
+                                </td>
+                                <td class="mc-money">
+                                    <fmt:formatNumber value="${c.monthlyRent}" type="number" groupingUsed="true"/> đ
+                                </td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${c.status eq 'ACTIVE'}">
+                                            <span class="mc-badge active">ACTIVE</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="mc-badge pending">${c.status}</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td class="mc-td-action">
+                                    <a class="mc-view-btn" href="#" onclick="return false;">
+                                        <span class="mc-eye">👁️</span>
+                                        <span>View</span>
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+
                     </tbody>
                 </table>
             </div>
