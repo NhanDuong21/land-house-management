@@ -48,11 +48,13 @@ public class CreateContractController extends HttpServlet {
         BigDecimal rent = new BigDecimal(request.getParameter("rent"));
         BigDecimal deposit = new BigDecimal(request.getParameter("deposit"));
         LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
-
+        LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
+        
         Contract c = new Contract();
         c.setRoomId(roomId);
         c.setCreatedByStaffId(auth.getStaff().getStaffId());
         c.setStartDate(java.sql.Date.valueOf(startDate));
+        c.setEndDate(java.sql.Date.valueOf(endDate));
         c.setMonthlyRent(rent);
         c.setDeposit(deposit);
         c.setPaymentQrData("QR_DATA_PLACEHOLDER");
@@ -65,9 +67,10 @@ public class CreateContractController extends HttpServlet {
         boolean ok = service.createContractAndTenant(c, t);
 
         if (ok) {
-            response.sendRedirect(request.getContextPath() + "/manager/contracts?success=1");
+            response.sendRedirect(request.getContextPath() + "/manager/contracts");
         } else {
             response.sendRedirect(request.getContextPath() + "/manager/contracts/create?error=1");
         }
+
     }
 }
