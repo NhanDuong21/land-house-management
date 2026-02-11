@@ -102,7 +102,6 @@ public class TenantDAO extends DBContext {
         return null;
     }
 
-
     // add tenant pending
     public int insertPendingTenant(Connection conn, Tenant t) throws SQLException {
 
@@ -127,6 +126,24 @@ public class TenantDAO extends DBContext {
         }
 
         return -1;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean updatePasswordForTenant(int tenantId, String newHash) {
+        String sql = """
+        UPDATE TENANT
+        SET password_hash = ?, must_set_password = 0, updated_at = SYSDATETIME()
+        WHERE tenant_id = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newHash);
+            ps.setInt(2, tenantId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }
