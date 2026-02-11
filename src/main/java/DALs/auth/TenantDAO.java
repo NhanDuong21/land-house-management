@@ -1,8 +1,10 @@
 package DALs.auth;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import Models.entity.Tenant;
 import Utils.database.DBContext;
@@ -99,4 +101,32 @@ public class TenantDAO extends DBContext {
         }
         return null;
     }
+
+
+    // add tenant pending
+    public int insertPendingTenant(Connection conn, Tenant t) throws SQLException {
+
+        String sql = """
+            INSERT INTO TENANT (full_name, phone_number, email, account_status, password_hash, must_set_password) 
+            VALUES (?, ?, ?, 'PENDING', NULL, 1)
+    """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, t.getFullName());
+            ps.setString(2, t.getPhoneNumber());
+            ps.setString(3, t.getEmail());
+
+            ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+
+        return -1;
+    }
+
 }
