@@ -34,7 +34,7 @@ public class AuthFilter implements Filter {
         String ctx = request.getContextPath();
         String uri = request.getRequestURI();
 
-        // Cho qua public pages
+        // ===== PUBLIC =====
         boolean isStatic = uri.startsWith(ctx + "/assets/");
         boolean isPublic = uri.equals(ctx + "/home")
                 || uri.equals(ctx + "/login")
@@ -46,23 +46,21 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        // Lấy auth từ session
+        // ===== SESSION =====
         HttpSession session = request.getSession(false);
         AuthResult auth = (session == null) ? null : (AuthResult) session.getAttribute("auth");
 
-        // remember me
+        // ===== REMEMBER ME =====
         if (auth == null) {
             String token = getCookieValue(request, "REMEMBER_TOKEN");
             if (token != null && !token.isBlank()) {
 
-                // check tenant
                 Tenant tenant = tenantDAO.findByTokenForTenant(token);
                 if (tenant != null) {
                     AuthResult ar = new AuthResult("TENANT", tenant, null);
                     request.getSession(true).setAttribute("auth", ar);
-                    auth = ar; // cập nhật lại auth để check role bên dưới
+                    auth = ar;
                 } else {
-                    // check staff
                     Staff staff = staffDAO.findByTokenForStaff(token);
                     if (staff != null) {
                         AuthResult ar = new AuthResult(staff.getStaffRole(), null, staff);
@@ -75,23 +73,42 @@ public class AuthFilter implements Filter {
 
         String role = (auth == null || auth.getRole() == null) ? "GUEST" : auth.getRole();
 
-        // Chặn theo prefix
-        if (uri.startsWith(ctx + "/tenant/") && !"TENANT".equalsIgnoreCase(role)) {
-            response.sendRedirect(ctx + "/home");
-            return;
+        // ===== TENANT ROUTE CHECK =====
+        if (uri.startsWith(ctx + "/tenant/")) {
+
+            if (!"TENANT".equalsIgnoreCase(role)) {
+                response.sendRedirect(ctx + "/home");
+                return;
+            }
+
+            // ===== CHECK PENDING TENANT =====
+            Tenant tenant = auth.getTenant();
+            if (tenant != null && "PENDING".equalsIgnoreCase(tenant.getAccountStatus())) {
+
+                boolean allowContract
+                        = uri.equals(ctx + "/tenant/contract")
+                        || uri.startsWith(ctx + "/tenant/contract/");
+
+                if (!allowContract) {
+                    response.sendRedirect(ctx + "/tenant/contract");
+                    return;
+                }
+            }
         }
 
+        // ===== MANAGER =====
         if (uri.startsWith(ctx + "/manager/") && !"MANAGER".equalsIgnoreCase(role)) {
             response.sendRedirect(ctx + "/home");
             return;
         }
 
+        // ===== ADMIN =====
         if (uri.startsWith(ctx + "/admin/") && !"ADMIN".equalsIgnoreCase(role)) {
             response.sendRedirect(ctx + "/home");
             return;
         }
 
-        //cancel click back after logout
+        // ===== DISABLE BACK CACHE =====
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
