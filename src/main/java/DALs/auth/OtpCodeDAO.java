@@ -7,6 +7,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+import Models.entity.OtpCode;
 import Utils.database.DBContext;
 
 /**
@@ -51,5 +52,50 @@ public class OtpCodeDAO extends DBContext {
             e.printStackTrace();
         }
         return -1;
+    }
+
+    //tìm OTP mới nhất còn hiệu lực để verify
+    // find dựa trên tiêu chí tenant id và purpoes
+    @SuppressWarnings("CallToPrintStackTrace")
+    public OtpCode findValidLatestOtp(int tenantId, String purpose) {
+        String sql = """
+    SELECT TOP 1 otp_id, tenant_id, purpose, receiver, otp_hash, expires_at, used_at 
+    FROM OTP_CODE 
+    WHERE tenant_id = ? AND purpose = ? AND used_at IS NULL AND expires_at > SYSDATETIME() 
+    ORDER BY otp_id DESC
+                """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            ps.setString(2, purpose);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    OtpCode o = new OtpCode();
+                    o.setOtpId(rs.getInt("otp_id"));
+                    o.setTenantId(rs.getInt("tenant_id"));
+                    o.setPurpose(rs.getString("purpose"));
+                    o.setReceiver(rs.getString("receiver"));
+                    o.setOtpHash(rs.getString("otp_hash"));
+                    o.setExpiresAt(rs.getTimestamp("expires_at"));
+                    o.setUsedAt(rs.getTimestamp("used_at"));
+                    return o;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    //disable otp khi mà đã sử dụng
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean markUsed(int otpId) {
+        String sql = "UPDATE OTP_CODE SET used_at = SYSDATETIME() WHERE otp_id = ? AND used_at IS NULL";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, otpId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
