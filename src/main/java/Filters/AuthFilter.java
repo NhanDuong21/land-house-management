@@ -81,15 +81,33 @@ public class AuthFilter implements Filter {
                 return;
             }
 
-            // ===== CHECK PENDING TENANT =====
+            // ===== FORCE SET PASSWORD (FIRST LOGIN) =====
             Tenant tenant = auth.getTenant();
+            if (tenant != null) {
+
+                // must_set_password trong DB là BIT, entity bạn chắc có getter boolean hoặc int
+                boolean mustSet = tenant.isMustSetPassword(); // nếu lỗi thì xem note bên dưới
+
+                boolean isSetPasswordPage = uri.equals(ctx + "/tenant/set-password");
+                boolean allowSetPass = isSetPasswordPage || uri.equals(ctx + "/logout") || uri.startsWith(ctx + "/assets/");
+
+                if (mustSet && !allowSetPass) {
+                    response.sendRedirect(ctx + "/tenant/set-password");
+                    return;
+                }
+            }
+
+            // ===== CHECK PENDING TENANT =====
             if (tenant != null && "PENDING".equalsIgnoreCase(tenant.getAccountStatus())) {
 
                 boolean allowContract
                         = uri.equals(ctx + "/tenant/contract")
                         || uri.startsWith(ctx + "/tenant/contract/");
 
-                if (!allowContract) {
+                // IMPORTANT: cho phép luôn /tenant/set-password (nếu bạn muốn pending vẫn set pass)
+                boolean allowSetPassword = uri.equals(ctx + "/tenant/set-password");
+
+                if (!allowContract && !allowSetPassword) {
                     response.sendRedirect(ctx + "/tenant/contract");
                     return;
                 }
