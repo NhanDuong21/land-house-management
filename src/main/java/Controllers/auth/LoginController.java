@@ -36,24 +36,47 @@ public class LoginController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        String mode = request.getParameter("mode"); // password or otp
         String email = request.getParameter("email");
-        String password = request.getParameter("password");
+
         String remember = request.getParameter("remember"); // on nếu tick
 
-        if (email == null || password == null || email.isBlank() || password.isBlank()) {
-            request.setAttribute("error", "Vui lòng nhập email và mật khẩu.");
-            request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
-            return;
+        AuthResult authResult = null;
+        if ("OTP".equalsIgnoreCase(mode)) {
+            String otp = request.getParameter("otp");
+
+            if (email == null || otp == null || email.isBlank() || otp.isBlank()) {
+                request.setAttribute("error", "Vui lòng nhập email và OTP.");
+                request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
+                return;
+            }
+
+            authResult = authService.loginByOtp(email, otp);
+            if (authResult == null) {
+                request.setAttribute("error", "OTP không đúng hoặc đã hết hạn.");
+                request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
+            }
+        } else {
+            String password = request.getParameter("password");
+
+            if (email == null || password == null || email.isBlank() || password.isBlank()) {
+                request.setAttribute("error", "Vui lòng nhập email và mật khẩu.");
+                request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
+                return;
+            }
+
+            authResult = authService.login(email, password);
+
+            if (authResult == null) {
+                request.setAttribute("error", "Sai thông tin đăng nhập hoặc tài khoản chưa set mật khẩu (hãy dùng OTP lần đầu).");
+                request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
+                return;
+            }
         }
 
-        AuthResult authResult = authService.login(email, password);
-        if (authResult == null) {
-            request.setAttribute("error", "Sai thông tin đăng nhập hoặc tài khoản chưa set mật khẩu (hãy dùng OTP lần đầu).");
-            request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
-            return;
-        }
         HttpSession session = request.getSession(true);
         session.setAttribute("auth", authResult);
+
         // remember me
         if ("on".equals(remember)) {
 
