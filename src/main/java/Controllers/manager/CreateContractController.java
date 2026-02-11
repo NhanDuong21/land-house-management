@@ -49,7 +49,7 @@ public class CreateContractController extends HttpServlet {
         BigDecimal deposit = new BigDecimal(request.getParameter("deposit"));
         LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
         LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
-        
+
         Contract c = new Contract();
         c.setRoomId(roomId);
         c.setCreatedByStaffId(auth.getStaff().getStaffId());
@@ -64,12 +64,25 @@ public class CreateContractController extends HttpServlet {
         t.setEmail(email);
         t.setPhoneNumber(phone);
 
-        boolean ok = service.createContractAndTenant(c, t);
-
-        if (ok) {
-            response.sendRedirect(request.getContextPath() + "/manager/contracts");
-        } else {
-            response.sendRedirect(request.getContextPath() + "/manager/contracts/create?error=1");
+        System.out.println("--- Debug Create Contract ---");
+        System.out.println("Room ID: " + roomId);
+        System.out.println("Auth object: " + (auth != null ? "Found" : "NULL"));
+        System.out.println("Dates: " + startDate + " to " + endDate);
+        System.out.println("Tenant: " + tenantName + " | " + email);
+        try {
+            boolean ok = service.createContractAndTenant(c, t);
+            if (ok) {
+                response.sendRedirect(request.getContextPath() + "/manager/contracts");
+            } else {
+                // Log trường hợp service trả về false mà không ném exception
+                System.out.println("DEBUG: Service returned false for unknown reason");
+                response.sendRedirect(request.getContextPath() + "/manager/contracts/create?error=failed");
+            }
+        } catch (Exception e) {
+            // In toàn bộ lỗi ra console (Stack Trace)
+            e.printStackTrace();
+            // Gửi thông báo lỗi cụ thể qua URL để dễ nhận diện
+            response.sendRedirect(request.getContextPath() + "/manager/contracts/create?error=" + e.getMessage());
         }
 
     }
