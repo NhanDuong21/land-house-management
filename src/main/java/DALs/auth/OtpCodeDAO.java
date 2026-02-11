@@ -1,5 +1,6 @@
 package DALs.auth;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 
 import Models.entity.OtpCode;
 import Utils.database.DBContext;
+import Utils.security.HashUtil;
 
 /**
  * Description
@@ -98,4 +100,22 @@ public class OtpCodeDAO extends DBContext {
         }
         return false;
     }
+
+    //login laanf ddau voiw otp
+    public void insertFirstLoginOtp(Connection conn, int tenantId, String email, String otpPlain)
+            throws SQLException {
+
+        String sql = """
+        INSERT INTO OTP_CODE (tenant_id, purpose, receiver, otp_hash, expires_at, used_at) 
+        VALUES (?, 'FIRST_LOGIN', ?, ?, DATEADD(MINUTE,10,SYSDATETIME()), NULL)
+    """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            ps.setString(2, email);
+            ps.setString(3, HashUtil.md5(otpPlain));
+            ps.executeUpdate();
+        }
+    }
+
 }
