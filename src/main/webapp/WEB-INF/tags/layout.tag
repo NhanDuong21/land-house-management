@@ -16,10 +16,27 @@
     String ctx = request.getContextPath();
 
     AuthResult auth = (AuthResult) session.getAttribute("auth");
-    String role = (auth == null || auth.getRole() == null) ? "GUEST" : auth.getRole();
-
     Tenant tenant = (auth == null) ? null : auth.getTenant();
     Staff staff = (auth == null) ? null : auth.getStaff();
+
+    // ===== ROLE fallback (fix OTP login role null => Guest) =====
+    String role;
+    if (auth == null) {
+        role = "GUEST";
+    } else if (auth.getRole() != null && !auth.getRole().isBlank()) {
+        role = auth.getRole();
+    } else if (staff != null) {
+        // staffRole: MANAGER/ADMIN
+        role = (staff.getStaffRole() == null || staff.getStaffRole().isBlank()) ? "STAFF" : staff.getStaffRole();
+    } else if (tenant != null) {
+        role = "TENANT";
+    } else {
+        role = "GUEST";
+    }
+
+    String tenantStatus = (tenant == null || tenant.getAccountStatus() == null) ? null : tenant.getAccountStatus();
+    boolean isTenantPending = (tenant != null && "PENDING".equalsIgnoreCase(tenantStatus));
+    boolean isTenantActive = (tenant != null && "ACTIVE".equalsIgnoreCase(tenantStatus));
 
     String displayName = "Guest";
     if (!"GUEST".equalsIgnoreCase(role)) {
@@ -27,6 +44,7 @@
                 : (staff != null && staff.getFullName() != null) ? staff.getFullName()
                 : "User";
     }
+
     String firstLetter = (displayName != null && !displayName.isBlank())
             ? displayName.trim().substring(0, 1).toUpperCase()
             : "G";
@@ -40,6 +58,12 @@
     boolean isTenant = "TENANT".equalsIgnoreCase(role);
     boolean isManager = "MANAGER".equalsIgnoreCase(role);
     boolean isAdmin = "ADMIN".equalsIgnoreCase(role);
+
+    // label show in header
+    String roleLabel = role;
+    if (isTenant && tenantStatus != null) {
+        roleLabel = "TENANT • " + tenantStatus.toUpperCase();
+    }
 %>
 
 <!doctype html>
@@ -50,7 +74,6 @@
         <title><%=_title%></title>
         <link rel="icon" type="image/png"
               href="${pageContext.request.contextPath}/assets/images/logo/favicon_logo.png">
-
 
         <link rel="stylesheet" href="<%=ctx%>/assets/css/layout/layout.css">
         <% if (pageCss != null) {%>
@@ -73,14 +96,33 @@
                     <a class="rh-link <%= "home".equals(_active) ? "active" : ""%>" href="<%=ctx%>/home">Home</a>
                     <a class="rh-link <%= "contact".equals(_active) ? "active" : ""%>" href="<%=ctx%>/contact">Contact</a>
 
-                    <% if (isTenant) {%>
-                    <div class="rh-section">Tenant</div>
-                    <a class="rh-link" href="<%=ctx%>/tenant/room">My Room</a>
-                    <a class="rh-link" href="<%=ctx%>/tenant/contract">My Contract</a>
-                    <a class="rh-link" href="<%=ctx%>/tenant/bill">My Bills</a>
-                    <a class="rh-link" href="<%=ctx%>/maintenance">Maintenance Requests</a>
-                    <a class="rh-link" href="<%=ctx%>/tenant/utility">Utility</a>
-                    <a class="rh-link" href="<%=ctx%>/profile">Profile</a>
+                    <% if (isTenant) { %>
+                        <div class="rh-section">Tenant</div>
+
+                        <% if (isTenantPending) { %>
+                            <!-- PENDING: chỉ được xem hợp đồng để chuyển khoản + xác nhận -->
+                            <a class="rh-link <%= "t_contract".equals(_active) ? "active" : ""%>"
+                               href="<%=ctx%>/tenant/contract">My Contract</a>
+                        <% } else { %>
+                            <!-- ACTIVE: đầy đủ -->
+                            <a class="rh-link <%= "t_room".equals(_active) ? "active" : ""%>"
+                               href="<%=ctx%>/tenant/room">My Room</a>
+
+                            <a class="rh-link <%= "t_contract".equals(_active) ? "active" : ""%>"
+                               href="<%=ctx%>/tenant/contract">My Contract</a>
+
+                            <a class="rh-link <%= "t_bill".equals(_active) ? "active" : ""%>"
+                               href="<%=ctx%>/tenant/bill">My Bills</a>
+
+                            <a class="rh-link <%= "t_maintenance".equals(_active) ? "active" : ""%>"
+                               href="<%=ctx%>/maintenance">Maintenance Requests</a>
+
+                            <a class="rh-link <%= "t_utility".equals(_active) ? "active" : ""%>"
+                               href="<%=ctx%>/tenant/utility">Utility</a>
+
+                            <a class="rh-link <%= "t_profile".equals(_active) ? "active" : ""%>"
+                               href="<%=ctx%>/profile">Profile</a>
+                        <% } %>
                     <% } %>
 
                     <%-- STAFF / MANAGER / ADMIN --%>
@@ -115,7 +157,6 @@
                     <div class="rh-spacer"></div>
                     <a class="rh-dashboard manager" href="<%=ctx%>/manager/home">Manager Dashboard</a>
                     <% } %>
-
 
                     <% if (isAdmin) {%>
                     <div class="rh-section">Admin</div>
@@ -162,7 +203,7 @@
                             <div class="rh-avatar"><%=firstLetter%></div>
                             <div class="rh-user-meta">
                                 <div class="rh-user-name"><%=displayName%></div>
-                                <div class="rh-user-role"><%=role%></div>
+                                <div class="rh-user-role"><%=roleLabel%></div>
                             </div>
 
                             <% if (auth == null) {%>
@@ -186,7 +227,6 @@
                     <a href="https://github.com/NhanDuong21/land-house-management"
                        target="_blank">LandHouseManagement</a>
                 </footer>
-
 
             </main>
         </div>
