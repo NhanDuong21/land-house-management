@@ -206,4 +206,18 @@ WHERE   ROOM.room_id = ?
         return list;
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean updateStatus(int roomId, String status) {
+        String sql = "UPDATE ROOM SET status = ? WHERE room_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, roomId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
