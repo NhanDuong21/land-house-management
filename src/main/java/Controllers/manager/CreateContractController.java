@@ -7,6 +7,7 @@ import java.util.List;
 
 import DALs.room.RoomDAO;
 import Models.authentication.AuthResult;
+import Models.common.ServiceResult;
 import Models.entity.Contract;
 import Models.entity.Room;
 import Models.entity.Tenant;
@@ -35,6 +36,7 @@ public class CreateContractController extends HttpServlet {
     }
 
     @Override
+    @SuppressWarnings("CallToPrintStackTrace")
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -70,19 +72,20 @@ public class CreateContractController extends HttpServlet {
         System.out.println("Dates: " + startDate + " to " + endDate);
         System.out.println("Tenant: " + tenantName + " | " + email);
         try {
-            boolean ok = service.createContractAndTenant(c, t);
-            if (ok) {
-                response.sendRedirect(request.getContextPath() + "/manager/contracts");
+            ServiceResult rs = service.createContractAndTenant(c, t);
+
+            if (rs.isOk()) {
+                String msg = java.net.URLEncoder.encode(rs.getMessage(), "UTF-8");
+                response.sendRedirect(request.getContextPath() + "/manager/contracts?success=" + msg);
             } else {
-                // Log trường hợp service trả về false mà không ném exception
-                System.out.println("DEBUG: Service returned false for unknown reason");
-                response.sendRedirect(request.getContextPath() + "/manager/contracts/create?error=failed");
+                String err = java.net.URLEncoder.encode(rs.getMessage(), "UTF-8");
+                response.sendRedirect(request.getContextPath() + "/manager/contracts/create?error=" + err);
             }
-        } catch (Exception e) {
-            // In toàn bộ lỗi ra console (Stack Trace)
+
+        } catch (IOException e) {
             e.printStackTrace();
-            // Gửi thông báo lỗi cụ thể qua URL để dễ nhận diện
-            response.sendRedirect(request.getContextPath() + "/manager/contracts/create?error=" + e.getMessage());
+            String err = java.net.URLEncoder.encode("Lỗi hệ thống: " + e.getMessage(), "UTF-8");
+            response.sendRedirect(request.getContextPath() + "/manager/contracts/create?error=" + err);
         }
 
     }
