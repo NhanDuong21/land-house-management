@@ -27,13 +27,15 @@ public class Contract {
     private String status; // PENDING/ACTIVE/ENDED/CANCELLED
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private String roomNumber;
+    private String blockName;
 
     public Contract() {
     }
 
     public Contract(int contractId, int roomId, int tenantId, int createdByStaffId, Date startDate, Date endDate,
             BigDecimal monthlyRent, BigDecimal deposit, String paymentQrData, String status, Timestamp createdAt,
-            Timestamp updatedAt) {
+            Timestamp updatedAt, String roomNumber, String blockName) {
         this.contractId = contractId;
         this.roomId = roomId;
         this.tenantId = tenantId;
@@ -46,6 +48,8 @@ public class Contract {
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.roomNumber = roomNumber;
+        this.blockName = blockName;
     }
 
     public int getContractId() {
@@ -142,6 +146,22 @@ public class Contract {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getBlockName() {
+        return blockName;
+    }
+
+    public void setBlockName(String blockName) {
+        this.blockName = blockName;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
     }
 
 }
