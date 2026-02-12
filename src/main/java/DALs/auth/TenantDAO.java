@@ -146,4 +146,17 @@ public class TenantDAO extends DBContext {
         return false;
     }
 
+    public boolean updateAccountStatus(int tenantId, String status) {
+        String sql = "UPDATE TENANT SET account_status = ?, updated_at = SYSDATETIME() WHERE tenant_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, tenantId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
