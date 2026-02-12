@@ -9,6 +9,19 @@
 
         <h3>Create New Contract</h3>
 
+        <!-- ✅ ERROR / SUCCESS UI -->
+        <c:if test="${not empty param.error}">
+            <div class="alert alert-danger" style="margin-top:12px;">
+                ${param.error}
+            </div>
+        </c:if>
+
+        <c:if test="${not empty param.success}">
+            <div class="alert alert-success" style="margin-top:12px;">
+                ${param.success}
+            </div>
+        </c:if>
+
         <form method="post"
               action="${pageContext.request.contextPath}/manager/contracts/create">
 
@@ -63,6 +76,7 @@
                 <label class="form-label">End Date</label>
                 <input type="date" name="endDate" class="form-control" required>
             </div>
+
             <button class="btn btn-dark">Create Contract & Send OTP</button>
 
         </form>
