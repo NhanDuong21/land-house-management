@@ -86,38 +86,50 @@ FROM     CONTRACT INNER JOIN
     //sort theo status, pending gan 0,active gan 1, uu tien pending len dau
     @SuppressWarnings("CallToPrintStackTrace")
     public List<Contract> findByTenantId(int tenantId) {
-        List<Contract> listContractsByTenant = new ArrayList<>();
+        List<Contract> list = new ArrayList<>();
+
         String sql = """
-            SELECT contract_id, room_id, tenant_id, created_by_staff_id, start_date, end_date, monthly_rent, deposit,
-                   payment_qr_data, status, created_at, updated_at  
-            FROM CONTRACT 
-            WHERE tenant_id = ? 
-            ORDER BY CASE status WHEN 'PENDING' THEN 0 WHEN 'ACTIVE' THEN 1 ELSE 2 END, created_at DESC
-                """;
+        SELECT
+            c.contract_id, c.room_id, c.tenant_id, c.created_by_staff_id, 
+            c.start_date, c.end_date, c.monthly_rent, c.deposit, 
+            c.payment_qr_data, c.status, c.created_at, c.updated_at, r.room_number, b.block_name 
+        FROM CONTRACT c
+        JOIN ROOM r ON c.room_id = r.room_id
+        LEFT JOIN BLOCK b ON r.block_id = b.block_id
+        WHERE c.tenant_id = ?
+        ORDER BY
+            CASE c.status WHEN 'PENDING' THEN 0 WHEN 'ACTIVE' THEN 1 ELSE 2 END, c.created_at DESC
+    """;
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, tenantId);
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Contract contract = new Contract();
-                    contract.setContractId(rs.getInt("contract_id"));
-                    contract.setRoomId(rs.getInt("room_id"));
-                    contract.setTenantId(rs.getInt("tenant_id"));
-                    contract.setCreatedByStaffId(rs.getInt("created_by_staff_id"));
-                    contract.setStartDate(rs.getDate("start_date"));
-                    contract.setEndDate(rs.getDate("end_date") != null ? rs.getDate("end_date") : null);
-                    contract.setMonthlyRent(rs.getBigDecimal("monthly_rent"));
-                    contract.setDeposit(rs.getBigDecimal("deposit"));
-                    contract.setPaymentQrData(rs.getString("payment_qr_data"));
-                    contract.setStatus(rs.getString("status"));
-                    contract.setCreatedAt(rs.getTimestamp("created_at"));
-                    contract.setUpdatedAt(rs.getTimestamp("updated_at"));
-                    listContractsByTenant.add(contract);
+                    Contract c = new Contract();
+                    c.setContractId(rs.getInt("contract_id"));
+                    c.setRoomId(rs.getInt("room_id"));
+                    c.setTenantId(rs.getInt("tenant_id"));
+                    c.setCreatedByStaffId(rs.getInt("created_by_staff_id"));
+                    c.setStartDate(rs.getDate("start_date"));
+                    c.setEndDate(rs.getDate("end_date"));
+                    c.setMonthlyRent(rs.getBigDecimal("monthly_rent"));
+                    c.setDeposit(rs.getBigDecimal("deposit"));
+                    c.setPaymentQrData(rs.getString("payment_qr_data"));
+                    c.setStatus(rs.getString("status"));
+                    c.setCreatedAt(rs.getTimestamp("created_at"));
+                    c.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    c.setRoomNumber(rs.getString("room_number"));
+                    c.setBlockName(rs.getString("block_name"));
+
+                    list.add(c);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return listContractsByTenant;
+
+        return list;
     }
 
     //get contract theo id de tenant ko xem contract cua ngkhac
