@@ -72,6 +72,29 @@ public class PaymentDAO extends DBContext {
         return false;
     }
 
+    //check pending payment
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean hasPendingBankPayment(int contractId) {
+
+        String sql = """
+        SELECT TOP 1 1
+        FROM PAYMENT
+        WHERE contract_id = ?
+          AND method = 'BANK'
+          AND status = 'PENDING'
+        ORDER BY paid_at DESC, payment_id DESC
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, contractId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     //inser new data vào dbo payment để hiển thị bên manager contract confirm
     @SuppressWarnings("CallToPrintStackTrace")
@@ -92,4 +115,29 @@ public class PaymentDAO extends DBContext {
 
         return false;
     }
+
+    //tìm giao dịch chuyển khoản ngân hàng mới nhất đang ở trạng thái chờ và xác nhận nó đã thành công.
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean confirmLatestBankPayment(int contractId) {
+
+        String sql = """
+    UPDATE PAYMENT SET status = 'CONFIRMED' WHERE payment_id = (
+            SELECT TOP 1 payment_id
+            FROM PAYMENT
+            WHERE contract_id = ?
+              AND method = 'BANK'
+              AND status = 'PENDING'
+            ORDER BY paid_at DESC
+        )
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, contractId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
