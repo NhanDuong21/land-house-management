@@ -21,8 +21,8 @@ public class MailUtil {
 
     @SuppressWarnings("CallToPrintStackTrace")
     public static boolean sendOtp(String toEmail, String otp) {
-        final String fromEmail = "sgoku4880@gmail.com";
-        final String appPassword = "teyf xkbr xgme wxal"; // Gmail app password
+        final String fromEmail = "nhanduong21779@gmail.com";
+        final String appPassword = "qdng mcca yfne uzib"; 
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
