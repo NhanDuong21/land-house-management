@@ -157,4 +157,19 @@ FROM     CONTRACT INNER JOIN
         }
         return null;
     }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean updateStatus(int contractId, String status) {
+        String sql = "UPDATE CONTRACT SET status = ?, updated_at = SYSDATETIME() WHERE contract_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, contractId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
