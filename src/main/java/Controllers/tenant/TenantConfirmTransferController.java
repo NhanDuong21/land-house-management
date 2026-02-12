@@ -69,8 +69,10 @@ public class TenantConfirmTransferController extends HttpServlet {
             return;
         }
 
-        // amount bạn muốn tenant confirm: thường là deposit (đặt cọc)
-        BigDecimal amount = c.getDeposit();
+        BigDecimal deposit = (c.getDeposit() != null) ? c.getDeposit() : BigDecimal.ZERO;
+        BigDecimal rent = (c.getMonthlyRent() != null) ? c.getMonthlyRent() : BigDecimal.ZERO;
+
+        BigDecimal amount = deposit.add(rent);
 
         boolean ok = paymentDAO.insertTenantConfirmTransfer(contractId, amount);
         if (ok) {
