@@ -14,10 +14,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- *
- * @author Duong Thien Nhan - CE190741
- */
 @WebServlet("/tenant/contract/detail")
 public class TenantContractDetailController extends HttpServlet {
 
@@ -51,7 +47,7 @@ public class TenantContractDetailController extends HttpServlet {
         }
 
         int tenantId = auth.getTenant().getTenantId();
-        Contract c = contractDAO.findByIdForTenant(contractId, tenantId);
+        Contract c = contractDAO.findDetailForTenant(contractId, tenantId);
         if (c == null) {
             response.sendRedirect(request.getContextPath() + "/tenant/contract");
             return;
