@@ -135,34 +135,141 @@ FROM     CONTRACT INNER JOIN
     //get contract theo id de tenant ko xem contract cua ngkhac
     @SuppressWarnings("CallToPrintStackTrace")
     public Contract findByIdForTenant(int contractId, int tenantId) {
+
         String sql = """
-        SELECT contract_id, room_id, tenant_id, created_by_staff_id,
-               start_date, end_date, monthly_rent, deposit,
-               payment_qr_data, status, created_at, updated_at
-        FROM CONTRACT
-        WHERE contract_id = ? AND tenant_id = ?
+        SELECT
+            c.contract_id, c.room_id, c.tenant_id, c.created_by_staff_id,
+            c.start_date, c.end_date, c.monthly_rent, c.deposit,
+            c.payment_qr_data, c.status, c.created_at, c.updated_at,
+            r.room_number, b.block_name
+        FROM CONTRACT c
+        JOIN ROOM r ON c.room_id = r.room_id
+        LEFT JOIN BLOCK b ON r.block_id = b.block_id
+        WHERE c.contract_id = ? AND c.tenant_id = ?
     """;
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, contractId);
             ps.setInt(2, tenantId);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    Contract contract = new Contract();
-                    contract.setContractId(rs.getInt("contract_id"));
-                    contract.setRoomId(rs.getInt("room_id"));
-                    contract.setTenantId(rs.getInt("tenant_id"));
-                    contract.setCreatedByStaffId(rs.getInt("created_by_staff_id"));
-                    contract.setStartDate(rs.getDate("start_date"));
-                    contract.setEndDate(rs.getDate("end_date") != null ? rs.getDate("end_date") : null);
-                    contract.setMonthlyRent(rs.getBigDecimal("monthly_rent"));
-                    contract.setDeposit(rs.getBigDecimal("deposit"));
-                    contract.setPaymentQrData(rs.getString("payment_qr_data"));
-                    contract.setStatus(rs.getString("status"));
-                    contract.setCreatedAt(rs.getTimestamp("created_at"));
-                    contract.setUpdatedAt(rs.getTimestamp("updated_at"));
-                    return contract;
+                    Contract c = new Contract();
+                    c.setContractId(rs.getInt("contract_id"));
+                    c.setRoomId(rs.getInt("room_id"));
+                    c.setTenantId(rs.getInt("tenant_id"));
+                    c.setCreatedByStaffId(rs.getInt("created_by_staff_id"));
+                    c.setStartDate(rs.getDate("start_date"));
+                    c.setEndDate(rs.getDate("end_date"));
+                    c.setMonthlyRent(rs.getBigDecimal("monthly_rent"));
+                    c.setDeposit(rs.getBigDecimal("deposit"));
+                    c.setPaymentQrData(rs.getString("payment_qr_data"));
+                    c.setStatus(rs.getString("status"));
+                    c.setCreatedAt(rs.getTimestamp("created_at"));
+                    c.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    c.setRoomNumber(rs.getString("room_number"));
+                    c.setBlockName(rs.getString("block_name"));
+                    return c;
                 }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public Contract findDetailForTenant(int contractId, int tenantId) {
+
+        String sql = """
+        SELECT
+            c.contract_id, c.room_id, c.tenant_id, c.created_by_staff_id,
+            c.start_date, c.end_date, c.monthly_rent, c.deposit,
+            c.payment_qr_data, c.status, c.created_at, c.updated_at,
+
+            r.room_number, r.floor, r.area, r.max_tenants,
+            r.is_mezzanine, r.has_air_conditioning, r.[description] AS room_description,
+            b.block_name,
+
+            t.full_name AS tenant_name,
+            t.email AS tenant_email,
+            t.phone_number AS tenant_phone,
+            t.identity_code AS tenant_identity,
+            t.date_of_birth AS tenant_dob,
+            t.[address] AS tenant_address,
+
+            a.full_name AS landlord_name,
+            a.phone_number AS landlord_phone,
+            a.email AS landlord_email,
+            a.identity_code AS landlord_identity,
+            a.date_of_birth AS landlord_dob
+
+        FROM CONTRACT c
+        JOIN ROOM r ON c.room_id = r.room_id
+        LEFT JOIN BLOCK b ON r.block_id = b.block_id
+        JOIN TENANT t ON c.tenant_id = t.tenant_id
+
+        CROSS APPLY (
+            SELECT TOP 1 *
+            FROM STAFF
+            WHERE staff_role = 'ADMIN' AND [status] = 'ACTIVE'
+            ORDER BY staff_id ASC
+        ) a
+
+        WHERE c.contract_id = ? AND c.tenant_id = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, contractId);
+            ps.setInt(2, tenantId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+
+                Contract c = new Contract();
+
+                //contract
+                c.setContractId(rs.getInt("contract_id"));
+                c.setRoomId(rs.getInt("room_id"));
+                c.setTenantId(rs.getInt("tenant_id"));
+                c.setCreatedByStaffId(rs.getInt("created_by_staff_id"));
+                c.setStartDate(rs.getDate("start_date"));
+                c.setEndDate(rs.getDate("end_date"));
+                c.setMonthlyRent(rs.getBigDecimal("monthly_rent"));
+                c.setDeposit(rs.getBigDecimal("deposit"));
+                c.setPaymentQrData(rs.getString("payment_qr_data"));
+                c.setStatus(rs.getString("status"));
+                c.setCreatedAt(rs.getTimestamp("created_at"));
+                c.setUpdatedAt(rs.getTimestamp("updated_at"));
+
+                //room && block
+                c.setRoomNumber(rs.getString("room_number"));
+                c.setBlockName(rs.getString("block_name"));
+                c.setFloor((Integer) rs.getObject("floor"));
+                c.setArea(rs.getBigDecimal("area"));
+                c.setMaxTenants((Integer) rs.getObject("max_tenants"));
+                c.setIsMezzanine((Boolean) rs.getObject("is_mezzanine"));
+                c.setHasAirConditioning((Boolean) rs.getObject("has_air_conditioning"));
+                c.setRoomDescription(rs.getString("room_description"));
+
+                //party B
+                c.setTenantName(rs.getString("tenant_name"));
+                c.setTenantEmail(rs.getString("tenant_email"));
+                c.setTenantPhoneNumber(rs.getString("tenant_phone"));
+                c.setTenantIdentityCode(rs.getString("tenant_identity"));
+                c.setTenantDateOfBirth(rs.getDate("tenant_dob"));
+                c.setTenantAddress(rs.getString("tenant_address"));
+
+                //party A
+                c.setLandlordFullName(rs.getString("landlord_name"));
+                c.setLandlordPhoneNumber(rs.getString("landlord_phone"));
+                c.setLandlordEmail(rs.getString("landlord_email"));
+                c.setLandlordIdentityCode(rs.getString("landlord_identity"));
+                c.setLandlordDateOfBirth(rs.getDate("landlord_dob"));
+
+                return c;
             }
         } catch (Exception e) {
             e.printStackTrace();
