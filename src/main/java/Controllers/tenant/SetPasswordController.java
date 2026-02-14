@@ -7,7 +7,6 @@ import Models.authentication.AuthResult;
 import Models.entity.Tenant;
 import Utils.security.HashUtil;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,7 +16,6 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author Duong Thien Nhan - CE190741
  */
-@WebServlet("/tenant/set-password")
 public class SetPasswordController extends HttpServlet {
 
     private final TenantDAO tenantDAO = new TenantDAO();

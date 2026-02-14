@@ -8,6 +8,12 @@ import java.sql.SQLException;
 import Models.dto.TxResult;
 import Utils.database.DBContext;
 
+/**
+ * Description
+ *
+ * @author Duong Thien Nhan - CE190741
+ * @since 2026-02-13
+ */
 public class ContractConfirmDAO extends DBContext {
 
     @SuppressWarnings("CallToPrintStackTrace")

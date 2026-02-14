@@ -11,12 +11,14 @@ import Models.entity.Contract;
 import Models.entity.Tenant;
 import Services.contract.ContractService;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("/manager/contracts/create")
+/**
+ *
+ * @author Duong Thien Nhan - CE190741
+ */
 public class CreateContractController extends HttpServlet {
 
     private final RoomDAO roomDAO = new RoomDAO();

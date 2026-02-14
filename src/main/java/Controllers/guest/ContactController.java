@@ -9,7 +9,6 @@ import java.io.IOException;
 import Models.common.ContactInfo;
 import Utils.config.ContactConfigUtil;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,7 +17,6 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Duong Thien Nhan - CE190741
  */
-@WebServlet("/contact")
 public class ContactController extends HttpServlet {
 
     @Override

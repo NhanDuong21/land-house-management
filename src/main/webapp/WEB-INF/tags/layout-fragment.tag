@@ -1,3 +1,8 @@
+<%-- 
+    Document   : layout-fragment
+    Created on : Feb 2, 2026, 3:01:05 AM
+    Author     : Duong Thien Nhan - CE190741
+--%>
 <%@ tag body-content="scriptless" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ attribute name="cssFile" required="false" type="java.lang.String" %>

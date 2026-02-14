@@ -1,3 +1,7 @@
+<%-- 
+    Document   : managerDashboard
+    Author     : Duong Thien Nhan - CE190741
+--%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>

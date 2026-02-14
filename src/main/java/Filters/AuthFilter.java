@@ -18,6 +18,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+/**
+ *
+ * @author Duong Thien Nhan - CE190741
+ */
 @WebFilter("/*")
 public class AuthFilter implements Filter {
 

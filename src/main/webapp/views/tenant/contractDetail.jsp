@@ -1,3 +1,7 @@
+<%-- 
+    Document   : contractDetail
+    Author     : Duong Thien Nhan - CE190741
+--%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="layout" tagdir="/WEB-INF/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -159,18 +163,18 @@
                                 <c:otherwise>-</c:otherwise>
                             </c:choose>
                             <c:if test="${c.isMezzanine}">, Mezzanine</c:if>
-                        </span>
+                            </span>
+                        </div>
                     </div>
-                </div>
 
-                <div class="tcd-divider tcd-divider-soft"></div>
+                    <div class="tcd-divider tcd-divider-soft"></div>
 
-                <!-- ARTICLE 2 -->
-                <div class="tcd-article">
-                    <div class="tcd-article-title">ARTICLE 2: RENTAL PERIOD</div>
+                    <!-- ARTICLE 2 -->
+                    <div class="tcd-article">
+                        <div class="tcd-article-title">ARTICLE 2: RENTAL PERIOD</div>
 
-                    <div class="tcd-line"><span class="tcd-label">Start Date:</span>
-                        <span class="tcd-value"><fmt:formatDate value="${c.startDate}" pattern="dd/MM/yyyy"/></span>
+                        <div class="tcd-line"><span class="tcd-label">Start Date:</span>
+                            <span class="tcd-value"><fmt:formatDate value="${c.startDate}" pattern="dd/MM/yyyy"/></span>
                     </div>
 
                     <div class="tcd-line"><span class="tcd-label">End Date:</span>

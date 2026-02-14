@@ -1,3 +1,7 @@
+<%-- 
+    Document   : contact_content
+    Author     : Duong Thien Nhan - CE190741
+--%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="Models.common.ContactInfo" %>
 <%@ page contentType="text/html; charset=UTF-8" %>

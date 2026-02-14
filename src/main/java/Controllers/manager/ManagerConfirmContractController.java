@@ -6,12 +6,14 @@ import DALs.contract.ContractConfirmDAO;
 import DALs.payment.PaymentDAO;
 import Models.dto.TxResult;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("/manager/contracts/confirm")
+/**
+ *
+ * @author Duong Thien Nhan - CE190741
+ */
 public class ManagerConfirmContractController extends HttpServlet {
 
     private final ContractConfirmDAO confirmDAO = new ContractConfirmDAO();

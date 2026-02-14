@@ -13,6 +13,12 @@ import Models.entity.Tenant;
 import Utils.database.DBContext;
 import Utils.mail.MailUtil;
 
+/**
+ * Description
+ *
+ * @author Duong Thien Nhan - CE190741
+ * @since 2026-02-10
+ */
 public class ContractService {
 
     private final TenantDAO tenantDAO = new TenantDAO();

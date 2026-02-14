@@ -6,12 +6,14 @@ import java.util.List;
 import DALs.contract.ContractDAO;
 import Models.dto.ManagerContractRowDTO;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("/manager/contracts")
+/**
+ *
+ * @author Duong Thien Nhan - CE190741
+ */
 public class ManagerContractsController extends HttpServlet {
 
     private final ContractDAO contractDAO = new ContractDAO();

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
-    version="5.0">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
@@ -12,8 +12,8 @@
     <context-param>
         <param-name>contact_props_path</param-name>
         <param-value>
-        C:/Users/LENOVO/OneDrive/Desktop/Ky-5/SWP391/LandHouseManagement/renthouse-config/contact.properties
-    </param-value>
+            C:/Users/LENOVO/OneDrive/Desktop/Ky-5/SWP391/LandHouseManagement/renthouse-config/contact.properties
+        </param-value>
     </context-param>
 
 
@@ -62,4 +62,84 @@
         <url-pattern>/manager/home</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ContactController</servlet-name>
+        <servlet-class>Controllers.guest.ContactController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ContactController</servlet-name>
+        <url-pattern>/contact</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>CreateContractController</servlet-name>
+        <servlet-class>Controllers.manager.CreateContractController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CreateContractController</servlet-name>
+        <url-pattern>/manager/contracts/create</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ManagerConfirmContractController</servlet-name>
+        <servlet-class>Controllers.manager.ManagerConfirmContractController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManagerConfirmContractController</servlet-name>
+        <url-pattern>/manager/contracts/confirm</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ManagerContractDetailController</servlet-name>
+        <servlet-class>Controllers.manager.ManagerContractDetailController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManagerContractDetailController</servlet-name>
+        <url-pattern>/manager/contracts/detail</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>ManagerContractsController</servlet-name>
+        <servlet-class>Controllers.manager.ManagerContractsController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ManagerContractsController</servlet-name>
+        <url-pattern>/manager/contracts</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>SetPasswordController</servlet-name>
+        <servlet-class>Controllers.tenant.SetPasswordController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SetPasswordController</servlet-name>
+        <url-pattern>/tenant/set-password</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>TenantConfirmTransferController</servlet-name>
+        <servlet-class>Controllers.tenant.TenantConfirmTransferController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TenantConfirmTransferController</servlet-name>
+        <url-pattern>/tenant/contract/confirm-transfer</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>TenantContractController</servlet-name>
+        <servlet-class>Controllers.tenant.TenantContractController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TenantContractController</servlet-name>
+        <url-pattern>/tenant/contract</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>TenantContractDetailController</servlet-name>
+        <servlet-class>Controllers.tenant.TenantContractDetailController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TenantContractDetailController</servlet-name>
+        <url-pattern>/tenant/contract/detail</url-pattern>
+    </servlet-mapping>
 </web-app>
