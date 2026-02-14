@@ -2,28 +2,18 @@
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<layout:layout title="Create Contract"
-               active="m_contracts">
+<layout:layout title="Create Contract" active="m_contracts">
 
     <div class="container mt-4" style="max-width:800px">
-
         <h3>Create New Contract</h3>
 
-        <!-- ✅ ERROR / SUCCESS UI -->
         <c:if test="${not empty param.error}">
             <div class="alert alert-danger" style="margin-top:12px;">
                 ${param.error}
             </div>
         </c:if>
 
-        <c:if test="${not empty param.success}">
-            <div class="alert alert-success" style="margin-top:12px;">
-                ${param.success}
-            </div>
-        </c:if>
-
-        <form method="post"
-              action="${pageContext.request.contextPath}/manager/contracts/create">
+        <form method="post" action="${pageContext.request.contextPath}/manager/contracts/create">
 
             <!-- Room -->
             <div class="mb-3">
@@ -39,10 +29,15 @@
 
             <hr/>
 
-            <!-- Tenant info -->
+            <!-- Tenant info (ALL REQUIRED) -->
             <div class="mb-3">
                 <label class="form-label">Tenant Name</label>
                 <input type="text" name="tenantName" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Citizen ID</label>
+                <input type="text" name="identityCode" class="form-control" required>
             </div>
 
             <div class="mb-3">
@@ -55,16 +50,36 @@
                 <input type="text" name="phone" class="form-control" required>
             </div>
 
-            <hr/>
+            <div class="mb-3">
+                <label class="form-label">Address</label>
+                <input type="text" name="address" class="form-control" required>
+            </div>
 
             <div class="mb-3">
+                <label class="form-label">Date of Birth</label>
+                <input type="date" name="dob" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Gender</label>
+                <select name="gender" class="form-control" required>
+                    <option value="">-- Select --</option>
+                    <option value="0">Female</option>
+                    <option value="1">Male</option>
+                </select>
+            </div>
+
+            <hr/>
+
+            <!-- Contract (ALL REQUIRED) -->
+            <div class="mb-3">
                 <label class="form-label">Monthly Rent</label>
-                <input type="number" name="rent" class="form-control" required>
+                <input type="number" name="rent" class="form-control" required min="0">
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Deposit</label>
-                <input type="number" name="deposit" class="form-control" required>
+                <input type="number" name="deposit" class="form-control" required min="0">
             </div>
 
             <div class="mb-3">
@@ -78,7 +93,6 @@
             </div>
 
             <button class="btn btn-dark">Create Contract & Send OTP</button>
-
         </form>
     </div>
 
