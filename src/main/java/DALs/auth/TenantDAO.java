@@ -1,8 +1,10 @@
 package DALs.auth;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import Models.entity.Tenant;
 import Utils.database.DBContext;
@@ -99,4 +101,68 @@ public class TenantDAO extends DBContext {
         }
         return null;
     }
+
+    // add tenant pending
+    public int insertPendingTenant(Connection conn, Tenant t) throws SQLException {
+
+        String sql = """
+        INSERT INTO TENANT (
+            full_name, identity_code, phone_number, email, [address], date_of_birth, gender, avatar,
+            account_status, password_hash, must_set_password
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'PENDING', NULL, 1)
+    """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, t.getFullName());
+            ps.setString(2, t.getIdentityCode());
+            ps.setString(3, t.getPhoneNumber());
+            ps.setString(4, t.getEmail());
+            ps.setString(5, t.getAddress());
+            ps.setDate(6, t.getDateOfBirth());
+            ps.setInt(7, t.getGender());
+            ps.setString(8, t.getAvatar());
+
+            ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return -1;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean updatePasswordForTenant(int tenantId, String newHash) {
+        String sql = """
+        UPDATE TENANT
+        SET password_hash = ?, must_set_password = 0, updated_at = SYSDATETIME()
+        WHERE tenant_id = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newHash);
+            ps.setInt(2, tenantId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean updateAccountStatus(int tenantId, String status) {
+        String sql = "UPDATE TENANT SET account_status = ?, updated_at = SYSDATETIME() WHERE tenant_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, tenantId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

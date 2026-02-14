@@ -177,4 +177,47 @@ WHERE   ROOM.room_id = ?
             return null;
         }
     }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public List<Room> findAvailableRooms() {
+        List<Room> list = new ArrayList<>();
+
+        String sql = """
+        SELECT room_id, room_number, price
+        FROM ROOM
+        WHERE status = 'AVAILABLE'
+        ORDER BY room_number
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Room r = new Room();
+                r.setRoomId(rs.getInt("room_id"));
+                r.setRoomNumber(rs.getString("room_number"));
+                r.setPrice(rs.getBigDecimal("price"));
+                list.add(r);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean updateStatus(int roomId, String status) {
+        String sql = "UPDATE ROOM SET status = ? WHERE room_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, roomId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

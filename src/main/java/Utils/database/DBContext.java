@@ -29,4 +29,8 @@ public class DBContext {
         }
     }
 
+    public Connection getConnection() {
+        return this.connection;
+    }
+
 }

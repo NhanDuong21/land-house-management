@@ -1,14 +1,14 @@
+package Controllers.test;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package Controllers.guest;
-
 import java.io.IOException;
 
-import Models.common.ContactInfo;
-import Utils.config.ContactConfigUtil;
+import Services.auth.OtpService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,17 +17,20 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Duong Thien Nhan - CE190741
  */
-public class ContactController extends HttpServlet {
+@WebServlet(urlPatterns = {"/test/send-otp"})
+public class TestOtpController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String path = getServletContext().getInitParameter("contact_props_path");
+        int tenantId = Integer.parseInt(request.getParameter("tenantId"));
+        String email = request.getParameter("email");
 
-        ContactInfo info = ContactConfigUtil.load(path);
-        request.setAttribute("contact", info);
+        OtpService s = new OtpService();
+        boolean ok = s.sendFirstLoginOtp(tenantId, email);
 
-        request.getRequestDispatcher("/views/common/contact.jsp").forward(request, response);   
+        response.setContentType("text/plain; charset=UTF-8");
+        response.getWriter().println(ok ? "SEND OTP OK" : "SEND OTP FAIL");
     }
 }
