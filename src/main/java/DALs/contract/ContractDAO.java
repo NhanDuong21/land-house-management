@@ -278,6 +278,105 @@ FROM     CONTRACT INNER JOIN
     }
 
     @SuppressWarnings("CallToPrintStackTrace")
+    public Contract findDetailForManager(int contractId) {
+
+        String sql = """
+        SELECT
+            c.contract_id, c.room_id, c.tenant_id, c.created_by_staff_id,
+            c.start_date, c.end_date, c.monthly_rent, c.deposit,
+            c.payment_qr_data, c.status, c.created_at, c.updated_at,
+
+            r.room_number, r.floor, r.area, r.max_tenants,
+            r.is_mezzanine, r.has_air_conditioning, r.[description] AS room_description,
+            b.block_name,
+
+            t.full_name AS tenant_name,
+            t.email AS tenant_email,
+            t.phone_number AS tenant_phone,
+            t.identity_code AS tenant_identity,
+            t.date_of_birth AS tenant_dob,
+            t.[address] AS tenant_address,
+
+            a.full_name AS landlord_name,
+            a.phone_number AS landlord_phone,
+            a.email AS landlord_email,
+            a.identity_code AS landlord_identity,
+            a.date_of_birth AS landlord_dob
+
+        FROM CONTRACT c
+        JOIN ROOM r ON c.room_id = r.room_id
+        LEFT JOIN BLOCK b ON r.block_id = b.block_id
+        JOIN TENANT t ON c.tenant_id = t.tenant_id
+        JOIN STAFF cb ON c.created_by_staff_id = cb.staff_id
+
+        CROSS APPLY (
+            SELECT TOP 1 *
+            FROM STAFF
+            WHERE staff_role = 'ADMIN' AND [status] = 'ACTIVE'
+            ORDER BY staff_id ASC
+        ) a
+
+        WHERE c.contract_id = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, contractId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+
+                Contract c = new Contract();
+
+                // contract
+                c.setContractId(rs.getInt("contract_id"));
+                c.setRoomId(rs.getInt("room_id"));
+                c.setTenantId(rs.getInt("tenant_id"));
+                c.setCreatedByStaffId(rs.getInt("created_by_staff_id"));
+                c.setStartDate(rs.getDate("start_date"));
+                c.setEndDate(rs.getDate("end_date"));
+                c.setMonthlyRent(rs.getBigDecimal("monthly_rent"));
+                c.setDeposit(rs.getBigDecimal("deposit"));
+                c.setPaymentQrData(rs.getString("payment_qr_data"));
+                c.setStatus(rs.getString("status"));
+                c.setCreatedAt(rs.getTimestamp("created_at"));
+                c.setUpdatedAt(rs.getTimestamp("updated_at"));
+
+                // room & block
+                c.setRoomNumber(rs.getString("room_number"));
+                c.setBlockName(rs.getString("block_name"));
+                c.setFloor((Integer) rs.getObject("floor"));
+                c.setArea(rs.getBigDecimal("area"));
+                c.setMaxTenants((Integer) rs.getObject("max_tenants"));
+                c.setIsMezzanine((Boolean) rs.getObject("is_mezzanine"));
+                c.setHasAirConditioning((Boolean) rs.getObject("has_air_conditioning"));
+                c.setRoomDescription(rs.getString("room_description"));
+
+                // tenant (party B)
+                c.setTenantName(rs.getString("tenant_name"));
+                c.setTenantEmail(rs.getString("tenant_email"));
+                c.setTenantPhoneNumber(rs.getString("tenant_phone"));
+                c.setTenantIdentityCode(rs.getString("tenant_identity"));
+                c.setTenantDateOfBirth(rs.getDate("tenant_dob"));
+                c.setTenantAddress(rs.getString("tenant_address"));
+
+                // landlord/admin (party A)
+                c.setLandlordFullName(rs.getString("landlord_name"));
+                c.setLandlordPhoneNumber(rs.getString("landlord_phone"));
+                c.setLandlordEmail(rs.getString("landlord_email"));
+                c.setLandlordIdentityCode(rs.getString("landlord_identity"));
+                c.setLandlordDateOfBirth(rs.getDate("landlord_dob"));
+
+                return c;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
     public boolean updateStatus(int contractId, String status) {
         String sql = "UPDATE CONTRACT SET status = ?, updated_at = SYSDATETIME() WHERE contract_id = ?";
 
