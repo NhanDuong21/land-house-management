@@ -1,5 +1,5 @@
 <%-- 
-    Document   : home page
+    Document   : home page ( updated pagination )
     Created on : 02/06/2026, 6:22:57 AM
     Author     : Duong Thien Nhan - CE190741
 --%>
@@ -35,7 +35,8 @@
             <div class="home-count">
                 <c:choose>
                     <c:when test="${empty rooms}">0 rooms</c:when>
-                    <c:otherwise>${rooms.size()} rooms</c:otherwise>
+                    <c:otherwise>${totalItems} rooms</c:otherwise>
+
                 </c:choose>
             </div>
 
@@ -110,6 +111,91 @@
                     </div>
                 </c:forEach>
             </div>
+            <!-- PAGINATION (SMART) -->
+            <c:if test="${totalPages > 1}">
+                <c:url value="/home" var="baseUrl">
+                    <c:param name="minPrice" value="${param.minPrice}" />
+                    <c:param name="maxPrice" value="${param.maxPrice}" />
+                    <c:param name="minArea" value="${param.minArea}" />
+                    <c:param name="maxArea" value="${param.maxArea}" />
+                    <c:param name="hasAC" value="${param.hasAC}" />
+                    <c:param name="hasMezzanine" value="${param.hasMezzanine}" />
+                </c:url>
+
+                <%-- config: số nút ở giữa (xung quanh current) --%>
+                <c:set var="window" value="2" />
+                <c:set var="start" value="${page - window}" />
+                <c:set var="end" value="${page + window}" />
+
+                <%-- clamp start/end --%>
+                <c:if test="${start < 2}">
+                    <c:set var="start" value="2" />
+                </c:if>
+                <c:if test="${end > totalPages - 1}">
+                    <c:set var="end" value="${totalPages - 1}" />
+                </c:if>
+
+                <div class="pagination">
+
+                    <%-- Prev --%>
+                    <c:if test="${page > 1}">
+                        <a href="${baseUrl}&page=${page-1}">Prev</a>
+                    </c:if>
+
+                    <%-- First page always --%>
+                    <c:choose>
+                        <c:when test="${page == 1}">
+                            <span class="active">1</span>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${baseUrl}&page=1">1</a>
+                        </c:otherwise>
+                    </c:choose>
+
+                    <%-- Left ellipsis if gap --%>
+                    <c:if test="${start > 2}">
+                        <span class="dots">…</span>
+                    </c:if>
+
+                    <%-- Middle window pages --%>
+                    <c:forEach begin="${start}" end="${end}" var="i">
+                        <c:if test="${i >= 2 && i <= totalPages-1}">
+                            <c:choose>
+                                <c:when test="${i == page}">
+                                    <span class="active">${i}</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <a href="${baseUrl}&page=${i}">${i}</a>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:if>
+                    </c:forEach>
+
+                    <%-- Right ellipsis if gap --%>
+                    <c:if test="${end < totalPages - 1}">
+                        <span class="dots">…</span>
+                    </c:if>
+
+                    <%-- Last page (if >1) --%>
+                    <c:if test="${totalPages > 1}">
+                        <c:choose>
+                            <c:when test="${page == totalPages}">
+                                <span class="active">${totalPages}</span>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="${baseUrl}&page=${totalPages}">${totalPages}</a>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:if>
+
+                    <%-- Next --%>
+                    <c:if test="${page < totalPages}">
+                        <a href="${baseUrl}&page=${page+1}">Next</a>
+                    </c:if>
+                </div>
+            </c:if>
+
+
         </c:otherwise>
     </c:choose>
 

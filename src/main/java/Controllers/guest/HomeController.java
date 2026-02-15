@@ -1,9 +1,9 @@
 package Controllers.guest;
 
 import java.io.IOException;
-import java.util.List;
 
 import Models.authentication.AuthResult;
+import Models.dto.PageResult;
 import Models.entity.Room;
 import Services.guest.RoomGuestService;
 import Services.staff.RoomStaffService;
@@ -34,6 +34,17 @@ public class HomeController extends HttpServlet {
         String hasAC = request.getParameter("hasAC");
         String hasMezzanine = request.getParameter("hasMezzanine");
 
+        // lấy page
+        int page = 1;
+        int pageSize = 12; // chỉnh theo UI: 9/12/15...
+        try {
+            String p = request.getParameter("page");
+            if (p != null) {
+                page = Integer.parseInt(p);
+            }
+        } catch (NumberFormatException ignored) {
+        }
+
         // lấy role từ session
         HttpSession session = request.getSession(false);
         String role = null;
@@ -50,14 +61,18 @@ public class HomeController extends HttpServlet {
 
         boolean isStaff = role != null && (role.equalsIgnoreCase("ADMIN") || role.equalsIgnoreCase("MANAGER"));
 
-        List<Room> listRooms;
+        // phân trang
+        PageResult<Room> result;
         if (isStaff) {
-            listRooms = staffService.searchForStaff(minPrice, maxPrice, minArea, maxArea, hasAC, hasMezzanine);
+            result = staffService.searchForStaffPaged(minPrice, maxPrice, minArea, maxArea, hasAC, hasMezzanine, page, pageSize);
         } else {
-            listRooms = guestService.searchAvailable(minPrice, maxPrice, minArea, maxArea, hasAC, hasMezzanine);
+            result = guestService.searchAvailablePaged(minPrice, maxPrice, minArea, maxArea, hasAC, hasMezzanine, page, pageSize);
         }
 
-        request.setAttribute("rooms", listRooms);
+        request.setAttribute("rooms", result.getItems());
+        request.setAttribute("page", result.getPage());
+        request.setAttribute("totalPages", result.getTotalPages());
+        request.setAttribute("totalItems", result.getTotalItems());
 
         // giữ lại filter
         request.setAttribute("minPrice", minPrice);

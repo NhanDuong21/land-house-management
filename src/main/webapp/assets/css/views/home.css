@@ -361,3 +361,27 @@
   font-weight: 900;
   cursor: pointer;
 }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+
+.pagination a,
+.pagination span {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.pagination span.active {
+  font-weight: 700;
+}
+.pagination .dots {
+  padding: 8px 10px;
+  border: 1px solid transparent;
+}

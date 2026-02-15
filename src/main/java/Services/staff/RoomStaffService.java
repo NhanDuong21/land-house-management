@@ -5,6 +5,7 @@ import java.util.List;
 
 import DALs.room.RoomDAO;
 import DALs.room.RoomImageDAO;
+import Models.dto.PageResult;
 import Models.dto.RoomFilterDTO;
 import Models.entity.Room;
 
@@ -30,6 +31,41 @@ public class RoomStaffService {
         f.setHasAirConditioning(parseTriState(hasAC));  // any/yes/no -> null/true/false
         f.setHasMezzanine(parseTriState(hasMezzanine));
         return rdao.searchAll(f);
+    }
+
+    public PageResult<Room> searchForStaffPaged(String minPrice, String maxPrice, String minArea, String maxArea,
+            String hasAC, String hasMezzanine, int page, int pageSize) {
+
+        RoomFilterDTO f = new RoomFilterDTO();
+        f.setMinPrice(parseDecimal(minPrice));
+        f.setMaxPrice(parseDecimal(maxPrice));
+        f.setMinArea(parseDecimal(minArea));
+        f.setMaxArea(parseDecimal(maxArea));
+        f.setHasAirConditioning(parseTriState(hasAC));
+        f.setHasMezzanine(parseTriState(hasMezzanine));
+
+        int totalItems = rdao.countAll(f);
+        int totalPages = (int) Math.ceil(totalItems * 1.0 / pageSize);
+
+        if (totalPages < 1) {
+            totalPages = 1;
+        }
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > totalPages) {
+            page = totalPages;
+        }
+
+        List<Room> rooms = rdao.searchAllPaged(f, page, pageSize);
+
+        PageResult<Room> pr = new PageResult<>();
+        pr.setItems(rooms);
+        pr.setPage(page);
+        pr.setPageSize(pageSize);
+        pr.setTotalItems(totalItems);
+        pr.setTotalPages(totalPages);
+        return pr;
     }
 
     private BigDecimal parseDecimal(String s) {
