@@ -82,6 +82,125 @@ FROM     CONTRACT INNER JOIN
         return list;
     }
 
+    //nếu m có 100 hợp đồng và mỗi trang hiển thị 10 cái, 
+    //m cần con số 100 này để vẽ ra các nút chuyển trang 1, 2, 3, ..., 10 trên UI. 
+    //nếu không m sẽ không biết khi nào thì hết dữ liệu để dừng phân trang.
+    @SuppressWarnings("CallToPrintStackTrace")
+    public int countManagerContracts(String keyword, String status) {
+        String sql = """
+        SELECT COUNT(*)
+        FROM CONTRACT c
+        JOIN ROOM r ON c.room_id = r.room_id
+        JOIN TENANT t ON c.tenant_id = t.tenant_id
+        WHERE 1=1
+          AND (
+                ? IS NULL OR ? = '' OR
+                CAST(c.contract_id AS NVARCHAR(20)) LIKE '%' + ? + '%' OR
+                r.room_number LIKE '%' + ? + '%' OR
+                t.full_name LIKE '%' + ? + '%'
+              )
+          AND (
+                ? IS NULL OR ? = '' OR
+                c.status = ?
+              )
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String k = (keyword == null) ? "" : keyword.trim();
+            String s = (status == null) ? "" : status.trim();
+
+            int i = 1;
+            ps.setString(i++, k);
+            ps.setString(i++, k);
+            ps.setString(i++, k);
+            ps.setString(i++, k);
+            ps.setString(i++, k);
+
+            ps.setString(i++, s);
+            ps.setString(i++, s);
+            ps.setString(i++, s);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public List<ManagerContractRowDTO> findManagerContracts(String keyword, String status, int page, int pageSize) {
+        List<ManagerContractRowDTO> list = new ArrayList<>();
+
+        if (page <= 0) {
+            page = 1;
+        }
+        if (pageSize <= 0) {
+            pageSize = 10;
+        }
+        int offset = (page - 1) * pageSize;
+
+        String sql = """
+        SELECT c.contract_id, r.room_number, t.full_name as tenant_name,
+               c.start_date, c.monthly_rent, c.status
+        FROM CONTRACT c
+        JOIN ROOM r ON c.room_id = r.room_id
+        JOIN TENANT t ON c.tenant_id = t.tenant_id
+        WHERE 1=1
+          AND (
+                ? IS NULL OR ? = '' OR
+                CAST(c.contract_id AS NVARCHAR(20)) LIKE '%' + ? + '%' OR
+                r.room_number LIKE '%' + ? + '%' OR
+                t.full_name LIKE '%' + ? + '%'
+              )
+          AND (
+                ? IS NULL OR ? = '' OR
+                c.status = ?
+              )
+        ORDER BY c.created_at DESC
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            String k = (keyword == null) ? "" : keyword.trim();
+            String s = (status == null) ? "" : status.trim();
+
+            int i = 1;
+            ps.setString(i++, k);
+            ps.setString(i++, k);
+            ps.setString(i++, k);
+            ps.setString(i++, k);
+            ps.setString(i++, k);
+
+            ps.setString(i++, s);
+            ps.setString(i++, s);
+            ps.setString(i++, s);
+
+            ps.setInt(i++, offset);
+            ps.setInt(i++, pageSize);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ManagerContractRowDTO dto = new ManagerContractRowDTO();
+                    dto.setContractId(rs.getInt("contract_id"));
+                    dto.setRoomNumber(rs.getString("room_number"));
+                    dto.setTenantName(rs.getString("tenant_name"));
+                    dto.setStartDate(rs.getDate("start_date"));
+                    dto.setMonthlyRent(rs.getBigDecimal("monthly_rent"));
+                    dto.setStatus(rs.getString("status"));
+                    list.add(dto);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
     //get list contract theo tenantId
     //sort theo status, pending gan 0,active gan 1, uu tien pending len dau
     @SuppressWarnings("CallToPrintStackTrace")
