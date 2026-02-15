@@ -19,6 +19,7 @@ import Utils.database.DBContext;
 public class RoomDAO extends DBContext {
 
     //view available
+    @Deprecated
     @SuppressWarnings("CallToPrintStackTrace")
     public List<Room> searchAvailable(RoomFilterDTO filterDTO) {
         List<Room> list = new ArrayList<>();
@@ -79,7 +80,127 @@ public class RoomDAO extends DBContext {
         return list;
     }
 
+    //PAGINATION - GUEST - TENANT
+    @SuppressWarnings("CallToPrintStackTrace")
+    public List<Room> searchAvailablePaged(RoomFilterDTO filterDTO, int page, int pageSize) {
+        List<Room> list = new ArrayList<>();
+
+        String sql = """
+        SELECT r.room_id, r.block_id, r.room_number, r.area, r.price, r.status, 
+               r.floor, r.max_tenants, r.is_mezzanine, r.description, 
+               r.has_air_conditioning, img.image_url AS cover_image
+        FROM ROOM r
+        INNER JOIN BLOCK b ON b.block_id = r.block_id
+        LEFT JOIN ROOM_IMAGE img ON img.room_id = r.room_id AND img.is_cover = 1
+        WHERE r.status = 'AVAILABLE'
+          AND (? IS NULL OR r.price >= ?)
+          AND (? IS NULL OR r.price <= ?)
+          AND (? IS NULL OR r.area  >= ?)
+          AND (? IS NULL OR r.area  <= ?)
+          AND (? IS NULL OR r.has_air_conditioning = ?)
+          AND (? IS NULL OR r.is_mezzanine = ?)
+        ORDER BY b.block_name, r.room_number
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            int i = 1;
+
+            ps.setBigDecimal(i++, filterDTO.getMinPrice());
+            ps.setBigDecimal(i++, filterDTO.getMinPrice());
+            ps.setBigDecimal(i++, filterDTO.getMaxPrice());
+            ps.setBigDecimal(i++, filterDTO.getMaxPrice());
+            ps.setBigDecimal(i++, filterDTO.getMinArea());
+            ps.setBigDecimal(i++, filterDTO.getMinArea());
+            ps.setBigDecimal(i++, filterDTO.getMaxArea());
+            ps.setBigDecimal(i++, filterDTO.getMaxArea());
+            ps.setObject(i++, filterDTO.getHasAirConditioning());
+            ps.setObject(i++, filterDTO.getHasAirConditioning());
+            ps.setObject(i++, filterDTO.getHasMezzanine());
+            ps.setObject(i++, filterDTO.getHasMezzanine());
+
+            int offset = (page - 1) * pageSize;
+            ps.setInt(i++, offset);
+            ps.setInt(i++, pageSize);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Room r = new Room();
+                    r.setRoomId(rs.getInt("room_id"));
+                    r.setBlockId(rs.getInt("block_id"));
+                    r.setRoomNumber(rs.getString("room_number"));
+                    r.setArea(rs.getBigDecimal("area"));
+                    r.setPrice(rs.getBigDecimal("price"));
+                    r.setStatus(rs.getString("status"));
+                    r.setFloor((Integer) rs.getObject("floor"));
+                    r.setMaxTenants((Integer) rs.getObject("max_tenants"));
+                    r.setAirConditioning(rs.getBoolean("has_air_conditioning"));
+                    r.setMezzanine(rs.getBoolean("is_mezzanine"));
+                    r.setRoomImage(rs.getString("cover_image"));
+                    r.setDescription(rs.getString("description"));
+                    list.add(r);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    //method đếm tổng số lượng phòng đang ở status 
+    //AVAILABLE dựa trên các điều kiện lọc (filter) 
+    @SuppressWarnings("CallToPrintStackTrace")
+    public int countAvailable(RoomFilterDTO filterDTO) {
+
+        String sql = """
+        SELECT COUNT(DISTINCT r.room_id) AS total
+        FROM ROOM r
+        INNER JOIN BLOCK b ON b.block_id = r.block_id
+        LEFT JOIN ROOM_IMAGE img ON img.room_id = r.room_id AND img.is_cover = 1
+        WHERE r.status = 'AVAILABLE'
+          AND (? IS NULL OR r.price >= ?)
+          AND (? IS NULL OR r.price <= ?)
+          AND (? IS NULL OR r.area  >= ?)
+          AND (? IS NULL OR r.area  <= ?)
+          AND (? IS NULL OR r.has_air_conditioning = ?)
+          AND (? IS NULL OR r.is_mezzanine = ?)
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            int i = 1;
+
+            ps.setBigDecimal(i++, filterDTO.getMinPrice());
+            ps.setBigDecimal(i++, filterDTO.getMinPrice());
+            ps.setBigDecimal(i++, filterDTO.getMaxPrice());
+            ps.setBigDecimal(i++, filterDTO.getMaxPrice());
+            ps.setBigDecimal(i++, filterDTO.getMinArea());
+            ps.setBigDecimal(i++, filterDTO.getMinArea());
+            ps.setBigDecimal(i++, filterDTO.getMaxArea());
+            ps.setBigDecimal(i++, filterDTO.getMaxArea());
+            ps.setObject(i++, filterDTO.getHasAirConditioning());
+            ps.setObject(i++, filterDTO.getHasAirConditioning());
+            ps.setObject(i++, filterDTO.getHasMezzanine());
+            ps.setObject(i++, filterDTO.getHasMezzanine());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
     //display full room ( ko phan biet room status )
+    @Deprecated
     @SuppressWarnings("CallToPrintStackTrace")
     public List<Room> searchAll(RoomFilterDTO filterDTO) {
         List<Room> list = new ArrayList<>();
@@ -135,6 +256,123 @@ public class RoomDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+    //PAGINATION - STAFF
+    @SuppressWarnings("CallToPrintStackTrace")
+    public List<Room> searchAllPaged(RoomFilterDTO filterDTO, int page, int pageSize) {
+        List<Room> list = new ArrayList<>();
+
+        String sql = """
+        SELECT r.room_id, r.block_id, r.room_number, r.area, r.price, r.status, 
+               r.floor, r.max_tenants, r.is_mezzanine, r.description, 
+               r.has_air_conditioning, img.image_url AS cover_image
+        FROM ROOM r
+        INNER JOIN BLOCK b ON b.block_id = r.block_id
+        LEFT JOIN ROOM_IMAGE img ON img.room_id = r.room_id AND img.is_cover = 1
+        WHERE 1=1
+          AND (? IS NULL OR r.price >= ?)
+          AND (? IS NULL OR r.price <= ?)
+          AND (? IS NULL OR r.area  >= ?)
+          AND (? IS NULL OR r.area  <= ?)
+          AND (? IS NULL OR r.has_air_conditioning = ?)
+          AND (? IS NULL OR r.is_mezzanine = ?)
+        ORDER BY b.block_name, r.room_number
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            int i = 1;
+
+            ps.setBigDecimal(i++, filterDTO.getMinPrice());
+            ps.setBigDecimal(i++, filterDTO.getMinPrice());
+            ps.setBigDecimal(i++, filterDTO.getMaxPrice());
+            ps.setBigDecimal(i++, filterDTO.getMaxPrice());
+            ps.setBigDecimal(i++, filterDTO.getMinArea());
+            ps.setBigDecimal(i++, filterDTO.getMinArea());
+            ps.setBigDecimal(i++, filterDTO.getMaxArea());
+            ps.setBigDecimal(i++, filterDTO.getMaxArea());
+            ps.setObject(i++, filterDTO.getHasAirConditioning());
+            ps.setObject(i++, filterDTO.getHasAirConditioning());
+            ps.setObject(i++, filterDTO.getHasMezzanine());
+            ps.setObject(i++, filterDTO.getHasMezzanine());
+
+            int offset = (page - 1) * pageSize;
+            ps.setInt(i++, offset);
+            ps.setInt(i++, pageSize);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Room r = new Room();
+                    r.setRoomId(rs.getInt("room_id"));
+                    r.setBlockId(rs.getInt("block_id"));
+                    r.setRoomNumber(rs.getString("room_number"));
+                    r.setArea(rs.getBigDecimal("area"));
+                    r.setPrice(rs.getBigDecimal("price"));
+                    r.setStatus(rs.getString("status"));
+                    r.setFloor((Integer) rs.getObject("floor"));
+                    r.setMaxTenants((Integer) rs.getObject("max_tenants"));
+                    r.setAirConditioning(rs.getBoolean("has_air_conditioning"));
+                    r.setMezzanine(rs.getBoolean("is_mezzanine"));
+                    r.setRoomImage(rs.getString("cover_image"));
+                    r.setDescription(rs.getString("description"));
+                    list.add(r);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public int countAll(RoomFilterDTO filterDTO) {
+
+        String sql = """
+        SELECT COUNT(DISTINCT r.room_id) AS total
+        FROM ROOM r
+        INNER JOIN BLOCK b ON b.block_id = r.block_id
+        LEFT JOIN ROOM_IMAGE img ON img.room_id = r.room_id AND img.is_cover = 1
+        WHERE 1=1
+          AND (? IS NULL OR r.price >= ?)
+          AND (? IS NULL OR r.price <= ?)
+          AND (? IS NULL OR r.area  >= ?)
+          AND (? IS NULL OR r.area  <= ?)
+          AND (? IS NULL OR r.has_air_conditioning = ?)
+          AND (? IS NULL OR r.is_mezzanine = ?)
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            int i = 1;
+
+            ps.setBigDecimal(i++, filterDTO.getMinPrice());
+            ps.setBigDecimal(i++, filterDTO.getMinPrice());
+            ps.setBigDecimal(i++, filterDTO.getMaxPrice());
+            ps.setBigDecimal(i++, filterDTO.getMaxPrice());
+            ps.setBigDecimal(i++, filterDTO.getMinArea());
+            ps.setBigDecimal(i++, filterDTO.getMinArea());
+            ps.setBigDecimal(i++, filterDTO.getMaxArea());
+            ps.setBigDecimal(i++, filterDTO.getMaxArea());
+            ps.setObject(i++, filterDTO.getHasAirConditioning());
+            ps.setObject(i++, filterDTO.getHasAirConditioning());
+            ps.setObject(i++, filterDTO.getHasMezzanine());
+            ps.setObject(i++, filterDTO.getHasMezzanine());
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 
     //display cover image trong detail
