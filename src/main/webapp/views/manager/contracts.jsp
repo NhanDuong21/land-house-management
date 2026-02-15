@@ -46,100 +46,58 @@
             </div>
         </c:if>
 
-
+        <!-- SEARCH BAR (giữ form nhưng JS sẽ chặn submit) -->
         <div class="mc-search-card">
-            <div class="mc-search">
+            <form id="mcSearchForm" class="mc-search" method="get"
+                  action="${pageContext.request.contextPath}/manager/contracts"
+                  style="display:flex; align-items:center; gap:10px;">
+
                 <span class="mc-search-icon">🔍</span>
-                <input class="mc-search-input" type="text"
-                       placeholder="Search by contract ID, room number, or tenant name..."
-                       onkeydown="return false;">
-            </div>
+
+                <input id="mcQ" class="mc-search-input" type="text" name="q"
+                       value="${q}"
+                       placeholder="Search by contract ID, room number, or tenant name...">
+
+                <select id="mcStatus" name="status" class="mc-search-input" style="max-width:180px;">
+                    <option value="" ${empty status ? "selected" : ""}>All Status</option>
+                    <option value="PENDING"   ${status eq 'PENDING' ? "selected" : ""}>PENDING</option>
+                    <option value="ACTIVE"    ${status eq 'ACTIVE' ? "selected" : ""}>ACTIVE</option>
+                    <option value="ENDED"     ${status eq 'ENDED' ? "selected" : ""}>ENDED</option>
+                    <option value="CANCELLED" ${status eq 'CANCELLED' ? "selected" : ""}>CANCELLED</option>
+                </select>
+
+                <select id="mcPageSize" name="pageSize" class="mc-search-input" style="max-width:120px;">
+                    <option value="5"  ${pageSize == 5 ? "selected" : ""}>5 / page</option>
+                    <option value="10" ${pageSize == 10 ? "selected" : ""}>10 / page</option>
+                    <option value="20" ${pageSize == 20 ? "selected" : ""}>20 / page</option>
+                    <option value="50" ${pageSize == 50 ? "selected" : ""}>50 / page</option>
+                </select>
+
+                <!-- nút Search bạn có thể giữ hoặc xóa -->
+                <button type="submit" class="mc-add-btn" style="padding:10px 14px;">
+                    Search
+                </button>
+
+                <c:if test="${not empty q || not empty status}">
+                    <a href="${pageContext.request.contextPath}/manager/contracts"
+                       class="mc-add-btn"
+                       style="padding:10px 14px; background:#e2e8f0; color:#0f172a;">
+                        Clear
+                    </a>
+                </c:if>
+            </form>
         </div>
 
-        <div class="mc-card">
-            <div class="mc-card-title">
-                All Contracts (<c:out value="${empty contracts ? 0 : contracts.size()}"/>)
-            </div>
-
-            <div class="mc-table-wrap">
-                <table class="mc-table">
-                    <thead>
-                        <tr>
-                            <th>Contract ID</th>
-                            <th>Room</th>
-                            <th>Tenant Name</th>
-                            <th>Start Date</th>
-                            <th>Monthly Rent</th>
-                            <th>Status</th>
-                            <th class="mc-th-action">Action</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <c:if test="${empty contracts}">
-                            <tr>
-                                <td colspan="7" style="padding:18px 12px;color:#64748b;font-weight:700;">
-                                    No contracts found.
-                                </td>
-                            </tr>
-                        </c:if>
-
-                        <c:forEach var="c" items="${contracts}">
-                            <tr>
-                                <td class="mc-mono">${c.displayId}</td>
-                                <td>${c.roomNumber}</td>
-                                <td>${c.tenantName}</td>
-                                <td>
-                                    <fmt:formatDate value="${c.startDate}" pattern="MMMM d, yyyy"/>
-                                </td>
-                                <td class="mc-money">
-                                    <fmt:formatNumber value="${c.monthlyRent}" type="number" groupingUsed="true"/> đ
-                                </td>
-                                <td>
-                                    <c:choose>
-                                        <c:when test="${c.status eq 'ACTIVE'}">
-                                            <span class="mc-badge active">ACTIVE</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="mc-badge pending">${c.status}</span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-
-                                <td class="mc-td-action">
-
-                                    <!-- VIEW: đi tới trang detail của manager -->
-                                    <a class="mc-view-btn"
-                                       href="${pageContext.request.contextPath}/manager/contracts/detail?id=${c.contractId}">
-                                        <span class="mc-eye">👁️</span>
-                                        <span>View</span>
-                                    </a>
-
-                                    <!-- CONFIRM: chỉ show khi PENDING -->
-                                    <c:if test="${c.status eq 'PENDING'}">
-                                        <form method="post"
-                                              action="${pageContext.request.contextPath}/manager/contracts/confirm"
-                                              style="display:inline;">
-                                            <input type="hidden" name="contractId" value="${c.contractId}"/>
-
-                                            <button type="submit"
-                                                    class="mc-view-btn"
-                                                    style="margin-left:10px;"
-                                                    onclick="return confirm('Confirm contract này? Contract->ACTIVE, Room->OCCUPIED, Tenant->ACTIVE');">
-                                                ✅ Confirm
-                                            </button>
-                                        </form>
-                                    </c:if>
-
-                                </td>
-                            </tr>
-                        </c:forEach>
-
-                    </tbody>
-                </table>
-            </div>
+        <!-- TABLE FRAGMENT WRAPPER -->
+        <div id="contractTableWrapper">
+            <jsp:include page="_contracts_table.jsp"/>
         </div>
 
     </div>
+
+    <script>
+        window.__CTX = "${pageContext.request.contextPath}";
+    </script>
+    <script src="${pageContext.request.contextPath}/assets/js/pages/managerContracts.js"></script>
 
 </layout:layout>

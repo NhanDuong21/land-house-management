@@ -22,9 +22,60 @@ public class ManagerContractsController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<ManagerContractRowDTO> list = contractDAO.getManagerContracts();
-        request.setAttribute("contracts", list);
+        String q = request.getParameter("q");
+        String status = request.getParameter("status");
 
-        request.getRequestDispatcher("/views/manager/contracts.jsp").forward(request, response);
+        int page = 1;
+        int pageSize = 10;
+
+        try {
+            page = Integer.parseInt(request.getParameter("page"));
+        } catch (NumberFormatException ignored) {
+        }
+        try {
+            pageSize = Integer.parseInt(request.getParameter("pageSize"));
+        } catch (NumberFormatException ignored) {
+        }
+
+        if (page <= 0) {
+            page = 1;
+        }
+        if (pageSize <= 0) {
+            pageSize = 10;
+        }
+        if (pageSize > 50) {
+            pageSize = 50;
+        }
+
+        int total = contractDAO.countManagerContracts(q, status);
+        int totalPages = (int) Math.ceil(total / (double) pageSize);
+        if (totalPages <= 0) {
+            totalPages = 1;
+        }
+        if (page > totalPages) {
+            page = totalPages;
+        }
+
+        List<ManagerContractRowDTO> list
+                = contractDAO.findManagerContracts(q, status, page, pageSize);
+
+        request.setAttribute("contracts", list);
+        request.setAttribute("total", total);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("page", page);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("q", q);
+        request.setAttribute("status", status);
+
+        // AJAX request: chỉ trả fragment table
+        if ("1".equals(request.getParameter("ajax"))) {
+            request.getRequestDispatcher("/views/manager/_contracts_table.jsp")
+                    .forward(request, response);
+            return;
+        }
+
+        request.getRequestDispatcher("/views/manager/contracts.jsp")
+                .forward(request, response);
     }
+
 }
