@@ -207,6 +207,19 @@ ON dbo.[CONTRACT](room_id)
 WHERE [status] IN ('PENDING','ACTIVE');
 GO
 
+DROP INDEX UX_CONTRACT_room_active ON dbo.[CONTRACT];
+GO
+
+CREATE UNIQUE INDEX UX_CONTRACT_room_only_active
+ON dbo.[CONTRACT](room_id)
+WHERE [status] = 'ACTIVE';
+GO
+
+CREATE UNIQUE INDEX UX_CONTRACT_room_only_pending
+ON dbo.[CONTRACT](room_id)
+WHERE [status] = 'PENDING';
+GO
+
 /* =========================
    8) BILL
 ========================= */
