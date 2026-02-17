@@ -61,5 +61,15 @@
         <servlet-name>ManagerHomeController</servlet-name>
         <url-pattern>/manager/home</url-pattern>
     </servlet-mapping>
+    <servlet>
+    <servlet-name>UtilityController</servlet-name>
+    <servlet-class>Controllers.manager.UtilityController</servlet-class>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>UtilityController</servlet-name>
+    <url-pattern>/manager/utilities</url-pattern>
+</servlet-mapping>
+
 
 </web-app>

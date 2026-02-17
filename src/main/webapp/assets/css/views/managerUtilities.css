@@ -1,0 +1,130 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/ClientSide/css.css to edit this template
+*/
+/* 
+    Created on : Feb 17, 2026, 11:02:29 PM
+    Author     : truon
+*/
+.rh-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.rh-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.rh-subtitle {
+    margin-top: 6px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Card */
+.rh-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.rh-card-header {
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+/* Table */
+.rh-table-wrapper {
+    overflow-x: auto;
+}
+
+.rh-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.rh-table thead {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.rh-table th {
+    text-align: left;
+    padding: 14px 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.rh-table td {
+    padding: 16px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+}
+
+.rh-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* Actions */
+.rh-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+/* Buttons */
+.rh-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.rh-btn.small {
+    padding: 5px 12px;
+    font-size: 12px;
+}
+
+/* Primary */
+.rh-btn.primary {
+    background: #2563eb;
+    color: #fff;
+}
+
+.rh-btn.primary:hover {
+    background: #1e4ed8;
+}
+
+/* Outline */
+.rh-btn.outline {
+    background: #fff;
+    border: 1px solid #d1d5db;
+    color: #374151;
+}
+
+.rh-btn.outline:hover {
+    background: #f3f4f6;
+}
+
+/* Danger */
+.rh-btn.danger {
+    background: #dc2626;
+    color: #fff;
+}
+
+.rh-btn.danger:hover {
+    background: #b91c1c;
+}
+

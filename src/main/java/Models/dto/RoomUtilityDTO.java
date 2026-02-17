@@ -6,7 +6,7 @@ package Models.dto;
 
 /**
  *
- * @author truon
+ * @author Truong Hoang Khang - CE190729
  */
 public class RoomUtilityDTO {
 
