@@ -64,7 +64,8 @@
                                         ACTIVE
                                     </span>
                                 </c:when>
-                                <c:otherwise>
+
+                                <c:when test="${c.status eq 'PENDING'}">
                                     <span style="
                                           padding:8px 12px;border-radius:999px;
                                           background:#fffbeb;color:#92400e;
@@ -72,8 +73,39 @@
                                           font-weight:900;font-size:12px;">
                                         PENDING
                                     </span>
+                                </c:when>
+
+                                <c:when test="${c.status eq 'ENDED'}">
+                                    <span style="
+                                          padding:8px 12px;border-radius:999px;
+                                          background:#f1f5f9;color:#0f172a;
+                                          border:1px solid #cbd5e1;
+                                          font-weight:900;font-size:12px;">
+                                        ENDED
+                                    </span>
+                                </c:when>
+
+                                <c:when test="${c.status eq 'CANCELLED'}">
+                                    <span style="
+                                          padding:8px 12px;border-radius:999px;
+                                          background:#fef2f2;color:#991b1b;
+                                          border:1px solid #fecaca;
+                                          font-weight:900;font-size:12px;">
+                                        CANCELLED
+                                    </span>
+                                </c:when>
+
+                                <c:otherwise>
+                                    <span style="
+                                          padding:8px 12px;border-radius:999px;
+                                          background:#e2e8f0;color:#0f172a;
+                                          border:1px solid #cbd5e1;
+                                          font-weight:900;font-size:12px;">
+                                        <c:out value="${c.status}"/>
+                                    </span>
                                 </c:otherwise>
                             </c:choose>
+
                         </div>
 
                         <hr style="margin:14px 0;opacity:0.12;"/>
