@@ -509,4 +509,59 @@ FROM     CONTRACT INNER JOIN
         return false;
     }
 
+    //update status contract to ENDED and sign time update to updated_at
+    public int expireActiveContracts(Connection conn) throws SQLException {
+        String sql = """
+        UPDATE CONTRACT
+        SET status = 'ENDED',
+            updated_at = SYSDATETIME()
+        WHERE status = 'ACTIVE'
+          AND end_date IS NOT NULL
+          AND end_date < CAST(GETDATE() AS date)
+    """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            return ps.executeUpdate();
+        }
+    }
+
+    //update room ve available 
+    public int releaseRoomsWithoutActiveContract(Connection conn) throws SQLException {
+        String sql = """
+        UPDATE ROOM
+        SET status = 'AVAILABLE'
+        WHERE status = 'OCCUPIED'
+          AND room_id IN (
+              SELECT r.room_id
+              FROM ROOM r
+              LEFT JOIN CONTRACT c
+                ON c.room_id = r.room_id
+               AND c.status = 'ACTIVE'
+              WHERE r.status = 'OCCUPIED'
+              GROUP BY r.room_id
+              HAVING COUNT(c.contract_id) = 0
+          )
+    """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            return ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Chạy job expire không throw ra ngoài để tránh làm gãy request. Gọi từ
+     * Filter (mỗi X phút).
+     */
+    @SuppressWarnings("CallToPrintStackTrace")
+    public void runExpireJobSafely() {
+        try (Connection conn = new DBContext().getConnection()) {
+            conn.setAutoCommit(false);
+
+            expireActiveContracts(conn);
+            releaseRoomsWithoutActiveContract(conn);
+
+            conn.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
