@@ -153,4 +153,14 @@
         <url-pattern>/manager/contracts/extend</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>CreateExistingContractController</servlet-name>
+        <servlet-class>Controllers.manager.CreateExistingContractController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CreateExistingContractController</servlet-name>
+        <url-pattern>/manager/contracts/create-existing</url-pattern>
+    </servlet-mapping>
+
 </web-app>
