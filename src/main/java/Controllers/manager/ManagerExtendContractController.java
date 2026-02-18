@@ -82,6 +82,7 @@ public class ManagerExtendContractController extends HttpServlet {
     }
 
     @Override
+    @SuppressWarnings({"UseSpecificCatch", "CallToPrintStackTrace"})
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 

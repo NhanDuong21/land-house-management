@@ -2,28 +2,32 @@ package Controllers.manager;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Connection;
 import java.sql.Date;
 import java.util.List;
 
 import DALs.auth.TenantDAO;
-import DALs.contract.ContractDAO;
 import DALs.room.RoomDAO;
 import Models.authentication.AuthResult;
+import Models.common.ServiceResult;
 import Models.entity.Contract;
-import Models.entity.Tenant;
 import Models.entity.Room;
+import Models.entity.Tenant;
+import Services.contract.ContractService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+/**
+ *
+ * @author Duong Thien Nhan - CE190741
+ */
 public class CreateExistingContractController extends HttpServlet {
 
     private final TenantDAO tenantDAO = new TenantDAO();
-    private final ContractDAO contractDAO = new ContractDAO();
     private final RoomDAO roomDAO = new RoomDAO();
+    private final ContractService contractService = new ContractService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -52,8 +56,7 @@ public class CreateExistingContractController extends HttpServlet {
             return;
         }
 
-        try (Connection conn = contractDAO.getConnection()) {
-
+        try {
             int tenantId = Integer.parseInt(request.getParameter("tenantId"));
             int roomId = Integer.parseInt(request.getParameter("roomId"));
 
@@ -65,19 +68,6 @@ public class CreateExistingContractController extends HttpServlet {
 
             String qr = request.getParameter("paymentQrData");
 
-            if (endDate.before(startDate)) {
-                response.sendRedirect(request.getContextPath()
-                        + "/manager/contracts/create-existing?error=End date must be after start date");
-                return;
-            }
-
-            // Check phòng có ACTIVE chưa
-            if (contractDAO.existsActiveContractForRoom(roomId)) {
-                response.sendRedirect(request.getContextPath()
-                        + "/manager/contracts/create-existing?error=Room already has ACTIVE contract");
-                return;
-            }
-
             Contract c = new Contract();
             c.setTenantId(tenantId);
             c.setRoomId(roomId);
@@ -88,20 +78,22 @@ public class CreateExistingContractController extends HttpServlet {
             c.setDeposit(deposit);
             c.setPaymentQrData(qr);
 
-            int newId = contractDAO.insertPendingContract(conn, c);
+            ServiceResult rs = contractService.createContractForExistingTenant(c, tenantId);
 
-            if (newId > 0) {
+            if (rs.isOk()) {
                 response.sendRedirect(request.getContextPath()
                         + "/manager/contracts?created=1");
             } else {
                 response.sendRedirect(request.getContextPath()
-                        + "/manager/contracts?err=1");
+                        + "/manager/contracts/create-existing?error="
+                        + java.net.URLEncoder.encode(rs.getMessage(), "UTF-8"));
             }
 
-        } catch (Exception e) {
+        } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
             response.sendRedirect(request.getContextPath()
-                    + "/manager/contracts?err=1");
+                    + "/manager/contracts/create-existing?error="
+                    + java.net.URLEncoder.encode("Lỗi dữ liệu form hoặc hệ thống.", "UTF-8"));
         }
     }
 }
