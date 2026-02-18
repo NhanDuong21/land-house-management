@@ -564,4 +564,29 @@ FROM     CONTRACT INNER JOIN
         }
     }
 
+    // check room nếu OCCUPIED ( contract đang ACTIVE) để tránh xung đột dữ liệu
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean existsActiveContractForRoom(int roomId) {
+
+        String sql = """
+        SELECT 1
+        FROM CONTRACT
+        WHERE room_id = ?
+          AND status = 'ACTIVE'
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 }
