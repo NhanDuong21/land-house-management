@@ -196,4 +196,26 @@ public class TenantDAO extends DBContext {
         return list;
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
+    public Tenant findById(int tenantId) {
+        String sql = "SELECT tenant_id, full_name, email, phone_number, account_status FROM TENANT WHERE tenant_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Tenant t = new Tenant();
+                    t.setTenantId(rs.getInt("tenant_id"));
+                    t.setFullName(rs.getString("full_name"));
+                    t.setEmail(rs.getString("email"));
+                    t.setPhoneNumber(rs.getString("phone_number"));
+                    t.setAccountStatus(rs.getString("account_status"));
+                    return t;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
