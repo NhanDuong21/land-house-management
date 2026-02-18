@@ -564,7 +564,15 @@ FROM     CONTRACT INNER JOIN
         }
     }
 
-    // check room nếu OCCUPIED ( contract đang ACTIVE) để tránh xung đột dữ liệu
+    /**
+     * Kiểm tra sự tồn tại của hợp đồng đang hoạt động cho một phòng. Dùng để
+     * chặn việc tạo nhiều hợp đồng 'ACTIVE' trên cùng một phòng tại một thời
+     * điểm.
+     *
+     * @param roomId ID của phòng cần kiểm tra
+     * @return true nếu phòng đã có người ở (Busy), false nếu phòng trống
+     * (Available)
+     */
     @SuppressWarnings("CallToPrintStackTrace")
     public boolean existsActiveContractForRoom(int roomId) {
 
