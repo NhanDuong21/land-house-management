@@ -597,4 +597,70 @@ FROM     CONTRACT INNER JOIN
         return false;
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean existsActiveContractForTenant(int tenantId) {
+        String sql = "SELECT 1 FROM CONTRACT WHERE tenant_id = ? AND status = 'ACTIVE'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean existsPendingContractForTenant(int tenantId) {
+        String sql = "SELECT 1 FROM CONTRACT WHERE tenant_id = ? AND status = 'PENDING'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * active room id hiện tại của tenant, nếu không có thì trả -1
+     */
+    @SuppressWarnings("CallToPrintStackTrace")
+    public int getActiveRoomIdOfTenant(int tenantId) {
+        String sql = "SELECT TOP 1 room_id FROM CONTRACT WHERE tenant_id = ? AND status = 'ACTIVE' ORDER BY contract_id DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("room_id");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
+     * active contract id hiện tại của tenant, nếu không có thì -1
+     */
+    @SuppressWarnings("CallToPrintStackTrace")
+    public int getActiveContractIdOfTenant(int tenantId) {
+        String sql = "SELECT TOP 1 contract_id FROM CONTRACT WHERE tenant_id = ? AND status = 'ACTIVE' ORDER BY contract_id DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("contract_id");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
 }
