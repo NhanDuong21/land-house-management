@@ -25,12 +25,11 @@ public class ContractService {
     private final ContractDAO contractDAO = new ContractDAO();
     private final OtpCodeDAO otpDAO = new OtpCodeDAO();
 
+    //FLOW 1: CREATE CONTRACT + CREATE TENANT (NO ACCOUNT) + OTP
     @SuppressWarnings("UseSpecificCatch")
     public ServiceResult createContractAndTenant(Contract c, Tenant t) {
 
-        // =========================
-        // 1) Validate: ALL REQUIRED
-        // =========================
+        //1) Validate: Tenant
         if (t == null) {
             return ServiceResult.fail("Tenant không hợp lệ.");
         }
@@ -72,7 +71,132 @@ public class ContractService {
             return ServiceResult.fail("Avatar tenant không được để trống.");
         }
 
-        // ---- Contract ----
+        // normalize
+        t.setFullName(name);
+        t.setIdentityCode(identity);
+        t.setPhoneNumber(phone);
+        t.setEmail(email);
+        t.setAddress(address);
+        t.setAvatar(avatar);
+
+        //2) Validate: Contract
+        ServiceResult vc = validateContractCommon(c);
+        if (!vc.isOk()) {
+            return vc;
+        }
+
+        //3) Transaction
+        try (Connection conn = new DBContext().getConnection()) {
+
+            conn.setAutoCommit(false);
+
+            // 1) Check email tồn tại (phone rely DB UNIQUE)
+            if (tenantDAO.findByEmail(email) != null) {
+                conn.rollback();
+                return ServiceResult.fail("Email tenant đã tồn tại trong hệ thống.");
+            }
+
+            // 2) Insert tenant PENDING (full fields)
+            int tenantId = tenantDAO.insertPendingTenant(conn, t);
+            if (tenantId <= 0) {
+                conn.rollback();
+                return ServiceResult.fail("Không tạo được tenant (PENDING).");
+            }
+
+            // 3) Business rule: tenant chỉ có tối đa 1 ACTIVE/PENDING
+            // (luồng no-account: tenant mới tạo nên chắc chắn chưa có, nhưng check luôn cho chắc)
+            if (existsActiveOrPendingByTenant(conn, tenantId)) {
+                conn.rollback();
+                return ServiceResult.fail("Tenant này đang có hợp đồng ACTIVE/PENDING. Không thể tạo thêm.");
+            }
+
+            // 4) Insert contract PENDING
+            c.setTenantId(tenantId);
+            int contractId = contractDAO.insertPendingContract(conn, c);
+            if (contractId <= 0) {
+                conn.rollback();
+                return ServiceResult.fail("Không tạo được contract (PENDING).");
+            }
+
+            // 5) Generate OTP + insert
+            String otp = String.format("%06d", new Random().nextInt(1_000_000));
+            otpDAO.insertFirstLoginOtp(conn, tenantId, email, otp);
+
+            // 6) Send mail
+            boolean mailOk = MailUtil.sendOtp(email, otp);
+            if (!mailOk) {
+                conn.rollback();
+                return ServiceResult.fail("Gửi OTP thất bại. Vui lòng kiểm tra cấu hình mail.");
+            }
+
+            conn.commit();
+            return ServiceResult.ok("Tạo contract + tenant PENDING và gửi OTP thành công.");
+
+        } catch (SQLException e) {
+            return ServiceResult.fail(mapSqlErrorToUi(e));
+        } catch (Exception e) {
+            return ServiceResult.fail("Lỗi hệ thống: " + (e.getMessage() == null ? "UNKNOWN" : e.getMessage()));
+        }
+    }
+
+    //FLOW 2: CREATE CONTRACT FOR EXISTING TENANT (HAS ACCOUNT)
+    //block: tenant chỉ được có 1 ACTIVE hoặc 1 PENDING (cùng lúc)
+    @SuppressWarnings("UseSpecificCatch")
+    public ServiceResult createContractForExistingTenant(Contract c, int tenantId) {
+
+        if (tenantId <= 0) {
+            return ServiceResult.fail("Tenant không hợp lệ.");
+        }
+
+        // Validate contract fields common
+        ServiceResult vc = validateContractCommon(c);
+        if (!vc.isOk()) {
+            return vc;
+        }
+
+        // set tenantId vào contract
+        c.setTenantId(tenantId);
+
+        try (Connection conn = new DBContext().getConnection()) {
+
+            conn.setAutoCommit(false);
+
+            // 1) Check tenant có tồn tại + ACTIVE (đúng list dropdown)
+            Tenant t = tenantDAO.findById(tenantId);
+            if (t == null) {
+                conn.rollback();
+                return ServiceResult.fail("Tenant không tồn tại.");
+            }
+            if (t.getAccountStatus() == null || !"ACTIVE".equalsIgnoreCase(t.getAccountStatus())) {
+                conn.rollback();
+                return ServiceResult.fail("Tenant chưa ACTIVE. Không thể tạo hợp đồng theo luồng has-account.");
+            }
+
+            // 2) Chặn tenant đã có ACTIVE hoặc PENDING
+            if (existsActiveOrPendingByTenant(conn, tenantId)) {
+                conn.rollback();
+                return ServiceResult.fail("Tenant này đang có hợp đồng ACTIVE/PENDING. Không thể tạo thêm.");
+            }
+
+            // 3) Insert contract PENDING
+            int newId = contractDAO.insertPendingContract(conn, c);
+            if (newId <= 0) {
+                conn.rollback();
+                return ServiceResult.fail("Không tạo được contract (PENDING).");
+            }
+
+            conn.commit();
+            return ServiceResult.ok("Tạo contract (PENDING) cho tenant có account thành công.");
+
+        } catch (SQLException e) {
+            return ServiceResult.fail(mapSqlErrorToUi(e));
+        } catch (Exception e) {
+            return ServiceResult.fail("Lỗi hệ thống: " + (e.getMessage() == null ? "UNKNOWN" : e.getMessage()));
+        }
+    }
+
+    //VALIDATION HELPERS
+    private ServiceResult validateContractCommon(Contract c) {
         if (c == null) {
             return ServiceResult.fail("Contract không hợp lệ.");
         }
@@ -110,62 +234,27 @@ public class ContractService {
         if (qr.isBlank()) {
             return ServiceResult.fail("Payment QR data không được để trống.");
         }
-
-        // normalize back to entity (trim)
-        t.setFullName(name);
-        t.setIdentityCode(identity);
-        t.setPhoneNumber(phone);
-        t.setEmail(email);
-        t.setAddress(address);
-        t.setAvatar(avatar);
         c.setPaymentQrData(qr);
 
-        // =========================
-        // 2) Transaction
-        // =========================
-        try (Connection conn = new DBContext().getConnection()) {
+        return ServiceResult.ok("OK");
+    }
 
-            conn.setAutoCommit(false);
-
-            // 1) Check email tồn tại (phone rely DB UNIQUE)
-            if (tenantDAO.findByEmail(email) != null) {
-                conn.rollback();
-                return ServiceResult.fail("Email tenant đã tồn tại trong hệ thống.");
+    /**
+     * Check business rule: tenant chỉ được có tối đa 1 ACTIVE hoặc 1 PENDING
+     * tại 1 thời điểm.
+     */
+    private boolean existsActiveOrPendingByTenant(Connection conn, int tenantId) throws SQLException {
+        String sql = """
+            SELECT TOP 1 1
+            FROM CONTRACT
+            WHERE tenant_id = ?
+              AND [status] IN ('ACTIVE','PENDING')
+        """;
+        try (var ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (var rs = ps.executeQuery()) {
+                return rs.next();
             }
-
-            // 2) Insert tenant PENDING (full fields)
-            int tenantId = tenantDAO.insertPendingTenant(conn, t);
-            if (tenantId <= 0) {
-                conn.rollback();
-                return ServiceResult.fail("Không tạo được tenant (PENDING).");
-            }
-
-            // 3) Insert contract PENDING
-            c.setTenantId(tenantId);
-            int contractId = contractDAO.insertPendingContract(conn, c);
-            if (contractId <= 0) {
-                conn.rollback();
-                return ServiceResult.fail("Không tạo được contract (PENDING).");
-            }
-
-            // 4) Generate OTP + insert
-            String otp = String.format("%06d", new Random().nextInt(1_000_000));
-            otpDAO.insertFirstLoginOtp(conn, tenantId, email, otp);
-
-            // 5) Send mail
-            boolean mailOk = MailUtil.sendOtp(email, otp);
-            if (!mailOk) {
-                conn.rollback();
-                return ServiceResult.fail("Gửi OTP thất bại. Vui lòng kiểm tra cấu hình mail.");
-            }
-
-            conn.commit();
-            return ServiceResult.ok("Tạo contract + tenant PENDING và gửi OTP thành công.");
-
-        } catch (SQLException e) {
-            return ServiceResult.fail(mapSqlErrorToUi(e));
-        } catch (Exception e) {
-            return ServiceResult.fail("Lỗi hệ thống: " + (e.getMessage() == null ? "UNKNOWN" : e.getMessage()));
         }
     }
 
@@ -185,9 +274,12 @@ public class ContractService {
             return "Số điện thoại tenant đã tồn tại (trùng dữ liệu).";
         }
 
-        // room chỉ được có 1 contract pending/active
-        if (m.contains("ux_contract_room_active")) {
-            return "Phòng này đã có hợp đồng PENDING/ACTIVE rồi.";
+        // room chỉ được có 1 contract ACTIVE, 1 contract PENDING
+        if (m.contains("ux_contract_room_only_active")) {
+            return "Phòng này đã có hợp đồng ACTIVE rồi.";
+        }
+        if (m.contains("ux_contract_room_only_pending")) {
+            return "Phòng này đã có hợp đồng PENDING rồi.";
         }
 
         // check end_date > start_date
@@ -205,7 +297,6 @@ public class ContractService {
             return "Kết nối DB đã bị đóng. Vui lòng restart server hoặc kiểm tra DBContext.";
         }
 
-        // fallback
         return "Lỗi SQL: " + e.getMessage();
     }
 }

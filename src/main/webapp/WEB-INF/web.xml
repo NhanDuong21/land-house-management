@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
-         version="5.0">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+    version="5.0">
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
@@ -70,7 +70,7 @@
         <servlet-name>ContactController</servlet-name>
         <url-pattern>/contact</url-pattern>
     </servlet-mapping>
-    
+
     <servlet>
         <servlet-name>CreateContractController</servlet-name>
         <servlet-class>Controllers.manager.CreateContractController</servlet-class>
@@ -79,7 +79,7 @@
         <servlet-name>CreateContractController</servlet-name>
         <url-pattern>/manager/contracts/create</url-pattern>
     </servlet-mapping>
-    
+
     <servlet>
         <servlet-name>ManagerConfirmContractController</servlet-name>
         <servlet-class>Controllers.manager.ManagerConfirmContractController</servlet-class>
@@ -88,7 +88,7 @@
         <servlet-name>ManagerConfirmContractController</servlet-name>
         <url-pattern>/manager/contracts/confirm</url-pattern>
     </servlet-mapping>
-    
+
     <servlet>
         <servlet-name>ManagerContractDetailController</servlet-name>
         <servlet-class>Controllers.manager.ManagerContractDetailController</servlet-class>
@@ -97,7 +97,7 @@
         <servlet-name>ManagerContractDetailController</servlet-name>
         <url-pattern>/manager/contracts/detail</url-pattern>
     </servlet-mapping>
-    
+
     <servlet>
         <servlet-name>ManagerContractsController</servlet-name>
         <servlet-class>Controllers.manager.ManagerContractsController</servlet-class>
@@ -106,7 +106,7 @@
         <servlet-name>ManagerContractsController</servlet-name>
         <url-pattern>/manager/contracts</url-pattern>
     </servlet-mapping>
-    
+
     <servlet>
         <servlet-name>SetPasswordController</servlet-name>
         <servlet-class>Controllers.tenant.SetPasswordController</servlet-class>
@@ -115,7 +115,7 @@
         <servlet-name>SetPasswordController</servlet-name>
         <url-pattern>/tenant/set-password</url-pattern>
     </servlet-mapping>
-    
+
     <servlet>
         <servlet-name>TenantConfirmTransferController</servlet-name>
         <servlet-class>Controllers.tenant.TenantConfirmTransferController</servlet-class>
@@ -124,7 +124,7 @@
         <servlet-name>TenantConfirmTransferController</servlet-name>
         <url-pattern>/tenant/contract/confirm-transfer</url-pattern>
     </servlet-mapping>
-    
+
     <servlet>
         <servlet-name>TenantContractController</servlet-name>
         <servlet-class>Controllers.tenant.TenantContractController</servlet-class>
@@ -133,7 +133,7 @@
         <servlet-name>TenantContractController</servlet-name>
         <url-pattern>/tenant/contract</url-pattern>
     </servlet-mapping>
-    
+
     <servlet>
         <servlet-name>TenantContractDetailController</servlet-name>
         <servlet-class>Controllers.tenant.TenantContractDetailController</servlet-class>
@@ -142,4 +142,25 @@
         <servlet-name>TenantContractDetailController</servlet-name>
         <url-pattern>/tenant/contract/detail</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ManagerExtendContractController</servlet-name>
+        <servlet-class>Controllers.manager.ManagerExtendContractController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ManagerExtendContractController</servlet-name>
+        <url-pattern>/manager/contracts/extend</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CreateExistingContractController</servlet-name>
+        <servlet-class>Controllers.manager.CreateExistingContractController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>CreateExistingContractController</servlet-name>
+        <url-pattern>/manager/contracts/create-existing</url-pattern>
+    </servlet-mapping>
+
 </web-app>

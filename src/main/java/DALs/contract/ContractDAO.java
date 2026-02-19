@@ -509,4 +509,158 @@ FROM     CONTRACT INNER JOIN
         return false;
     }
 
+    //update status contract to ENDED and sign time update to updated_at
+    public int expireActiveContracts(Connection conn) throws SQLException {
+        String sql = """
+        UPDATE CONTRACT
+        SET status = 'ENDED',
+            updated_at = SYSDATETIME()
+        WHERE status = 'ACTIVE'
+          AND end_date IS NOT NULL
+          AND end_date < CAST(GETDATE() AS date)
+    """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            return ps.executeUpdate();
+        }
+    }
+
+    //update room ve available 
+    public int releaseRoomsWithoutActiveContract(Connection conn) throws SQLException {
+        String sql = """
+        UPDATE ROOM
+        SET status = 'AVAILABLE'
+        WHERE status = 'OCCUPIED'
+          AND room_id IN (
+              SELECT r.room_id
+              FROM ROOM r
+              LEFT JOIN CONTRACT c
+                ON c.room_id = r.room_id
+               AND c.status = 'ACTIVE'
+              WHERE r.status = 'OCCUPIED'
+              GROUP BY r.room_id
+              HAVING COUNT(c.contract_id) = 0
+          )
+    """;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            return ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Chạy job expire không throw ra ngoài để tránh làm gãy request. Gọi từ
+     * Filter (mỗi X phút).
+     */
+    @SuppressWarnings("CallToPrintStackTrace")
+    public void runExpireJobSafely() {
+        try (Connection conn = new DBContext().getConnection()) {
+            conn.setAutoCommit(false);
+
+            expireActiveContracts(conn);
+            releaseRoomsWithoutActiveContract(conn);
+
+            conn.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Kiểm tra sự tồn tại của hợp đồng đang hoạt động cho một phòng. Dùng để
+     * chặn việc tạo nhiều hợp đồng 'ACTIVE' trên cùng một phòng tại một thời
+     * điểm.
+     *
+     * @param roomId ID của phòng cần kiểm tra
+     * @return true nếu phòng đã có người ở (Busy), false nếu phòng trống
+     * (Available)
+     */
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean existsActiveContractForRoom(int roomId) {
+
+        String sql = """
+        SELECT 1
+        FROM CONTRACT
+        WHERE room_id = ?
+          AND status = 'ACTIVE'
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean existsActiveContractForTenant(int tenantId) {
+        String sql = "SELECT 1 FROM CONTRACT WHERE tenant_id = ? AND status = 'ACTIVE'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean existsPendingContractForTenant(int tenantId) {
+        String sql = "SELECT 1 FROM CONTRACT WHERE tenant_id = ? AND status = 'PENDING'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * active room id hiện tại của tenant, nếu không có thì trả -1
+     */
+    @SuppressWarnings("CallToPrintStackTrace")
+    public int getActiveRoomIdOfTenant(int tenantId) {
+        String sql = "SELECT TOP 1 room_id FROM CONTRACT WHERE tenant_id = ? AND status = 'ACTIVE' ORDER BY contract_id DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("room_id");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
+     * active contract id hiện tại của tenant, nếu không có thì -1
+     */
+    @SuppressWarnings("CallToPrintStackTrace")
+    public int getActiveContractIdOfTenant(int tenantId) {
+        String sql = "SELECT TOP 1 contract_id FROM CONTRACT WHERE tenant_id = ? AND status = 'ACTIVE' ORDER BY contract_id DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("contract_id");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
 }

@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import Models.entity.Tenant;
 import Utils.database.DBContext;
@@ -152,6 +154,7 @@ public class TenantDAO extends DBContext {
         return false;
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public boolean updateAccountStatus(int tenantId, String status) {
         String sql = "UPDATE TENANT SET account_status = ?, updated_at = SYSDATETIME() WHERE tenant_id = ?";
 
@@ -163,6 +166,56 @@ public class TenantDAO extends DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public List<Tenant> findActiveTenants() {
+        List<Tenant> list = new ArrayList<>();
+
+        String sql = """
+        SELECT tenant_id, full_name, email, phone_number
+        FROM TENANT
+        WHERE account_status = 'ACTIVE'
+        ORDER BY full_name ASC
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Tenant t = new Tenant();
+                t.setTenantId(rs.getInt("tenant_id"));
+                t.setFullName(rs.getString("full_name"));
+                t.setEmail(rs.getString("email"));
+                t.setPhoneNumber(rs.getString("phone_number"));
+                list.add(t);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public Tenant findById(int tenantId) {
+        String sql = "SELECT tenant_id, full_name, email, phone_number, account_status FROM TENANT WHERE tenant_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Tenant t = new Tenant();
+                    t.setTenantId(rs.getInt("tenant_id"));
+                    t.setFullName(rs.getString("full_name"));
+                    t.setEmail(rs.getString("email"));
+                    t.setPhoneNumber(rs.getString("phone_number"));
+                    t.setAccountStatus(rs.getString("account_status"));
+                    return t;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

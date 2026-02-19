@@ -41,7 +41,19 @@
                             <span class="tcd-badge tcd-badge-pending">${c.status}</span>
                         </c:otherwise>
                     </c:choose>
+
+                    <!-- ACTIONS (Manager) -->
+                    <c:if test="${c.status eq 'ACTIVE'}">
+                        <div style="margin-top:10px; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;">
+                            <a class="mc-add-btn"
+                               href="${pageContext.request.contextPath}/manager/contracts/extend?contractId=${c.contractId}"
+                               style="padding:10px 14px; text-decoration:none;">
+                                ♻️ Extend
+                            </a>
+                        </div>
+                    </c:if>
                 </div>
+
 
                 <div class="tcd-divider"></div>
 

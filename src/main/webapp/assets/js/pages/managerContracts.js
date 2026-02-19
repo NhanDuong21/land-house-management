@@ -20,13 +20,19 @@
   }
 
   function attachPagerAjax() {
-    // pagination links trong fragment có ajax=1
     wrapper.querySelectorAll('a[href*="ajax=1"]').forEach((a) => {
       a.addEventListener("click", (e) => {
-        // chỉ chặn link pagination ajax thôi
-        if (!a.getAttribute("href").includes("/manager/contracts")) return;
+        const href = a.getAttribute("href") || "";
+        if (!href.includes("manager/contracts")) return;
+
         e.preventDefault();
-        fetchAndReplace(a.getAttribute("href"));
+
+        // Parse page từ href (dù href có bị double ctx vẫn parse được)
+        const u = new URL(href, window.location.origin);
+        const page = parseInt(u.searchParams.get("page") || "1", 10);
+
+        // Fetch bằng buildUrl => không bị /LandHouseManagement/LandHouseManagement nữa
+        fetchAndReplace(buildUrl(page));
       });
     });
   }
