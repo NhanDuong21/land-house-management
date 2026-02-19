@@ -101,6 +101,7 @@
             </div>
 
             <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+
                 <c:url var="baseUrl" value="/manager/contracts">
                     <c:param name="q" value="${q}"/>
                     <c:param name="status" value="${status}"/>
@@ -108,9 +109,12 @@
                     <c:param name="ajax" value="1"/>
                 </c:url>
 
+                <a class="mc-view-btn" href="${baseUrl}&page=${p}">...</a>
+
+
                 <c:choose>
                     <c:when test="${page > 1}">
-                        <a class="mc-view-btn" href="${pageContext.request.contextPath}${baseUrl}&page=${page - 1}">← Prev</a>
+                        <a class="mc-view-btn" href="${baseUrl}&page=${page - 1}">← Prev</a>
                     </c:when>
                     <c:otherwise>
                         <span class="mc-view-btn" style="opacity:.5; cursor:not-allowed;">← Prev</span>
@@ -130,7 +134,7 @@
                             </span>
                         </c:when>
                         <c:otherwise>
-                            <a class="mc-view-btn" href="${pageContext.request.contextPath}${baseUrl}&page=${p}">
+                            <a class="mc-view-btn" href="${baseUrl}&page=${p}">
                                 <c:out value="${p}"/>
                             </a>
                         </c:otherwise>
@@ -139,7 +143,7 @@
 
                 <c:choose>
                     <c:when test="${page < totalPages}">
-                        <a class="mc-view-btn" href="${pageContext.request.contextPath}${baseUrl}&page=${page + 1}">Next →</a>
+                        <a class="mc-view-btn" href="${baseUrl}&page=${page + 1}">Next →</a>
                     </c:when>
                     <c:otherwise>
                         <span class="mc-view-btn" style="opacity:.5; cursor:not-allowed;">Next →</span>

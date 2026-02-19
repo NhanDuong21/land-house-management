@@ -66,8 +66,6 @@ public class CreateExistingContractController extends HttpServlet {
             BigDecimal rent = new BigDecimal(request.getParameter("rent"));
             BigDecimal deposit = new BigDecimal(request.getParameter("deposit"));
 
-            String qr = request.getParameter("paymentQrData");
-
             Contract c = new Contract();
             c.setTenantId(tenantId);
             c.setRoomId(roomId);
@@ -76,7 +74,7 @@ public class CreateExistingContractController extends HttpServlet {
             c.setEndDate(endDate);
             c.setMonthlyRent(rent);
             c.setDeposit(deposit);
-            c.setPaymentQrData(qr);
+            c.setPaymentQrData("/assets/images/qr/myqr.png");
 
             ServiceResult rs = contractService.createContractForExistingTenant(c, tenantId);
 

@@ -79,7 +79,7 @@
                 <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
                     <button type="submit" class="mc-add-btn" style="padding:10px 14px;"
                             onclick="return confirm('Create NEW PENDING renewal contract? Tenant will confirm transfer, then you confirm to activate.');">
-                        ✅ Create Renewal (PENDING)
+                         Create Renewal (PENDING)
                     </button>
 
                     <a class="mc-add-btn"
