@@ -11,55 +11,75 @@
                active="m_contracts"
                cssFile="${pageContext.request.contextPath}/assets/css/views/managerContracts.css">
 
-    <div class="mc-wrap">
+    <div class="mc-container">
 
-        <div class="mc-head">
-            <div class="mc-head-left">
-                <div class="mc-title">Manage Contracts</div>
-                <div class="mc-sub">View and manage all rental contracts</div>
+        <!-- HEADER -->
+        <div class="mc-header">
+            <div>
+                <h2>Manage Contracts</h2>
+                <p>View and manage all rental contracts</p>
             </div>
 
-            <button type="button" class="mc-add-btn" onclick="openContractTypeModal()">
-                <span class="mc-plus">＋</span>
-                <span>Add Contract</span>
+            <button type="button" class="mc-generate-btn" onclick="openContractTypeModal()">
+                <span class="mc-btn-ico" aria-hidden="true">
+                    <!-- bootstrap icon: plus -->
+                    <svg viewBox="0 0 16 16">
+                    <path d="M8 1a.5.5 0 0 1 .5.5V7.5H14.5a.5.5 0 0 1 0 1H8.5V14.5a.5.5 0 0 1-1 0V8.5H1.5a.5.5 0 0 1 0-1H7.5V1.5A.5.5 0 0 1 8 1z"/>
+                    </svg>
+                </span>
+                Add Contract
             </button>
-
         </div>
 
+        <!-- ALERTS -->
         <c:if test="${param.confirmed eq '1'}">
-            <div style="margin:12px 0;padding:12px 14px;border-radius:14px;background:#ecfdf3;border:1px solid #86efac;color:#166534;font-weight:800;">
-                ✅ Confirm contract successfully.
+            <div class="mc-alert mc-alert-success">
+                <span class="mc-alert-ico" aria-hidden="true">
+                    <!-- bootstrap icon: check-circle -->
+                    <svg viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm3.354-8.354a.5.5 0 0 0-.708-.708L7.5 9.086 5.354 6.94a.5.5 0 1 0-.708.708l2.5 2.5a.5.5 0 0 0 .708 0l3.5-3.5z"/>
+                    </svg>
+                </span>
+                <div>
+                    <div class="mc-alert-title">Confirm contract successfully.</div>
+                </div>
             </div>
         </c:if>
 
         <c:if test="${param.err eq '1'}">
-            <div style="margin:12px 0;padding:12px 14px;border-radius:14px;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;font-weight:800;">
-                ❌ Confirm failed.
-                <c:if test="${not empty param.code}">
-                    <span style="margin-left:10px;font-weight:900;">(code: ${param.code})</span>
-                </c:if>
+            <div class="mc-alert mc-alert-danger">
+                <span class="mc-alert-ico" aria-hidden="true">
+                    <!-- bootstrap icon: x-circle -->
+                    <svg viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zM5.354 5.354a.5.5 0 1 1 .708-.708L8 6.586l1.938-1.94a.5.5 0 1 1 .708.708L8.707 7.293l1.939 1.938a.5.5 0 0 1-.708.708L8 8.001 6.062 9.94a.5.5 0 0 1-.708-.708l1.939-1.939-1.94-1.939z"/>
+                    </svg>
+                </span>
 
-                <c:if test="${param.code eq 'NEED_TENANT_PAYMENT'}">
-                    <div style="margin-top:6px;color:#7f1d1d;font-weight:700;">
-                        Vui lòng chờ TENANT confirm payment
+                <div>
+                    <div class="mc-alert-title">
+                        Confirm failed.
+                        <c:if test="${not empty param.code}">
+                            <span class="mc-alert-code">code: ${param.code}</span>
+                        </c:if>
                     </div>
-                </c:if>
+
+                    <c:if test="${param.code eq 'NEED_TENANT_PAYMENT'}">
+                        <div class="mc-alert-text">Please wait for tenant payment confirmation.</div>
+                    </c:if>
+                </div>
             </div>
         </c:if>
 
-        <!-- SEARCH BAR (giữ form nhưng JS sẽ chặn submit) -->
-        <div class="mc-search-card">
-            <form id="mcSearchForm" class="mc-search" method="get"
-                  action="${pageContext.request.contextPath}/manager/contracts"
-                  style="display:flex; align-items:center; gap:10px;">
+        <!-- SEARCH (giữ đúng param q/status/pageSize) -->
+        <div class="mc-search-box">
+            <form id="mcSearchForm" class="mc-search-form" method="get"
+                  action="${pageContext.request.contextPath}/manager/contracts">
 
-                <span class="mc-search-icon">🔍</span>
-
-                <input id="mcQ" class="mc-search-input" type="text" name="q"
+                <input id="mcQ" type="text" name="q"
                        value="${q}"
                        placeholder="Search by contract ID, room number, or tenant name...">
 
-                <select id="mcStatus" name="status" class="mc-search-input" style="max-width:180px;">
+                <select id="mcStatus" name="status">
                     <option value="" ${empty status ? "selected" : ""}>All Status</option>
                     <option value="PENDING"   ${status eq 'PENDING' ? "selected" : ""}>PENDING</option>
                     <option value="ACTIVE"    ${status eq 'ACTIVE' ? "selected" : ""}>ACTIVE</option>
@@ -67,29 +87,20 @@
                     <option value="CANCELLED" ${status eq 'CANCELLED' ? "selected" : ""}>CANCELLED</option>
                 </select>
 
-                <select id="mcPageSize" name="pageSize" class="mc-search-input" style="max-width:120px;">
+                <select id="mcPageSize" name="pageSize">
                     <option value="5"  ${pageSize == 5 ? "selected" : ""}>5 / page</option>
                     <option value="10" ${pageSize == 10 ? "selected" : ""}>10 / page</option>
                     <option value="20" ${pageSize == 20 ? "selected" : ""}>20 / page</option>
                     <option value="50" ${pageSize == 50 ? "selected" : ""}>50 / page</option>
                 </select>
 
-                <!-- nút Search bạn có thể giữ hoặc xóa -->
-                <button type="submit" class="mc-add-btn" style="padding:10px 14px;">
-                    Search
-                </button>
-
                 <c:if test="${not empty q || not empty status}">
-                    <a href="${pageContext.request.contextPath}/manager/contracts"
-                       class="mc-add-btn"
-                       style="padding:10px 14px; background:#e2e8f0; color:#0f172a;">
-                        Clear
-                    </a>
+                    <a class="mc-clear-btn" href="${pageContext.request.contextPath}/manager/contracts">Clear</a>
                 </c:if>
             </form>
         </div>
 
-        <!-- TABLE FRAGMENT WRAPPER -->
+        <!-- TABLE -->
         <div id="contractTableWrapper">
             <jsp:include page="_contracts_table.jsp"/>
         </div>
@@ -101,7 +112,8 @@
     </script>
     <script src="${pageContext.request.contextPath}/assets/js/pages/managerContracts.js"></script>
     <script src="${pageContext.request.contextPath}/assets/js/pages/managerContractModal.js"></script>
-    <!-- CONTRACT TYPE MODAL -->
+
+    <!-- MODAL (giữ inline style để chắc chắn không tụt) -->
     <div id="contractTypeModal" style="
          display:none;
          position:fixed;
@@ -111,44 +123,30 @@
          align-items:center;
          z-index:9999;">
 
-        <div style="
-             background:#fff;
-             padding:28px;
-             border-radius:18px;
-             width:420px;
-             text-align:center;
-             position:relative;">
+        <div class="mc-modal-dialog">
 
-            <div style="font-size:22px;font-weight:900;margin-bottom:18px;">
-                Create Contract For?
-            </div>
+            <div class="mc-modal-title">Create Contract For?</div>
 
-            <div style="display:flex;flex-direction:column;gap:14px;">
-
+            <div class="mc-modal-actions">
                 <a href="${pageContext.request.contextPath}/manager/contracts/create"
-                   class="mc-add-btn"
-                   style="justify-content:center;">
+                   class="mc-modal-btn primary">
                     New Tenant (No Account)
                 </a>
 
                 <a href="${pageContext.request.contextPath}/manager/contracts/create-existing"
-                   class="mc-add-btn"
-                   style="justify-content:center;background:#0ea5e9;">
+                   class="mc-modal-btn info">
                     Existing Tenant (Has Account)
                 </a>
-
             </div>
 
             <button onclick="closeContractTypeModal()"
-                    style="
-                    position:absolute;
-                    top:10px;
-                    right:14px;
-                    border:none;
-                    background:none;
-                    font-size:20px;
-                    cursor:pointer;">
-                ✖
+                    class="mc-modal-close"
+                    type="button"
+                    aria-label="Close">
+                <!-- bootstrap icon: x-lg -->
+                <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854z"/>
+                </svg>
             </button>
 
         </div>
