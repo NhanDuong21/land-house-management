@@ -198,19 +198,19 @@
                         <!-- TOP NAV (all roles) -->
                         <nav class="rh-topnav" aria-label="Main navigation">
                             <a class="rh-topnav-link <%= "home".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/home">TRANG CHỦ</a>
+                               href="<%=ctx%>/home">HOME</a>
 
                             <a class="rh-topnav-link <%= "about".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/home">GIỚI THIỆU</a>
+                               href="<%=ctx%>/home">ABOUT US</a>
 
                             <a class="rh-topnav-link <%= "news".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/home">TIN TỨC</a>
+                               href="<%=ctx%>/home">NEWS</a>
 
                             <a class="rh-topnav-link <%= "recruit".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/home">TUYỂN DỤNG</a>
+                               href="<%=ctx%>/home">RECRUITMENT</a>
 
                             <a class="rh-topnav-link <%= "contact".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/contact">LIÊN HỆ</a>
+                               href="<%=ctx%>/contact">CONTACT</a>
                         </nav>
                     </div>
 
