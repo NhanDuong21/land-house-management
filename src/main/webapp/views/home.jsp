@@ -25,10 +25,79 @@
     <c:set var="minArea"  value="${empty minArea  ? AREA_MIN  : minArea}" />
     <c:set var="maxArea"  value="${empty maxArea  ? AREA_MAX  : maxArea}" />
 
+    <%-- =========================================
+         ROLE (scriptless) - fallback like layout.tag
+         ========================================= --%>
+    <c:set var="role" value="GUEST" />
+
+    <c:choose>
+        <c:when test="${empty sessionScope.auth}">
+            <c:set var="role" value="GUEST" />
+        </c:when>
+
+        <c:when test="${not empty sessionScope.auth.role}">
+            <c:set var="role" value="${sessionScope.auth.role}" />
+        </c:when>
+
+        <c:otherwise>
+            <%-- OTP case: role null -> fallback staffRole / tenant / guest --%>
+            <c:choose>
+                <c:when test="${not empty sessionScope.auth.staff}">
+                    <c:choose>
+                        <c:when test="${not empty sessionScope.auth.staff.staffRole}">
+                            <c:set var="role" value="${sessionScope.auth.staff.staffRole}" />
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="role" value="STAFF" />
+                        </c:otherwise>
+                    </c:choose>
+                </c:when>
+
+                <c:when test="${not empty sessionScope.auth.tenant}">
+                    <c:set var="role" value="TENANT" />
+                </c:when>
+
+                <c:otherwise>
+                    <c:set var="role" value="GUEST" />
+                </c:otherwise>
+            </c:choose>
+        </c:otherwise>
+    </c:choose>
+
+    <!-- =========================
+         HERO BANNER (2 slides)
+    ========================== -->
+    <div class="home-hero" id="homeHero" aria-label="Hero Banner">
+        <div class="hero-track">
+            <div class="hero-slide is-active">
+                <img src="${ctx}/assets/images/banners/banner1.jpg" alt="Hero banner 1">
+            </div>
+            <div class="hero-slide">
+                <img src="${ctx}/assets/images/banners/banner2.jpg" alt="Hero banner 2">
+            </div>
+        </div>
+
+        <button class="hero-nav prev" type="button" aria-label="Previous slide">‹</button>
+        <button class="hero-nav next" type="button" aria-label="Next slide">›</button>
+
+        <div class="hero-dots" aria-label="Hero dots">
+            <button type="button" class="dot is-active" data-index="0" aria-label="Slide 1"></button>
+            <button type="button" class="dot" data-index="1" aria-label="Slide 2"></button>
+        </div>
+    </div>
+
     <div class="home-head">
         <div>
-            <h1 class="home-title">Available Rooms</h1>
-            <div class="home-sub">Browse our collection of available rooms and find your perfect home</div>
+            <c:choose>
+                <c:when test="${role == 'GUEST' || role == 'TENANT'}">
+                    <h1 class="home-title">Available Rooms</h1>
+                    <div class="home-sub">Browse our collection of available rooms and find your perfect home</div>
+                </c:when>
+                <c:otherwise>
+                    <h1 class="home-title">All Rooms</h1>
+                    <div class="home-sub">Manage and monitor all rooms in the system</div>
+                </c:otherwise>
+            </c:choose>
         </div>
 
         <div class="home-actions">
@@ -36,7 +105,6 @@
                 <c:choose>
                     <c:when test="${empty rooms}">0 rooms</c:when>
                     <c:otherwise>${totalItems} rooms</c:otherwise>
-
                 </c:choose>
             </div>
 
@@ -111,6 +179,7 @@
                     </div>
                 </c:forEach>
             </div>
+
             <!-- PAGINATION (SMART) -->
             <c:if test="${totalPages > 1}">
                 <c:url value="/home" var="baseUrl">
@@ -122,12 +191,10 @@
                     <c:param name="hasMezzanine" value="${param.hasMezzanine}" />
                 </c:url>
 
-                <%-- config: số nút ở giữa (xung quanh current) --%>
                 <c:set var="window" value="2" />
                 <c:set var="start" value="${page - window}" />
                 <c:set var="end" value="${page + window}" />
 
-                <%-- clamp start/end --%>
                 <c:if test="${start < 2}">
                     <c:set var="start" value="2" />
                 </c:if>
@@ -137,12 +204,10 @@
 
                 <div class="pagination">
 
-                    <%-- Prev --%>
                     <c:if test="${page > 1}">
                         <a href="${baseUrl}&page=${page-1}">Prev</a>
                     </c:if>
 
-                    <%-- First page always --%>
                     <c:choose>
                         <c:when test="${page == 1}">
                             <span class="active">1</span>
@@ -152,12 +217,10 @@
                         </c:otherwise>
                     </c:choose>
 
-                    <%-- Left ellipsis if gap --%>
                     <c:if test="${start > 2}">
                         <span class="dots">…</span>
                     </c:if>
 
-                    <%-- Middle window pages --%>
                     <c:forEach begin="${start}" end="${end}" var="i">
                         <c:if test="${i >= 2 && i <= totalPages-1}">
                             <c:choose>
@@ -171,12 +234,10 @@
                         </c:if>
                     </c:forEach>
 
-                    <%-- Right ellipsis if gap --%>
                     <c:if test="${end < totalPages - 1}">
                         <span class="dots">…</span>
                     </c:if>
 
-                    <%-- Last page (if >1) --%>
                     <c:if test="${totalPages > 1}">
                         <c:choose>
                             <c:when test="${page == totalPages}">
@@ -188,18 +249,15 @@
                         </c:choose>
                     </c:if>
 
-                    <%-- Next --%>
                     <c:if test="${page < totalPages}">
                         <a href="${baseUrl}&page=${page+1}">Next</a>
                     </c:if>
                 </div>
             </c:if>
-
-
         </c:otherwise>
     </c:choose>
 
-    <!-- FILTER MODAL (UI tượng trưng, submit GET đúng HomeController) -->
+    <!-- FILTER MODAL -->
     <div class="rh-modal" id="filterModal" aria-hidden="true">
         <div class="rh-modal-backdrop" id="filterBackdrop"></div>
 
@@ -279,13 +337,13 @@
             </form>
         </div>
     </div>
+
     <div class="rh-modal" id="roomDetailModal" aria-hidden="true">
         <div class="rh-modal-backdrop" id="roomDetailBackdrop"></div>
 
         <div class="rh-modal-dialog room-detail-dialog" role="dialog" aria-modal="true">
             <button class="rh-modal-close" type="button" id="roomDetailClose">✕</button>
 
-            <!-- nội dung detail sẽ được load vào đây -->
             <div id="roomDetailBody" class="room-detail-body">
                 <div class="room-detail-loading">Loading...</div>
             </div>
@@ -300,6 +358,105 @@
             hasMezzanine: "${empty hasMezzanine ? 'any' : hasMezzanine}"
         };
     </script>
+
+    <script>
+        // HERO SLIDER (2 images)
+        (function () {
+            const hero = document.getElementById("homeHero");
+            if (!hero)
+                return;
+
+            const slides = Array.from(hero.querySelectorAll(".hero-slide"));
+            const dots = Array.from(hero.querySelectorAll(".dot"));
+            const prevBtn = hero.querySelector(".hero-nav.prev");
+            const nextBtn = hero.querySelector(".hero-nav.next");
+
+            if (slides.length <= 1)
+                return;
+
+            let idx = 0;
+            let timer = null;
+            const intervalMs = 3500;
+
+            function render() {
+                slides.forEach((s, i) => s.classList.toggle("is-active", i === idx));
+                dots.forEach((d, i) => d.classList.toggle("is-active", i === idx));
+            }
+
+            function go(n) {
+                idx = (n + slides.length) % slides.length;
+                render();
+            }
+
+            function next() {
+                go(idx + 1);
+            }
+            function prev() {
+                go(idx - 1);
+            }
+
+            function start() {
+                stop();
+                timer = setInterval(next, intervalMs);
+            }
+
+            function stop() {
+                if (timer)
+                    clearInterval(timer);
+                timer = null;
+            }
+
+            if (nextBtn)
+                nextBtn.addEventListener("click", () => {
+                    next();
+                    start();
+                });
+            if (prevBtn)
+                prevBtn.addEventListener("click", () => {
+                    prev();
+                    start();
+                });
+
+            dots.forEach((d) => {
+                d.addEventListener("click", () => {
+                    const n = Number(d.dataset.index || 0);
+                    go(n);
+                    start();
+                });
+            });
+
+            hero.addEventListener("mouseenter", stop);
+            hero.addEventListener("mouseleave", start);
+
+            // swipe (mobile)
+            let x0 = null;
+            hero.addEventListener("touchstart", (e) => {
+                x0 = e.touches && e.touches[0] ? e.touches[0].clientX : null;
+            }, {passive: true});
+
+            hero.addEventListener("touchend", (e) => {
+                if (x0 == null)
+                    return;
+                const x1 = e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientX : null;
+                if (x1 == null)
+                    return;
+
+                const dx = x1 - x0;
+                if (Math.abs(dx) > 40) {
+                    if (dx < 0)
+                        next();
+                    else
+                        prev();
+                    start();
+                }
+                x0 = null;
+            });
+
+            render();
+            start();
+        })();
+    </script>
+
     <script src="${ctx}/assets/js/pages/home.js"></script>
     <script src="${ctx}/assets/js/vendor/bootstrap.bundle.min.js"></script>
 </t:layout>

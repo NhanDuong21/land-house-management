@@ -152,7 +152,6 @@ function closeRoomModal() {
   document.body.style.overflow = "";
 }
 
-
 const bd = document.getElementById("roomDetailBackdrop");
 const cl = document.getElementById("roomDetailClose");
 if (bd) bd.addEventListener("click", closeRoomModal);

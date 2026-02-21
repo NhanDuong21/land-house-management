@@ -1,0 +1,230 @@
+@import url("../base/bootstrap.min.css");
+
+:root {
+  --tc-bg: #f5f7fb;
+  --tc-card: #fff;
+  --tc-text: #0f172a;
+  --tc-muted: #64748b;
+  --tc-border: rgba(2, 6, 23, 0.08);
+  --tc-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+
+  --tc-green-bg: #dcfce7;
+  --tc-green-tx: #166534;
+  --tc-green-br: #86efac;
+
+  --tc-yellow-bg: #fffbeb;
+  --tc-yellow-tx: #92400e;
+  --tc-yellow-br: #fcd34d;
+
+  --tc-red-bg: #fef2f2;
+  --tc-red-tx: #991b1b;
+  --tc-red-br: #fecaca;
+
+  --tc-gray-bg: #f1f5f9;
+  --tc-gray-tx: #0f172a;
+  --tc-gray-br: #cbd5e1;
+
+  --tc-radius: 16px;
+}
+
+body {
+  background: var(--tc-bg);
+  color: var(--tc-text);
+}
+
+.tc-wrap {
+  font-family: "Segoe UI", sans-serif;
+}
+
+.tc-title {
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.tc-sub {
+  margin-top: 6px;
+  color: var(--tc-muted);
+  font-weight: 600;
+}
+
+/* khung lớn chứa list card */
+.tc-board {
+  margin-top: 18px;
+  background: var(--tc-card);
+  border: 1px solid rgba(2, 6, 23, 0.06);
+  border-radius: 18px;
+  box-shadow: var(--tc-shadow);
+  padding: 20px;
+}
+
+/* GRID: 3 cột (desktop), 2 cột (tablet), 1 cột (mobile) */
+.tc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  justify-content: start; /* không căn giữa */
+  align-items: start;
+}
+
+/* card contract */
+.tc-card {
+  background: #fff;
+  border: 1px solid var(--tc-border);
+  border-radius: var(--tc-radius);
+  padding: 16px;
+  box-shadow: 0 6px 16px rgba(2, 6, 23, 0.04);
+}
+
+/* header card */
+.tc-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.tc-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tc-doc {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.1);
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb;
+  font-weight: 900;
+}
+
+.tc-card-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.tc-card-meta {
+  margin-top: 3px;
+  color: var(--tc-muted);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* badge status */
+.tc-badge {
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 12px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.tc-badge.active {
+  background: var(--tc-green-bg);
+  color: var(--tc-green-tx);
+  border-color: var(--tc-green-br);
+}
+.tc-badge.pending {
+  background: var(--tc-yellow-bg);
+  color: var(--tc-yellow-tx);
+  border-color: var(--tc-yellow-br);
+}
+.tc-badge.cancelled {
+  background: var(--tc-red-bg);
+  color: var(--tc-red-tx);
+  border-color: var(--tc-red-br);
+}
+.tc-badge.ended {
+  background: var(--tc-gray-bg);
+  color: var(--tc-gray-tx);
+  border-color: var(--tc-gray-br);
+}
+
+.tc-divider {
+  height: 1px;
+  background: rgba(2, 6, 23, 0.08);
+  opacity: 0.6;
+  margin: 12px 0;
+}
+
+/* body rows */
+.tc-rows {
+  display: grid;
+  gap: 12px;
+}
+
+.tc-row {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 10px;
+  align-items: start;
+}
+
+.tc-ico {
+  width: 26px;
+  opacity: 0.75;
+}
+
+.tc-label {
+  font-weight: 600;
+}
+
+.tc-value {
+  color: #475569;
+  font-weight: 650;
+}
+
+.tc-actions {
+  margin-top: 14px;
+}
+
+.tc-view-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(2, 6, 23, 0.2);
+  background: #fff;
+  color: #0f172a;
+  font-weight: 800;
+  text-decoration: none;
+  transition: 0.15s;
+}
+
+.tc-view-btn:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+/* empty state */
+.tc-empty {
+  color: var(--tc-muted);
+  font-weight: 700;
+  padding: 6px 4px;
+}
+
+/* responsive */
+@media (max-width: 1200px) {
+  .tc-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 768px) {
+  .tc-wrap {
+    padding: 18px;
+  }
+  .tc-title {
+    font-size: 34px;
+  }
+  .tc-grid {
+    grid-template-columns: 1fr;
+  }
+}

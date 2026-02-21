@@ -7,173 +7,125 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<layout:layout title="My Contracts" active="tenant_contract">
+<layout:layout title="My Contracts"
+               active="tenant_contract"
+               cssFile="${pageContext.request.contextPath}/assets/css/views/tenantContracts.css">
 
-    <div class="container" style="max-width: 980px; margin-top: 28px;">
+    <div class="container tc-wrap">
 
-        <div style="font-size:34px;font-weight:900;letter-spacing:-0.02em;">My Contracts</div>
-        <div style="color:#64748b;font-weight:650;margin-top:6px;">
-            View your rental contracts
+        <h1 class="tc-title">My Contracts</h1>
+        <div class="tc-sub">View your rental contracts</div>
+
+        <div class="tc-board">
+
+            <c:if test="${empty contracts}">
+                <div class="tc-empty">You don't have any contracts yet.</div>
+            </c:if>
+
+            <c:if test="${not empty contracts}">
+                <div class="tc-grid">
+
+                    <c:forEach var="c" items="${contracts}">
+                        <div class="tc-card">
+
+                            <!-- Header -->
+                            <div class="tc-card-head">
+                                <div class="tc-card-left">
+                                    <div class="tc-doc">T</div>
+
+                                    <div>
+                                        <div class="tc-card-title">
+                                            Contract #<fmt:formatNumber value="${c.contractId}" pattern="000000"/>
+                                        </div>
+                                        <div class="tc-card-meta">
+                                            <c:out value="${c.roomNumber}"/>
+                                            <c:if test="${not empty c.blockName}">
+                                                - <c:out value="${c.blockName}"/>
+                                            </c:if>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <c:choose>
+                                    <c:when test="${c.status eq 'ACTIVE'}">
+                                        <span class="tc-badge active">ACTIVE</span>
+                                    </c:when>
+                                    <c:when test="${c.status eq 'PENDING'}">
+                                        <span class="tc-badge pending">PENDING</span>
+                                    </c:when>
+                                    <c:when test="${c.status eq 'CANCELLED'}">
+                                        <span class="tc-badge cancelled">CANCELLED</span>
+                                    </c:when>
+                                    <c:when test="${c.status eq 'ENDED'}">
+                                        <span class="tc-badge ended">ENDED</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="tc-badge ended"><c:out value="${c.status}"/></span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
+
+                            <div class="tc-divider"></div>
+
+                            <!-- Rows -->
+                            <div class="tc-rows">
+
+                                <div class="tc-row">
+                                    <div class="tc-ico">•</div>
+                                    <div>
+                                        <div class="tc-label">Room</div>
+                                        <div class="tc-value">
+                                            <c:out value="${c.roomNumber}"/>
+                                            <c:if test="${not empty c.blockName}">
+                                                - <c:out value="${c.blockName}"/>
+                                            </c:if>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tc-row">
+                                    <div class="tc-ico">•</div>
+                                    <div>
+                                        <div class="tc-label">Duration</div>
+                                        <div class="tc-value">
+                                            <fmt:formatDate value="${c.startDate}" pattern="dd/MM/yyyy"/>
+                                            -
+                                            <c:choose>
+                                                <c:when test="${empty c.endDate}">...</c:when>
+                                                <c:otherwise>
+                                                    <fmt:formatDate value="${c.endDate}" pattern="dd/MM/yyyy"/>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tc-row">
+                                    <div class="tc-ico">•</div>
+                                    <div>
+                                        <div class="tc-label">Monthly Rent</div>
+                                        <div class="tc-value">
+                                            <fmt:formatNumber value="${c.monthlyRent}" type="number" groupingUsed="true"/> đ
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="tc-actions">
+                                <a class="tc-view-btn"
+                                   href="${pageContext.request.contextPath}/tenant/contract/detail?id=${c.contractId}">
+                                    View
+                                </a>
+                            </div>
+
+                        </div>
+                    </c:forEach>
+
+                </div>
+            </c:if>
+
         </div>
-
-        <div class="card mt-4" style="border-radius:18px;">
-            <div class="card-body" style="padding: 18px;">
-
-                <c:if test="${empty contracts}">
-                    <div style="color:#64748b;font-weight:700;padding:10px 6px;">
-                        You don't have any contracts yet.
-                    </div>
-                </c:if>
-
-                <c:forEach var="c" items="${contracts}">
-                    <div style="
-                         border:1px solid rgba(2,6,23,0.08);
-                         border-radius:16px;
-                         padding:18px;
-                         margin-bottom:14px;
-                         background:#fff;">
-
-                        <!-- Header -->
-                        <div style="display:flex;justify-content:space-between;align-items:center;">
-                            <div style="display:flex;align-items:center;gap:12px;">
-                                <div style="
-                                     width:42px;height:42px;border-radius:12px;
-                                     background:rgba(37,99,235,0.10);
-                                     display:flex;align-items:center;justify-content:center;
-                                     font-size:18px;">
-                                    📄
-                                </div>
-
-                                <div>
-                                    <div style="font-size:18px;font-weight:900;">
-                                        Contract #<fmt:formatNumber value="${c.contractId}" pattern="000000"/>
-                                    </div>
-                                    <div style="color:#64748b;font-weight:650;margin-top:2px;">
-                                        <c:out value="${c.status}"/>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <c:choose>
-                                <c:when test="${c.status eq 'ACTIVE'}">
-                                    <span style="
-                                          padding:8px 12px;border-radius:999px;
-                                          background:#dcfce7;color:#166534;
-                                          border:1px solid #86efac;
-                                          font-weight:900;font-size:12px;">
-                                        ACTIVE
-                                    </span>
-                                </c:when>
-
-                                <c:when test="${c.status eq 'PENDING'}">
-                                    <span style="
-                                          padding:8px 12px;border-radius:999px;
-                                          background:#fffbeb;color:#92400e;
-                                          border:1px solid #fcd34d;
-                                          font-weight:900;font-size:12px;">
-                                        PENDING
-                                    </span>
-                                </c:when>
-
-                                <c:when test="${c.status eq 'ENDED'}">
-                                    <span style="
-                                          padding:8px 12px;border-radius:999px;
-                                          background:#f1f5f9;color:#0f172a;
-                                          border:1px solid #cbd5e1;
-                                          font-weight:900;font-size:12px;">
-                                        ENDED
-                                    </span>
-                                </c:when>
-
-                                <c:when test="${c.status eq 'CANCELLED'}">
-                                    <span style="
-                                          padding:8px 12px;border-radius:999px;
-                                          background:#fef2f2;color:#991b1b;
-                                          border:1px solid #fecaca;
-                                          font-weight:900;font-size:12px;">
-                                        CANCELLED
-                                    </span>
-                                </c:when>
-
-                                <c:otherwise>
-                                    <span style="
-                                          padding:8px 12px;border-radius:999px;
-                                          background:#e2e8f0;color:#0f172a;
-                                          border:1px solid #cbd5e1;
-                                          font-weight:900;font-size:12px;">
-                                        <c:out value="${c.status}"/>
-                                    </span>
-                                </c:otherwise>
-                            </c:choose>
-
-                        </div>
-
-                        <hr style="margin:14px 0;opacity:0.12;"/>
-
-                        <!-- Body rows -->
-                        <div style="display:grid;grid-template-columns: 1fr;gap:14px;">
-
-                            <!-- Room -->
-                            <div style="display:flex;gap:12px;">
-                                <div style="width:26px;opacity:0.75;">📍</div>
-                                <div>
-                                    <div style="font-weight:900;">Room</div>
-                                    <div style="color:#475569;font-weight:650;margin-top:2px;">
-                                        <c:out value="${c.roomNumber}"/>
-                                        <c:if test="${not empty c.blockName}">
-                                            - <c:out value="${c.blockName}"/>
-                                        </c:if>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Duration -->
-                            <div style="display:flex;gap:12px;">
-                                <div style="width:26px;opacity:0.75;">📅</div>
-                                <div>
-                                    <div style="font-weight:900;">Duration</div>
-                                    <div style="color:#475569;font-weight:650;margin-top:2px;">
-                                        <fmt:formatDate value="${c.startDate}" pattern="dd/MM/yyyy"/>
-                                        -
-                                        <c:choose>
-                                            <c:when test="${empty c.endDate}">
-                                                ...
-                                            </c:when>
-                                            <c:otherwise>
-                                                <fmt:formatDate value="${c.endDate}" pattern="dd/MM/yyyy"/>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Monthly Rent -->
-                            <div style="display:flex;gap:12px;">
-                                <div style="width:26px;opacity:0.75;">💲</div>
-                                <div>
-                                    <div style="font-weight:900;">Monthly Rent</div>
-                                    <div style="color:#475569;font-weight:650;margin-top:2px;">
-                                        <fmt:formatNumber value="${c.monthlyRent}" type="number" groupingUsed="true"/> đ
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div style="margin-top:14px;">
-                            <a class="btn btn-outline-dark"
-                               href="${pageContext.request.contextPath}/tenant/contract/detail?id=${c.contractId}"
-                               style="border-radius:12px;font-weight:800;">
-                                View
-                            </a>
-                        </div>
-
-                    </div>
-                </c:forEach>
-
-            </div>
-        </div>
-
     </div>
 
 </layout:layout>

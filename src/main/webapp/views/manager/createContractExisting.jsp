@@ -7,7 +7,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <layout:layout title="Create Contract (Existing Tenant)" active="m_contracts"
-               cssFile="${pageContext.request.contextPath}/assets/css/views/managerCreateContracts.css">
+               cssFile="${pageContext.request.contextPath}/assets/css/views/managerCreateContracts.css?v=1">
 
     <div class="container mt-4 contract-create" style="max-width:900px">
         <div class="contract-card">
@@ -106,18 +106,15 @@
                 </div>
 
                 <!-- ACTIONS -->
-                <div class="actions" style="display:flex;gap:10px;flex-wrap:wrap;">
-
-                    <a class="btn btn-outline-dark"
-                       href="${pageContext.request.contextPath}/manager/contracts"
-                       style="border-radius:12px;font-weight:800;">
+                <div class="actions actions-row">
+                    <a class="btn btn-outline-dark btn-cancel"
+                       href="${pageContext.request.contextPath}/manager/contracts">
                         Cancel
                     </a>
 
                     <button class="btn btn-dark btn-submit" type="submit">
                         Create Contract (PENDING)
                     </button>
-
                 </div>
 
             </form>

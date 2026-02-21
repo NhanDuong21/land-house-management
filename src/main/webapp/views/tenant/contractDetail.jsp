@@ -9,7 +9,7 @@
 
 <layout:layout title="Contract Detail"
                active="tenant_contract"
-               cssFile="${pageContext.request.contextPath}/assets/css/views/contractDetail.css?v=2">
+               cssFile="${pageContext.request.contextPath}/assets/css/views/tenantContractDetail.css">
 
     <div class="tcd-wrap">
 
