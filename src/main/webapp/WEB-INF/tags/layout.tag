@@ -218,7 +218,9 @@
                         <!-- ❌ removed rhOpenFilter button -->
 
                         <div class="rh-user">
-                            <div class="rh-avatar"><%=firstLetter%></div>
+                            <div class="rh-avatar">
+                                <img src="<%=ctx%>/assets/images/avatar/avtDefault.png" alt="Avatar">
+                            </div>
                             <div class="rh-user-meta">
                                 <div class="rh-user-name"><%=displayName%></div>
                                 <div class="rh-user-role"><%=roleLabel%></div>
