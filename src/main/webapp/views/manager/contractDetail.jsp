@@ -19,6 +19,19 @@
 
         <c:set var="c" value="${contract}"/>
 
+        <%-- alerts --%>
+        <c:if test="${param.terminated eq '1'}">
+            <div class="tcd-alert tcd-alert-success" style="margin-bottom:12px;">
+                Terminate thành công.
+            </div>
+        </c:if>
+
+        <c:if test="${param.err eq '1'}">
+            <div class="tcd-alert tcd-alert-warning" style="margin-bottom:12px;">
+                Lỗi: <b><c:out value="${param.code}"/></b>
+            </div>
+        </c:if>
+
         <div class="tcd-card">
             <div class="tcd-card-body">
 
@@ -38,22 +51,46 @@
                             <span class="tcd-badge tcd-badge-active">ACTIVE</span>
                         </c:when>
                         <c:otherwise>
-                            <span class="tcd-badge tcd-badge-pending">${c.status}</span>
+                            <span class="tcd-badge tcd-badge-pending"><c:out value="${c.status}"/></span>
                         </c:otherwise>
                     </c:choose>
 
                     <!-- ACTIONS (Manager) -->
-                    <c:if test="${c.status eq 'ACTIVE'}">
+                    <c:if test="${c.status eq 'ACTIVE' || c.status eq 'PENDING'}">
                         <div style="margin-top:10px; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;">
-                            <a class="mc-add-btn"
-                               href="${pageContext.request.contextPath}/manager/contracts/extend?contractId=${c.contractId}"
-                               style="padding:10px 14px; text-decoration:none;">
-                                ♻️ Extend
-                            </a>
+
+                            <c:if test="${c.status eq 'ACTIVE'}">
+                                <a class="mc-add-btn"
+                                   href="${pageContext.request.contextPath}/manager/contracts/extend?contractId=${c.contractId}"
+                                   style="padding:10px 14px; text-decoration:none;">
+                                    ♻️ Extend
+                                </a>
+                            </c:if>
+
+                            <%-- Terminate: dùng confirm() thuần, không dùng Bootstrap modal --%>
+                            <form method="post"
+                                  action="${pageContext.request.contextPath}/manager/contracts/terminate"
+                                  style="display:inline;">
+                                <input type="hidden" name="contractId" value="${c.contractId}" />
+
+                                <button type="submit"
+                                        class="mc-add-btn"
+                                        style="padding:10px 14px; text-decoration:none; background:#dc3545; border:none;"
+                                        onclick="
+                                                return confirm(
+                                                        'Bạn chắc chắn muốn terminate Contract #<fmt:formatNumber value="${c.contractId}" pattern="000000"/> ?\n\n'
+                                                        + 'Lưu ý: Nếu contract ACTIVE và có hợp đồng gia hạn (PENDING) cùng room, hệ thống sẽ huỷ luôn hợp đồng đó.\n'
+                                                        + 'Nếu contract có BANK payment đang PENDING, hệ thống sẽ chặn terminate.'
+                                                        );
+                                        ">
+                                    ⛔ Terminate
+                                </button>
+                            </form>
+
                         </div>
                     </c:if>
-                </div>
 
+                </div>
 
                 <div class="tcd-divider"></div>
 
@@ -232,7 +269,7 @@
 
                     <div class="tcd-alert tcd-alert-success" style="display:flex;align-items:center;gap:10px;">
                         Latest bank transfer:
-                        <span class="tcd-pill">${latestPayment.status}</span>
+                        <span class="tcd-pill"><c:out value="${latestPayment.status}"/></span>
                         <span style="opacity:.8;">
                             (Amount:
                             <fmt:formatNumber value="${latestPayment.amount}" type="number" groupingUsed="true"/> ₫)
@@ -265,7 +302,7 @@
                             <c:if test="${not empty latestPayment}">
                                 <div class="tcd-pay-latest">
                                     Latest transfer status:
-                                    <span class="tcd-pill">${latestPayment.status}</span>
+                                    <span class="tcd-pill"><c:out value="${latestPayment.status}"/></span>
                                 </div>
                             </c:if>
                         </div>
@@ -275,25 +312,6 @@
                             <div class="tcd-pay-sub">
                                 Chờ tenant confirm transfer và/hoặc kiểm tra sao kê để duyệt hợp đồng.
                             </div>
-
-                            <!-- Nếu bạn muốn đặt nút Confirm ngay tại detail thì bật phần này và trỏ đúng endpoint -->
-                            <!--
-                            <form class="tcd-form"
-                                  method="post"
-                                  action="${pageContext.request.contextPath}/manager/contracts/confirm">
-
-                                <input type="hidden" name="contractId" value="${c.contractId}"/>
-
-                                <button class="tcd-btn" type="submit"
-                                        onclick="return confirm('Confirm contract này? Contract->ACTIVE, Room->OCCUPIED, Tenant->ACTIVE');">
-                                    ✅ Confirm Contract
-                                </button>
-
-                                <div class="tcd-hint">
-                                    Lưu ý: chỉ confirm khi đã nhận tiền cọc.
-                                </div>
-                            </form>
-                            -->
                         </div>
                     </div>
                 </c:if>
