@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import DALs.payment.PaymentDAO;
+import Models.common.ServiceResult;
 import Models.dto.ManagerContractRowDTO;
 import Models.entity.Contract;
 import Utils.database.DBContext;
@@ -661,6 +663,170 @@ FROM     CONTRACT INNER JOIN
             e.printStackTrace();
         }
         return -1;
+    }
+
+    /**
+     * Terminate contract (ACTIVE/PENDING -> CANCELLED) Rule: - block if
+     * contract already ENDED/CANCELLED - block if has pending BANK payment - if
+     * terminating ACTIVE: auto cancel any PENDING contracts in same room
+     * (renew) - recalc ROOM status: if any ACTIVE or PENDING => OCCUPIED else
+     * AVAILABLE - recalc TENANT account_status: ACTIVE if has ACTIVE, else
+     * PENDING if has PENDING, else ACTIVE
+     */
+    @SuppressWarnings("CallToPrintStackTrace")
+    public ServiceResult terminateContractByManager(int contractId) {
+        String lockSql = """
+            SELECT contract_id, room_id, tenant_id, status
+            FROM CONTRACT WITH (UPDLOCK, ROWLOCK)
+            WHERE contract_id = ?
+        """;
+
+        String cancelCurrentSql = """
+            UPDATE CONTRACT
+            SET status = 'CANCELLED',
+                updated_at = SYSDATETIME()
+            WHERE contract_id = ?
+              AND status IN ('ACTIVE','PENDING')
+        """;
+
+        String cancelPendingSameRoomSql = """
+            UPDATE CONTRACT
+            SET status = 'CANCELLED',
+                updated_at = SYSDATETIME()
+            WHERE room_id = ?
+              AND status = 'PENDING'
+        """;
+
+        String roomHasActiveSql = "SELECT TOP 1 1 FROM CONTRACT WHERE room_id = ? AND status = 'ACTIVE'";
+        String roomHasPendingSql = "SELECT TOP 1 1 FROM CONTRACT WHERE room_id = ? AND status = 'PENDING'";
+
+        String updateRoomSql = "UPDATE ROOM SET status = ? WHERE room_id = ?";
+
+        String tenantHasActiveSql = "SELECT TOP 1 1 FROM CONTRACT WHERE tenant_id = ? AND status = 'ACTIVE'";
+        String tenantHasPendingSql = "SELECT TOP 1 1 FROM CONTRACT WHERE tenant_id = ? AND status = 'PENDING'";
+        String updateTenantSql = "UPDATE TENANT SET account_status = ? WHERE tenant_id = ?";
+
+        try (Connection conn = new DBContext().getConnection()) {
+            conn.setAutoCommit(false);
+
+            // 1) Khóa dữ liệu và kiểm tra tồn tại
+            // 2) Kiểm tra trạng thái: Chỉ cho phép hủy ACTIVE hoặc PENDING
+            // 3) Kiểm tra công nợ: Chặn nếu có giao dịch chuyển khoản chưa xác nhận
+            // 4) Thực hiện đổi trạng thái sang CANCELLED
+            // 5) Xử lý dây chuyền: Hủy các "hợp đồng nối đuôi" (gia hạn) của cùng phòng
+            // 6) Tính toán lại để giải phóng phòng nếu không còn ai thuê
+            // 7) Tính toán lại trạng thái người thuê để cập nhật quyền truy cập app
+            int roomId;
+            int tenantId;
+            String oldStatus;
+
+            // 1) lock + load
+            try (PreparedStatement ps = conn.prepareStatement(lockSql)) {
+                ps.setInt(1, contractId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {
+                        conn.rollback();
+                        return ServiceResult.fail("NOT_FOUND");
+                    }
+                    roomId = rs.getInt("room_id");
+                    tenantId = rs.getInt("tenant_id");
+                    oldStatus = rs.getString("status");
+                }
+            }
+
+            // 2) validate status
+            if (oldStatus == null
+                    || (!oldStatus.equals("ACTIVE") && !oldStatus.equals("PENDING"))) {
+                conn.rollback();
+                return ServiceResult.fail("NOT_TERMINATABLE");
+            }
+
+            // 3) block if pending bank payment exists (reuse đúng logic đang dùng confirm)
+            PaymentDAO paymentDAO = new PaymentDAO();
+            boolean hasPendingPayment = paymentDAO.hasPendingBankPayment(contractId);
+            if (hasPendingPayment) {
+                conn.rollback();
+                return ServiceResult.fail("HAS_PENDING_PAYMENT");
+            }
+
+            // 4) cancel current
+            int updated;
+            try (PreparedStatement ps = conn.prepareStatement(cancelCurrentSql)) {
+                ps.setInt(1, contractId);
+                updated = ps.executeUpdate();
+            }
+            if (updated == 0) {
+                conn.rollback();
+                return ServiceResult.fail("CANCEL_FAILED");
+            }
+
+            // 5) If terminating ACTIVE: cancel PENDING renews in same room
+            if (oldStatus.equals("ACTIVE")) {
+                try (PreparedStatement ps = conn.prepareStatement(cancelPendingSameRoomSql)) {
+                    ps.setInt(1, roomId);
+                    ps.executeUpdate();
+                }
+            }
+
+            // 6) Recalc room status
+            boolean roomHasActive;
+            try (PreparedStatement ps = conn.prepareStatement(roomHasActiveSql)) {
+                ps.setInt(1, roomId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    roomHasActive = rs.next();
+                }
+            }
+
+            boolean roomHasPending = false;
+            if (!roomHasActive) {
+                try (PreparedStatement ps = conn.prepareStatement(roomHasPendingSql)) {
+                    ps.setInt(1, roomId);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        roomHasPending = rs.next();
+                    }
+                }
+            }
+
+            String newRoomStatus = (roomHasActive || roomHasPending) ? "OCCUPIED" : "AVAILABLE";
+            try (PreparedStatement ps = conn.prepareStatement(updateRoomSql)) {
+                ps.setString(1, newRoomStatus);
+                ps.setInt(2, roomId);
+                ps.executeUpdate();
+            }
+
+            // 7) Recalc tenant account_status
+            boolean tenantHasActive;
+            try (PreparedStatement ps = conn.prepareStatement(tenantHasActiveSql)) {
+                ps.setInt(1, tenantId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    tenantHasActive = rs.next();
+                }
+            }
+
+            boolean tenantHasPending = false;
+            if (!tenantHasActive) {
+                try (PreparedStatement ps = conn.prepareStatement(tenantHasPendingSql)) {
+                    ps.setInt(1, tenantId);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        tenantHasPending = rs.next();
+                    }
+                }
+            }
+
+            String newAccStatus = tenantHasActive ? "ACTIVE" : (tenantHasPending ? "PENDING" : "ACTIVE");
+            try (PreparedStatement ps = conn.prepareStatement(updateTenantSql)) {
+                ps.setString(1, newAccStatus);
+                ps.setInt(2, tenantId);
+                ps.executeUpdate();
+            }
+
+            conn.commit();
+            return ServiceResult.ok("OK");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ServiceResult.fail("EXCEPTION");
+        }
     }
 
 }
