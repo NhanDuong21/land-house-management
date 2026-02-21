@@ -287,3 +287,90 @@ body {
     opacity: 0;
   }
 }
+
+/* ===== TOP HEADER NAV (TRUE CENTER + NO BLUE) ===== */
+
+/* header giữ glass */
+.rh-topbar {
+  position: relative; /* để topnav absolute canh giữa */
+  height: 72px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+}
+
+/* left/right giữ layout cũ */
+.rh-topbar-left,
+.rh-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 2; /* nổi lên trên */
+}
+
+/* đồng bộ màu nút ☰ */
+.rh-icon-btn {
+  border: 1px solid rgba(17, 24, 39, 0.18);
+  background: rgba(255, 255, 255, 0.78);
+  color: #111827;
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: 0.12s ease;
+}
+
+.rh-icon-btn:hover {
+  background: #ffffff;
+  border-color: rgba(17, 24, 39, 0.26);
+}
+
+/* NAV: canh giữa theo toàn header (không phụ thuộc left/right) */
+.rh-topnav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  align-items: center;
+  gap: 22px;
+
+  z-index: 1;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+
+/* Link: bỏ xanh, giống text menu */
+.rh-topnav-link {
+  color: #111827; /* <-- không xanh */
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+
+  text-decoration: none; /* bỏ underline */
+  padding: 10px 6px;
+  border-radius: 10px;
+  transition: 0.12s ease;
+}
+
+.rh-topnav-link:hover {
+  background: rgba(17, 24, 39, 0.06);
+}
+
+.rh-topnav-link.active {
+  background: rgba(17, 24, 39, 0.1);
+}
+
+/* responsive */
+@media (max-width: 900px) {
+  .rh-topnav {
+    display: none;
+  }
+}

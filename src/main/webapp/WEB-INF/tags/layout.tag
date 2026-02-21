@@ -97,32 +97,32 @@
                     <a class="rh-link <%= "contact".equals(_active) ? "active" : ""%>" href="<%=ctx%>/contact">Contact</a>
 
                     <% if (isTenant) { %>
-                        <div class="rh-section">Tenant</div>
+                    <div class="rh-section">Tenant</div>
 
-                        <% if (isTenantPending) { %>
-                            <!-- PENDING: chỉ được xem hợp đồng để chuyển khoản + xác nhận -->
-                            <a class="rh-link <%= "t_contract".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/tenant/contract">My Contract</a>
-                        <% } else { %>
-                            <!-- ACTIVE: đầy đủ -->
-                            <a class="rh-link <%= "t_room".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/tenant/room">My Room</a>
+                    <% if (isTenantPending) {%>
+                    <!-- PENDING: chỉ được xem hợp đồng để chuyển khoản + xác nhận -->
+                    <a class="rh-link <%= "t_contract".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/tenant/contract">My Contract</a>
+                    <% } else {%>
+                    <!-- ACTIVE: đầy đủ -->
+                    <a class="rh-link <%= "t_room".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/tenant/room">My Room</a>
 
-                            <a class="rh-link <%= "t_contract".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/tenant/contract">My Contract</a>
+                    <a class="rh-link <%= "t_contract".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/tenant/contract">My Contract</a>
 
-                            <a class="rh-link <%= "t_bill".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/tenant/bill">My Bills</a>
+                    <a class="rh-link <%= "t_bill".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/tenant/bill">My Bills</a>
 
-                            <a class="rh-link <%= "t_maintenance".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/maintenance">Maintenance Requests</a>
+                    <a class="rh-link <%= "t_maintenance".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/maintenance">Maintenance Requests</a>
 
-                            <a class="rh-link <%= "t_utility".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/tenant/utility">Utility</a>
+                    <a class="rh-link <%= "t_utility".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/tenant/utility">Utility</a>
 
-                            <a class="rh-link <%= "t_profile".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/profile">Profile</a>
-                        <% } %>
+                    <a class="rh-link <%= "t_profile".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/profile">Profile</a>
+                    <% } %>
                     <% } %>
 
                     <%-- STAFF / MANAGER / ADMIN --%>
@@ -190,14 +190,32 @@
             <main class="rh-main">
 
                 <!-- HEADER -->
+                <!-- HEADER -->
                 <header class="rh-topbar">
                     <div class="rh-topbar-left">
                         <button class="rh-icon-btn" type="button" id="rhToggleSidebar">☰</button>
+
+                        <!-- TOP NAV (all roles) -->
+                        <nav class="rh-topnav" aria-label="Main navigation">
+                            <a class="rh-topnav-link <%= "home".equals(_active) ? "active" : ""%>"
+                               href="<%=ctx%>/home">TRANG CHỦ</a>
+
+                            <a class="rh-topnav-link <%= "about".equals(_active) ? "active" : ""%>"
+                               href="<%=ctx%>/home">GIỚI THIỆU</a>
+
+                            <a class="rh-topnav-link <%= "news".equals(_active) ? "active" : ""%>"
+                               href="<%=ctx%>/home">TIN TỨC</a>
+
+                            <a class="rh-topnav-link <%= "recruit".equals(_active) ? "active" : ""%>"
+                               href="<%=ctx%>/home">TUYỂN DỤNG</a>
+
+                            <a class="rh-topnav-link <%= "contact".equals(_active) ? "active" : ""%>"
+                               href="<%=ctx%>/contact">LIÊN HỆ</a>
+                        </nav>
                     </div>
 
                     <div class="rh-topbar-right">
-                        <!-- Filter icon chỉ là UI tượng trưng -->
-                        <button class="rh-icon-btn" type="button" id="rhOpenFilter" title="Filter">🔎</button>
+                        <!-- ❌ removed rhOpenFilter button -->
 
                         <div class="rh-user">
                             <div class="rh-avatar"><%=firstLetter%></div>
