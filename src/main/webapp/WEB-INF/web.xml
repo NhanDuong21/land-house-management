@@ -163,4 +163,14 @@
         <url-pattern>/manager/contracts/create-existing</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ManagerTerminateContractController</servlet-name>
+        <servlet-class>Controllers.manager.ManagerTerminateContractController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ManagerTerminateContractController</servlet-name>
+        <url-pattern>/manager/contracts/terminate</url-pattern>
+    </servlet-mapping>
+
 </web-app>
