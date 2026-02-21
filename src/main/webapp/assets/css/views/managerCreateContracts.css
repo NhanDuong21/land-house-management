@@ -1,61 +1,89 @@
-/* managerCreateContracts.css */
+/* ================================
+   IMPORT (Bootstrap + optional font)
+   ================================ */
+@import url("../base/bootstrap.min.css");
 
+/* ================================
+   PAGE WRAP
+   ================================ */
 .contract-create {
+  padding: 30px;
   padding-bottom: 28px;
+  font-family: "Segoe UI", sans-serif;
 }
 
+/* Limit same style as bill pages */
+.contract-create[style*="max-width"] {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ================================
+   CARD (same vibe as managerBills)
+   ================================ */
 .contract-card {
   background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  padding: 22px 22px 18px;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
+/* Header */
 .contract-header {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 12px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .contract-title {
   margin: 0;
+  font-size: 22px;
   font-weight: 700;
+  color: #111827;
   letter-spacing: -0.2px;
 }
 
 .contract-subtitle {
   margin: 6px 0 0;
-  color: rgba(0, 0, 0, 0.6);
-  font-size: 0.95rem;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
 }
 
+/* Badge */
 .contract-badge {
   display: inline-flex;
   align-items: center;
   height: 28px;
   padding: 0 10px;
   border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  background: rgba(13, 110, 253, 0.1);
-  color: #0d6efd;
-  border: 1px solid rgba(13, 110, 253, 0.2);
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  white-space: nowrap;
 }
 
+/* Alert */
 .contract-alert {
   margin: 12px 0 18px;
-  border-radius: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
+/* ================================
+   SECTIONS
+   ================================ */
 .section {
-  background: rgba(0, 0, 0, 0.02);
+  background: #f3f4f6; /* giống search box bill */
   border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 14px;
   margin-bottom: 14px;
 }
@@ -63,52 +91,66 @@
 .section-title {
   font-weight: 700;
   margin-bottom: 10px;
-  font-size: 0.95rem;
-  color: rgba(0, 0, 0, 0.75);
+  font-size: 14px;
+  color: #111827;
 }
 
 .helper-text {
   margin-top: 6px;
-  font-size: 0.85rem;
-  color: rgba(0, 0, 0, 0.55);
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
 }
 
+/* Grid */
 .grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
+/* Labels */
 .form-label {
   font-weight: 600;
-  color: rgba(0, 0, 0, 0.72);
+  color: #111827;
+  font-size: 14px;
 }
 
+/* Input: make bootstrap form-control look like bill vibe */
 .form-control {
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  padding: 10px 12px;
-  transition:
-    box-shadow 0.15s ease,
-    border-color 0.15s ease,
-    transform 0.05s ease;
+  border-radius: 10px !important;
+  border: 1px solid #e5e7eb !important;
+  padding: 10px 12px !important;
+  background: #ffffff !important;
+  transition: 0.2s;
 }
 
 .form-control:focus {
-  border-color: rgba(13, 110, 253, 0.55);
-  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.12);
+  border-color: rgba(37, 99, 235, 0.45) !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
 }
 
+/* ================================
+   ACTIONS
+   ================================ */
 .actions {
   display: flex;
   justify-content: flex-end;
   margin-top: 8px;
 }
 
+/* existing tenant page uses 2 buttons */
+.actions-row {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Use bootstrap button but unify radius like bill */
 .btn-submit {
-  border-radius: 12px;
-  padding: 10px 14px;
-  font-weight: 700;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  font-weight: 700 !important;
+  transition: 0.2s;
 }
 
 .btn-submit:hover {
@@ -119,11 +161,34 @@
   transform: translateY(0);
 }
 
+/* Cancel button: make it look like bill view button */
+.btn-cancel.btn-outline-dark {
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  font-weight: 700 !important;
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #111827;
+  transition: 0.2s;
+}
+
+.btn-cancel.btn-outline-dark:hover {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+/* ================================
+   RESPONSIVE
+   ================================ */
 @media (max-width: 768px) {
   .grid-2 {
     grid-template-columns: 1fr;
   }
   .contract-card {
+    padding: 16px;
+  }
+  .contract-create {
     padding: 16px;
   }
 }
