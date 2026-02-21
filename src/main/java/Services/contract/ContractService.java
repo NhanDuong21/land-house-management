@@ -44,7 +44,7 @@ public class ContractService {
             return ServiceResult.fail("Tên tenant không được để trống.");
         }
         if (identity.isBlank()) {
-            return ServiceResult.fail("Citizen ID tenant không được để trống.");
+            return ServiceResult.fail("Identity Code tenant không được để trống.");
         }
         if (phone.isBlank()) {
             return ServiceResult.fail("SĐT tenant không được để trống.");
