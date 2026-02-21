@@ -1,161 +1,46 @@
-/* ===============================
-   Tenant Contract Detail Page
-================================= */
+@import url("../base/bootstrap.min.css");
 
-.tcd-wrap {
+/* ===== Container giống bill ===== */
+.tcd-container {
+  padding: 30px;
+  font-family: "Segoe UI", sans-serif;
   max-width: 1100px;
-  margin: 30px auto;
+  margin: 0 auto;
 }
 
-/* Back button */
+/* Back button giống kiểu view-btn */
 .tcd-back {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 18px;
-  font-weight: 700;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
   text-decoration: none;
-  color: #0f172a;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  padding: 8px 14px;
-  border-radius: 10px;
-  transition: 0.2s ease;
+  font-size: 13px;
+  color: #111827;
+  background: #f9fafb;
+  transition: 0.2s;
 }
 
 .tcd-back:hover {
-  background: #0f172a;
-  color: #fff;
+  background: #e5e7eb;
 }
 
-/* Card */
-.tcd-card {
-  background: #ffffff;
-  border-radius: 18px;
-  border: 1px solid rgba(2, 6, 23, 0.08);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
-}
-
-.tcd-card-body {
-  padding: 28px 32px;
-}
-
-/* Header */
-.tcd-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tcd-contract-id {
-  font-size: 22px;
-  font-weight: 900;
-  letter-spacing: -0.02em;
-}
-
-.tcd-sub {
-  margin-top: 6px;
-  color: #64748b;
-  font-weight: 600;
-}
-
-/* Badges */
-.tcd-badge {
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 900;
-}
-
-.tcd-badge-active {
-  background: #dcfce7;
-  color: #166534;
-  border: 1px solid #86efac;
-}
-
-.tcd-badge-pending {
-  background: #fffbeb;
-  color: #92400e;
-  border: 1px solid #fcd34d;
-}
-
-/* Divider */
-.tcd-divider {
-  height: 1px;
-  background: rgba(0, 0, 0, 0.08);
-  margin: 24px 0;
-}
-
-.tcd-divider-soft {
-  opacity: 0.5;
-}
-
-/* Titles */
-.tcd-doc-title {
-  font-weight: 900;
-  font-size: 18px;
-}
-
-.tcd-doc-meta {
-  margin-top: 6px;
-  color: #475569;
-  font-weight: 600;
-}
-
-.tcd-doc-meta-2 {
-  margin-top: 10px;
-}
-
-.tcd-section-title,
-.tcd-article-title {
-  font-weight: 900;
-  margin-bottom: 10px;
-  font-size: 15px;
-}
-
-/* Grid */
-.tcd-grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-}
-
-/* Lines */
-.tcd-line {
-  margin-bottom: 10px;
-}
-
-.tcd-label {
-  font-weight: 800;
-  margin-right: 6px;
-}
-
-.tcd-value {
-  color: #334155;
-  font-weight: 600;
-}
-
-/* Article block */
-.tcd-article {
-  margin-top: 8px;
-}
-
-.tcd-note {
-  margin-top: 10px;
-  font-size: 14px;
-  color: #64748b;
-  font-weight: 600;
-}
-
-/* Alerts */
+/* Alerts (đơn giản như bill) */
 .tcd-alert {
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-weight: 700;
-  margin-top: 15px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  font-size: 14px;
 }
 
 .tcd-alert-success {
-  background: #ecfdf5;
+  background: #ecfdf3;
   border: 1px solid #86efac;
-  color: #065f46;
+  color: #166534;
 }
 
 .tcd-alert-warning {
@@ -170,87 +55,295 @@
   color: #991b1b;
 }
 
-/* Payment Section */
+.tcd-alert-inline {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tcd-muted {
+  color: rgba(17, 24, 39, 0.7);
+}
+
+/* Card giống bill */
+.tcd-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+}
+
+.tcd-card-body {
+  padding: 22px;
+}
+
+/* Top */
+.tcd-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tcd-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.tcd-sub {
+  margin-top: 6px;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.tcd-top-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+/* Badge giống bill: solid */
+.tcd-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.tcd-badge.active {
+  background: #16a34a;
+}
+.tcd-badge.pending {
+  background: #f59e0b;
+}
+.tcd-badge.ended {
+  background: #6b7280;
+}
+.tcd-badge.cancelled {
+  background: #ef4444;
+}
+
+/* Actions */
+.tcd-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Buttons kiểu bill */
+.tcd-btn {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  color: #111827;
+  cursor: pointer;
+  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tcd-btn:hover {
+  background: #e5e7eb;
+}
+
+.tcd-btn-primary {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.tcd-btn-primary:hover {
+  background: #1e40af;
+  border-color: #1e40af;
+}
+
+.tcd-btn-danger {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.tcd-btn-danger:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+
+/* Divider */
+.tcd-divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 18px 0;
+}
+
+.tcd-divider-soft {
+  opacity: 0.7;
+}
+
+/* Doc header */
+.tcd-doc-head {
+  margin-top: 4px;
+}
+
+.tcd-doc-title {
+  font-weight: 700;
+  font-size: 16px;
+  color: #111827;
+}
+
+.tcd-doc-meta {
+  margin-top: 6px;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tcd-dot {
+  margin: 0 8px;
+  color: #d1d5db;
+}
+
+/* Sections & lines */
+.tcd-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.tcd-grid-compact {
+  gap: 12px;
+}
+
+.tcd-section {
+  background: #ffffff;
+  border: 1px solid #f1f1f1;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.tcd-section-title,
+.tcd-article-title {
+  font-weight: 700;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #111827;
+}
+
+.tcd-line {
+  margin-bottom: 10px;
+}
+
+.tcd-line:last-child {
+  margin-bottom: 0;
+}
+
+.tcd-label {
+  font-weight: 600;
+  margin-right: 6px;
+  color: #111827;
+}
+
+.tcd-value {
+  color: #374151;
+  font-weight: 500;
+}
+
+/* Articles */
+.tcd-article {
+  margin-top: 8px;
+}
+
+.tcd-note {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Pill */
+.tcd-pill {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  font-size: 12px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Payment */
 .tcd-pay-wrap {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: 18px;
+}
+
+.tcd-pay-card {
+  border: 1px solid #f1f1f1;
+  border-radius: 10px;
+  padding: 14px;
+  background: #fff;
 }
 
 .tcd-pay-title {
-  font-weight: 900;
+  font-weight: 700;
   margin-bottom: 6px;
+  color: #111827;
 }
 
 .tcd-pay-sub {
-  color: #64748b;
-  font-weight: 600;
+  color: #6b7280;
+  font-weight: 500;
   margin-bottom: 12px;
+  font-size: 13px;
 }
 
 .tcd-qr-box {
   background: #ffffff;
-  padding: 12px;
-  border-radius: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
   display: inline-block;
 }
 
 .tcd-qr-img {
-  width: 260px;
-  height: 260px;
+  width: 240px;
+  height: 240px;
   object-fit: contain;
 }
 
 .tcd-pay-latest {
-  margin-top: 14px;
-  font-weight: 800;
-}
-
-.tcd-pill {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: #f1f5f9;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  font-size: 12px;
-  margin-left: 6px;
-}
-
-/* Confirm form */
-.tcd-form {
   margin-top: 12px;
-}
-
-.tcd-btn {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  border: none;
-  background: #0f172a;
-  color: #ffffff;
-  font-weight: 800;
-  transition: 0.2s ease;
-}
-
-.tcd-btn:hover {
-  background: #1e293b;
-}
-
-.tcd-hint {
-  margin-top: 8px;
-  font-size: 13px;
-  color: #64748b;
   font-weight: 600;
+  color: #111827;
 }
 
 /* Responsive */
 @media (max-width: 992px) {
-  .tcd-grid-2 {
+  .tcd-grid-2,
+  .tcd-pay-wrap {
     grid-template-columns: 1fr;
   }
 
-  .tcd-pay-wrap {
-    grid-template-columns: 1fr;
+  .tcd-top-right {
+    align-items: flex-start;
+  }
+
+  .tcd-actions {
+    justify-content: flex-start;
   }
 }
