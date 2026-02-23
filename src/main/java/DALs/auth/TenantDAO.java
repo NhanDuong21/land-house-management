@@ -137,6 +137,22 @@ public class TenantDAO extends DBContext {
     }
 
     @SuppressWarnings("CallToPrintStackTrace")
+    public String getPasswordHashById(int tenantId) {
+        String sql = "SELECT password_hash FROM TENANT WHERE tenant_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("password_hash");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
     public boolean updatePasswordForTenant(int tenantId, String newHash) {
         String sql = """
         UPDATE TENANT
