@@ -7,7 +7,6 @@
 
         <!-- Bootstrap (page-level) -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/base/bootstrap.min.css">
-        <!-- Bootstrap Icons (optional) -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
         <div class="container-fluid py-4 rhp-wrap">
@@ -24,7 +23,6 @@
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <div class="rhp-card-title">Personal Information</div>
 
-                        <!-- future edit -->
                         <a class="btn btn-primary rhp-btn disabled" href="javascript:void(0)" aria-disabled="true">
                             <i class="bi bi-pencil-square me-2"></i>
                             Edit Profile
@@ -33,7 +31,6 @@
 
                     <div class="row g-4">
 
-                        <!-- Full name -->
                         <div class="col-12 col-md-6">
                             <label class="rhp-label">
                                 <i class="bi bi-person me-2"></i> Full Name
@@ -41,7 +38,6 @@
                             <input class="form-control rhp-input" value="${fullName}" readonly>
                         </div>
 
-                        <!-- Phone -->
                         <div class="col-12 col-md-6">
                             <label class="rhp-label">
                                 <i class="bi bi-telephone me-2"></i> Phone Number
@@ -51,7 +47,6 @@
                                    readonly>
                         </div>
 
-                        <!-- Email -->
                         <div class="col-12 col-md-6">
                             <label class="rhp-label">
                                 <i class="bi bi-envelope me-2"></i> Email
@@ -59,7 +54,6 @@
                             <input class="form-control rhp-input" value="${email}" readonly>
                         </div>
 
-                        <!-- Gender -->
                         <div class="col-12 col-md-6">
                             <label class="rhp-label">
                                 <i class="bi bi-gender-ambiguous me-2"></i> Gender
@@ -69,7 +63,6 @@
                                    readonly>
                         </div>
 
-                        <!-- DOB -->
                         <div class="col-12 col-md-6">
                             <label class="rhp-label">
                                 <i class="bi bi-calendar-event me-2"></i> Date of Birth
@@ -79,7 +72,6 @@
                                    readonly>
                         </div>
 
-                        <!-- Citizen ID -->
                         <div class="col-12">
                             <label class="rhp-label">
                                 <i class="bi bi-credit-card-2-front me-2"></i> Citizen ID
@@ -89,7 +81,6 @@
                                    readonly>
                         </div>
 
-                        <!-- Address (tenant only) -->
                         <c:if test="${showAddress}">
                             <div class="col-12">
                                 <label class="rhp-label">
@@ -117,21 +108,53 @@
                         <i class="bi bi-lock me-2"></i> Change Password
                     </div>
 
-                    <c:if test="${not empty pwdMessage}">
-                        <div class="alert ${pwdSuccess ? 'alert-success' : 'alert-danger'}">
-                            <c:out value="${pwdMessage}"/>
+                    <!-- Success -->
+                    <c:if test="${param.pwd == '1'}">
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Password changed successfully.
                         </div>
                     </c:if>
 
-                    <form method="post" action="${pageContext.request.contextPath}/profile" class="rhp-form">
-                        <input type="hidden" name="action" value="changePassword"/>
+                    <!-- Error mapping -->
+                    <c:if test="${param.err == '1'}">
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>Change password failed:</strong>
+                            <c:choose>
+                                <c:when test="${param.code == 'PWD_REQUIRED'}">
+                                    New password and confirm password are required.
+                                </c:when>
+                                <c:when test="${param.code == 'PWD_LENGTH'}">
+                                    Password must be between 6 and 64 characters.
+                                </c:when>
+                                <c:when test="${param.code == 'PWD_CONFIRM_MISMATCH'}">
+                                    Confirm password does not match.
+                                </c:when>
+                                <c:when test="${param.code == 'OLD_REQUIRED'}">
+                                    Current password is required.
+                                </c:when>
+                                <c:when test="${param.code == 'OLD_INCORRECT'}">
+                                    Current password is incorrect.
+                                </c:when>
+                                <c:when test="${param.code == 'UPDATE_FAILED'}">
+                                    Failed to update password. Please try again.
+                                </c:when>
+                                <c:otherwise>
+                                    Unexpected error occurred.
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </c:if>
+
+                    <form method="post" action="${pageContext.request.contextPath}/change-password" class="rhp-form">
 
                         <div class="mb-3">
                             <label class="form-label rhp-form-label">Current Password</label>
                             <div class="input-group">
-                                <input type="password" name="currentPassword"
+                                <input type="password" name="old_password"
                                        class="form-control rhp-input pwd-field"
-                                       placeholder="Enter current password" required>
+                                       placeholder="Enter current password">
                                 <button class="btn btn-outline-secondary toggle-password" type="button">
                                     <i class="bi bi-eye"></i>
                                 </button>
@@ -141,7 +164,7 @@
                         <div class="mb-3">
                             <label class="form-label rhp-form-label">New Password</label>
                             <div class="input-group">
-                                <input type="password" name="newPassword"
+                                <input type="password" name="new_password"
                                        class="form-control rhp-input pwd-field"
                                        placeholder="Enter new password" required>
                                 <button class="btn btn-outline-secondary toggle-password" type="button">
@@ -149,11 +172,11 @@
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div class="mb-4">
                             <label class="form-label rhp-form-label">Confirm New Password</label>
                             <div class="input-group">
-                                <input type="password" name="confirmPassword"
+                                <input type="password" name="confirm_password"
                                        class="form-control rhp-input pwd-field"
                                        placeholder="Confirm new password" required>
                                 <button class="btn btn-outline-secondary toggle-password" type="button">
