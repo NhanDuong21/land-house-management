@@ -316,3 +316,12 @@
     padding: 16px;
   }
 }
+
+.tcd-label i {
+  width: 16px;
+  text-align: center;
+}
+.tcd-section-title i,
+.tcd-article-title i {
+  opacity: 0.85;
+}

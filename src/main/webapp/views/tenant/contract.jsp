@@ -13,13 +13,22 @@
 
     <div class="container tc-wrap">
 
-        <h1 class="tc-title">My Contracts</h1>
-        <div class="tc-sub">View your rental contracts</div>
+        <h1 class="tc-title">
+            <i class="bi bi-file-earmark-text me-2"></i>
+            My Contracts
+        </h1>
+        <div class="tc-sub">
+            <i class="bi bi-info-circle me-2"></i>
+            View your rental contracts
+        </div>
 
         <div class="tc-board">
 
             <c:if test="${empty contracts}">
-                <div class="tc-empty">You don't have any contracts yet.</div>
+                <div class="tc-empty">
+                    <i class="bi bi-inbox me-2"></i>
+                    You don't have any contracts yet.
+                </div>
             </c:if>
 
             <c:if test="${not empty contracts}">
@@ -31,13 +40,16 @@
                             <!-- Header -->
                             <div class="tc-card-head">
                                 <div class="tc-card-left">
-                                    <div class="tc-doc">T</div>
+                                    <div class="tc-doc">
+                                        <i class="bi bi-file-earmark-text"></i>
+                                    </div>
 
                                     <div>
                                         <div class="tc-card-title">
                                             Contract #<fmt:formatNumber value="${c.contractId}" pattern="000000"/>
                                         </div>
                                         <div class="tc-card-meta">
+                                            <i class="bi bi-door-open me-1"></i>
                                             <c:out value="${c.roomNumber}"/>
                                             <c:if test="${not empty c.blockName}">
                                                 - <c:out value="${c.blockName}"/>
@@ -48,19 +60,30 @@
 
                                 <c:choose>
                                     <c:when test="${c.status eq 'ACTIVE'}">
-                                        <span class="tc-badge active">ACTIVE</span>
+                                        <span class="tc-badge active">
+                                            <i class="bi bi-check-circle me-1"></i> ACTIVE
+                                        </span>
                                     </c:when>
                                     <c:when test="${c.status eq 'PENDING'}">
-                                        <span class="tc-badge pending">PENDING</span>
+                                        <span class="tc-badge pending">
+                                            <i class="bi bi-clock-history me-1"></i> PENDING
+                                        </span>
                                     </c:when>
                                     <c:when test="${c.status eq 'CANCELLED'}">
-                                        <span class="tc-badge cancelled">CANCELLED</span>
+                                        <span class="tc-badge cancelled">
+                                            <i class="bi bi-x-circle me-1"></i> CANCELLED
+                                        </span>
                                     </c:when>
                                     <c:when test="${c.status eq 'ENDED'}">
-                                        <span class="tc-badge ended">ENDED</span>
+                                        <span class="tc-badge ended">
+                                            <i class="bi bi-flag me-1"></i> ENDED
+                                        </span>
                                     </c:when>
                                     <c:otherwise>
-                                        <span class="tc-badge ended"><c:out value="${c.status}"/></span>
+                                        <span class="tc-badge ended">
+                                            <i class="bi bi-question-circle me-1"></i>
+                                            <c:out value="${c.status}"/>
+                                        </span>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
@@ -71,7 +94,9 @@
                             <div class="tc-rows">
 
                                 <div class="tc-row">
-                                    <div class="tc-ico">•</div>
+                                    <div class="tc-ico">
+                                        <i class="bi bi-door-open"></i>
+                                    </div>
                                     <div>
                                         <div class="tc-label">Room</div>
                                         <div class="tc-value">
@@ -84,7 +109,9 @@
                                 </div>
 
                                 <div class="tc-row">
-                                    <div class="tc-ico">•</div>
+                                    <div class="tc-ico">
+                                        <i class="bi bi-calendar-event"></i>
+                                    </div>
                                     <div>
                                         <div class="tc-label">Duration</div>
                                         <div class="tc-value">
@@ -101,7 +128,9 @@
                                 </div>
 
                                 <div class="tc-row">
-                                    <div class="tc-ico">•</div>
+                                    <div class="tc-ico">
+                                        <i class="bi bi-cash-coin"></i>
+                                    </div>
                                     <div>
                                         <div class="tc-label">Monthly Rent</div>
                                         <div class="tc-value">
@@ -115,7 +144,7 @@
                             <div class="tc-actions">
                                 <a class="tc-view-btn"
                                    href="${pageContext.request.contextPath}/tenant/contract/detail?id=${c.contractId}">
-                                    View
+                                    <i class="bi bi-eye me-2"></i> View
                                 </a>
                             </div>
 

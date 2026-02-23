@@ -228,3 +228,14 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+.tc-doc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tc-ico {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
