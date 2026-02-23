@@ -173,4 +173,13 @@
         <url-pattern>/manager/contracts/terminate</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>ProfileController</servlet-name>
+        <servlet-class>Controllers.common.ProfileController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ProfileController</servlet-name>
+        <url-pattern>/profile</url-pattern>
+    </servlet-mapping>
 </web-app>

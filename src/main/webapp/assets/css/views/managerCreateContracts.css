@@ -1,194 +1,351 @@
-/* ================================
-   IMPORT (Bootstrap + optional font)
-   ================================ */
+/* /assets/css/views/managerCreateContracts.css */
 @import url("../base/bootstrap.min.css");
 
-/* ================================
-   PAGE WRAP
-   ================================ */
-.contract-create {
-  padding: 30px;
-  padding-bottom: 28px;
-  font-family: "Segoe UI", sans-serif;
+:root {
+  --mcc-bg: #f6f8fb;
+  --mcc-card: #ffffff;
+  --mcc-text: #0f172a;
+  --mcc-muted: #64748b;
+  --mcc-border: rgba(15, 23, 42, 0.1);
+  --mcc-border-2: rgba(15, 23, 42, 0.08);
+  --mcc-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --mcc-radius: 16px;
+
+  --mcc-primary: #2563eb;
+  --mcc-primary-2: #1d4ed8;
+
+  --mcc-danger: #dc2626;
+  --mcc-danger-2: #b91c1c;
 }
 
-/* Limit same style as bill pages */
-.contract-create[style*="max-width"] {
-  margin-left: auto;
-  margin-right: auto;
+.mcc-wrap {
+  max-width: 960px;
+  margin: 18px auto 40px;
+  padding: 0 16px;
+  font-family:
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    Arial,
+    sans-serif;
+  color: var(--mcc-text);
 }
 
-/* ================================
-   CARD (same vibe as managerBills)
-   ================================ */
-.contract-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-/* Header */
-.contract-header {
+.mcc-pagehead {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid #e5e7eb;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
 }
 
-.contract-title {
-  margin: 0;
+.mcc-title {
   font-size: 22px;
-  font-weight: 700;
-  color: #111827;
+  font-weight: 900;
   letter-spacing: -0.2px;
-}
-
-.contract-subtitle {
-  margin: 6px 0 0;
-  color: #6b7280;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-/* Badge */
-.contract-badge {
   display: inline-flex;
   align-items: center;
-  height: 28px;
-  padding: 0 10px;
+  gap: 10px;
+}
+
+.mcc-title i {
+  color: rgba(37, 99, 235, 0.95);
+  font-size: 18px;
+}
+
+.mcc-subtitle {
+  margin-top: 6px;
+  color: var(--mcc-muted);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.mcc-breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--mcc-muted);
+}
+
+.mcc-bc-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid var(--mcc-border-2);
+  background: rgba(255, 255, 255, 0.75);
   border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  background: rgba(37, 99, 235, 0.12);
-  color: #2563eb;
+}
+
+.mcc-bc-item i {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.mcc-bc-item.active {
+  color: var(--mcc-text);
+  background: #fff;
+  border-color: var(--mcc-border);
+}
+
+.mcc-bc-sep {
+  color: rgba(100, 116, 139, 0.75);
+}
+
+.mcc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--mcc-primary);
   border: 1px solid rgba(37, 99, 235, 0.18);
   white-space: nowrap;
 }
 
-/* Alert */
-.contract-alert {
-  margin: 12px 0 18px;
-  border-radius: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+/* Card */
+.mcc-card {
+  background: var(--mcc-card);
+  border-radius: var(--mcc-radius);
+  border: 1px solid var(--mcc-border);
+  box-shadow: var(--mcc-shadow);
+  padding: 18px;
 }
 
-/* ================================
-   SECTIONS
-   ================================ */
-.section {
-  background: #f3f4f6; /* giống search box bill */
-  border: 1px solid rgba(0, 0, 0, 0.06);
+/* Alert */
+.mcc-alert {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--mcc-border);
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+  margin-bottom: 14px;
+}
+
+.mcc-alert-ic {
+  width: 34px;
+  height: 34px;
   border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.mcc-alert-ic i {
+  font-size: 16px;
+}
+
+.mcc-alert-title {
+  font-weight: 900;
+  margin-bottom: 2px;
+  line-height: 1.1;
+}
+
+.mcc-alert-sub {
+  color: var(--mcc-muted);
+  line-height: 1.35;
+}
+
+.mcc-alert-danger .mcc-alert-ic {
+  background: rgba(220, 38, 38, 0.12);
+  color: var(--mcc-danger);
+}
+
+/* Form / sections */
+.mcc-form {
+  margin: 0;
+}
+
+.mcc-section {
+  border: 1px solid var(--mcc-border-2);
+  border-radius: 16px;
+  background: rgba(246, 248, 251, 0.6);
   padding: 14px;
   margin-bottom: 14px;
 }
 
-.section-title {
-  font-weight: 700;
-  margin-bottom: 10px;
+.mcc-section-head {
+  margin-bottom: 12px;
+}
+
+.mcc-section-title {
+  font-weight: 950;
   font-size: 14px;
-  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.helper-text {
+.mcc-section-title i {
+  color: rgba(37, 99, 235, 0.95);
+  font-size: 16px;
+}
+
+.mcc-section-desc {
   margin-top: 6px;
+  color: var(--mcc-muted);
   font-size: 13px;
-  color: #6b7280;
-  font-weight: 500;
+  line-height: 1.35;
 }
 
-/* Grid */
-.grid-2 {
+.mcc-grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
-/* Labels */
-.form-label {
-  font-weight: 600;
-  color: #111827;
-  font-size: 14px;
+.mcc-field {
+  margin-bottom: 12px;
 }
 
-/* Input: make bootstrap form-control look like bill vibe */
-.form-control {
-  border-radius: 10px !important;
-  border: 1px solid #e5e7eb !important;
+.mcc-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  color: var(--mcc-text);
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.mcc-label i {
+  font-size: 13px;
+  color: rgba(100, 116, 139, 0.95);
+}
+
+.mcc-control-input.form-control {
+  border-radius: 12px !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
   padding: 10px 12px !important;
-  background: #ffffff !important;
+  background: #fff !important;
   transition: 0.2s;
 }
 
-.form-control:focus {
+.mcc-control-input.form-control:focus {
   border-color: rgba(37, 99, 235, 0.45) !important;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
 }
 
-/* ================================
-   ACTIONS
-   ================================ */
-.actions {
-  display: flex;
-  justify-content: flex-end;
+.mcc-help {
   margin-top: 8px;
+  color: var(--mcc-muted);
+  font-size: 13px;
+  font-weight: 500;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.35;
 }
 
-/* existing tenant page uses 2 buttons */
-.actions-row {
-  gap: 10px;
+.mcc-help i {
+  margin-top: 2px;
+  color: rgba(37, 99, 235, 0.9);
+}
+
+.mcc-help-compact {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--mcc-border-2);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Buttons / actions */
+.mcc-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.mcc-actions-split {
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
-/* Use bootstrap button but unify radius like bill */
-.btn-submit {
-  border-radius: 8px !important;
-  padding: 10px 14px !important;
-  font-weight: 700 !important;
-  transition: 0.2s;
+.mcc-btn {
+  appearance: none;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 900;
+  font-size: 13px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition:
+    transform 0.05s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+  text-decoration: none;
 }
 
-.btn-submit:hover {
-  transform: translateY(-1px);
+.mcc-btn i {
+  font-size: 14px;
 }
 
-.btn-submit:active {
-  transform: translateY(0);
+.mcc-btn:active {
+  transform: translateY(1px);
 }
 
-/* Cancel button: make it look like bill view button */
-.btn-cancel.btn-outline-dark {
-  border-radius: 8px !important;
-  padding: 10px 14px !important;
-  font-weight: 700 !important;
-  background: #f9fafb;
-  border-color: #d1d5db;
-  color: #111827;
-  transition: 0.2s;
+.mcc-btn-primary {
+  background: var(--mcc-primary);
+  border-color: rgba(37, 99, 235, 0.3);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
 }
 
-.btn-cancel.btn-outline-dark:hover {
-  background: #e5e7eb;
-  border-color: #d1d5db;
-  color: #111827;
+.mcc-btn-primary:hover {
+  background: var(--mcc-primary-2);
 }
 
-/* ================================
-   RESPONSIVE
-   ================================ */
+.mcc-btn-ghost {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.1);
+  color: var(--mcc-text);
+}
+
+.mcc-btn-ghost:hover {
+  background: rgba(15, 23, 42, 0.06);
+  border-color: rgba(15, 23, 42, 0.14);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .grid-2 {
+  .mcc-grid-2 {
     grid-template-columns: 1fr;
   }
-  .contract-card {
-    padding: 16px;
+
+  .mcc-card {
+    padding: 14px;
   }
-  .contract-create {
-    padding: 16px;
+
+  .mcc-actions {
+    justify-content: stretch;
+  }
+
+  .mcc-actions-split {
+    justify-content: stretch;
+  }
+
+  .mcc-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
