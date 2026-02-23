@@ -98,4 +98,41 @@ public class StaffDAO extends DBContext {
         }
         return null;
     }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public Staff findById(int staffId) {
+        String sql = """
+        SELECT staff_id, full_name, phone_number, email, identity_code, date_of_birth, gender,
+               staff_role, password_hash, avatar, status, created_at, updated_at
+        FROM STAFF
+        WHERE staff_id = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, staffId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Staff staff = new Staff();
+                    staff.setStaffId(rs.getInt("staff_id"));
+                    staff.setFullName(rs.getString("full_name"));
+                    staff.setPhoneNumber(rs.getString("phone_number"));
+                    staff.setEmail(rs.getString("email"));
+                    staff.setIdentityCode(rs.getString("identity_code"));
+                    staff.setDateOfBirth(rs.getDate("date_of_birth"));
+                    staff.setGender(rs.getObject("gender") == null ? null : ((Number) rs.getObject("gender")).intValue());
+                    staff.setStaffRole(rs.getString("staff_role"));
+                    staff.setPasswordHash(rs.getString("password_hash"));
+                    staff.setAvatar(rs.getString("avatar"));
+                    staff.setStatus(rs.getString("status"));
+                    staff.setCreatedAt(rs.getTimestamp("created_at"));
+                    staff.setUpdatedAt(rs.getTimestamp("updated_at"));
+                    return staff;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
