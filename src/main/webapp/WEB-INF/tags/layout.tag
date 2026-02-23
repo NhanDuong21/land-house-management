@@ -167,6 +167,9 @@
                     <a class="rh-link <%= "a_dashboard".equals(_active) ? "active" : ""%>"
                        href="<%=ctx%>/admin/home">Admin Dashboard</a>
 
+                    <a class="rh-link <%= "a_profile".equals(_active) ? "active" : ""%>"
+                       href="<%=ctx%>/profile">Admin Profile</a>
+
                     <a class="rh-link <%= "a_accounts".equals(_active) ? "active" : ""%>"
                        href="<%=ctx%>/admin/accounts">Manage Accounts</a>
 
