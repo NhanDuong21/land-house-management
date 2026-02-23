@@ -1,0 +1,20 @@
+.rh-profile .rh-card {
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.rh-profile .rh-avatar-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex: 0 0 72px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #f8f9fa;
+}
+
+.rh-profile .rh-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
