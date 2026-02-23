@@ -198,17 +198,35 @@ public class TenantDAO extends DBContext {
 
     @SuppressWarnings("CallToPrintStackTrace")
     public Tenant findById(int tenantId) {
-        String sql = "SELECT tenant_id, full_name, email, phone_number, account_status FROM TENANT WHERE tenant_id = ?";
+        String sql = """
+        SELECT tenant_id, full_name, identity_code, phone_number, email, [address],
+               date_of_birth, gender, avatar, account_status, password_hash, must_set_password,
+               created_at, updated_at
+        FROM TENANT
+        WHERE tenant_id = ?
+    """;
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, tenantId);
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Tenant t = new Tenant();
                     t.setTenantId(rs.getInt("tenant_id"));
                     t.setFullName(rs.getString("full_name"));
-                    t.setEmail(rs.getString("email"));
+                    t.setIdentityCode(rs.getString("identity_code"));
                     t.setPhoneNumber(rs.getString("phone_number"));
+                    t.setEmail(rs.getString("email"));
+                    t.setAddress(rs.getString("address"));
+                    t.setDateOfBirth(rs.getDate("date_of_birth"));
+                    t.setGender(rs.getObject("gender") == null ? null : ((Number) rs.getObject("gender")).intValue());
+                    t.setAvatar(rs.getString("avatar"));
                     t.setAccountStatus(rs.getString("account_status"));
+                    t.setPasswordHash(rs.getString("password_hash"));
+                    t.setMustSetPassword(rs.getBoolean("must_set_password"));
+                    t.setCreatedAt(rs.getTimestamp("created_at"));
+                    t.setUpdatedAt(rs.getTimestamp("updated_at"));
+
                     return t;
                 }
             }
