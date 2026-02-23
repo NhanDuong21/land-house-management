@@ -1,20 +1,64 @@
-.rh-profile .rh-card {
+/* Profile page look giống screenshot */
+.rhp-wrap {
+  max-width: 980px;
+}
+
+.rhp-header {
+  margin: 0 0 18px 0;
+}
+
+.rhp-title {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.rhp-subtitle {
+  margin-top: 6px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.rhp-card {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+}
+
+.rhp-card-title {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.rhp-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.rhp-input {
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #f6f7f9;
+  padding: 12px 14px;
+}
+
+.rhp-input[readonly] {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.rhp-btn {
   border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 10px 16px;
+  font-weight: 600;
 }
 
-.rh-profile .rh-avatar-wrap {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  overflow: hidden;
-  flex: 0 0 72px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  background: #f8f9fa;
+.rhp-note {
+  border-radius: 12px;
 }
 
-.rh-profile .rh-avatar-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.rhp-form-label {
+  font-weight: 600;
 }
