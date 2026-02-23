@@ -1,6 +1,6 @@
 <%-- 
     Document   : layout
-    Created on : Feb 6, 2026, 6:17:05 AM
+    Created on : Feb 6, 2026, 6:17:05 AM
     Author     : Duong Thien Nhan - CE190741
 --%>
 <%@tag pageEncoding="UTF-8" body-content="scriptless"%>
@@ -76,6 +76,9 @@
               href="${pageContext.request.contextPath}/assets/images/logo/favicon_logo.png">
 
         <link rel="stylesheet" href="<%=ctx%>/assets/css/layout/layout.css">
+        <!-- ✅ only added: bootstrap icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
         <% if (pageCss != null) {%>
         <link rel="stylesheet" href="<%=pageCss%>">
         <% }%>
@@ -93,8 +96,13 @@
                 </div>
 
                 <nav class="rh-menu">
-                    <a class="rh-link <%= "home".equals(_active) ? "active" : ""%>" href="<%=ctx%>/home">Home</a>
-                    <a class="rh-link <%= "contact".equals(_active) ? "active" : ""%>" href="<%=ctx%>/contact">Contact</a>
+                    <a class="rh-link <%= "home".equals(_active) ? "active" : ""%>" href="<%=ctx%>/home">
+                        <i class="bi bi-house-door me-2"></i> Home
+                    </a>
+
+                    <a class="rh-link <%= "contact".equals(_active) ? "active" : ""%>" href="<%=ctx%>/contact">
+                        <i class="bi bi-envelope me-2"></i> Contact
+                    </a>
 
                     <% if (isTenant) { %>
                     <div class="rh-section">Tenant</div>
@@ -102,26 +110,40 @@
                     <% if (isTenantPending) {%>
                     <!-- PENDING: chỉ được xem hợp đồng để chuyển khoản + xác nhận -->
                     <a class="rh-link <%= "t_contract".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/tenant/contract">My Contract</a>
+                       href="<%=ctx%>/tenant/contract">
+                        <i class="bi bi-file-earmark-text me-2"></i> My Contract
+                    </a>
                     <% } else {%>
                     <!-- ACTIVE: đầy đủ -->
                     <a class="rh-link <%= "t_room".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/tenant/room">My Room</a>
+                       href="<%=ctx%>/tenant/room">
+                        <i class="bi bi-door-open me-2"></i> My Room
+                    </a>
 
                     <a class="rh-link <%= "t_contract".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/tenant/contract">My Contract</a>
+                       href="<%=ctx%>/tenant/contract">
+                        <i class="bi bi-file-earmark-text me-2"></i> My Contract
+                    </a>
 
                     <a class="rh-link <%= "t_bill".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/tenant/bill">My Bills</a>
+                       href="<%=ctx%>/tenant/bill">
+                        <i class="bi bi-receipt me-2"></i> My Bills
+                    </a>
 
                     <a class="rh-link <%= "t_maintenance".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/maintenance">Maintenance Requests</a>
+                       href="<%=ctx%>/maintenance">
+                        <i class="bi bi-tools me-2"></i> Maintenance Requests
+                    </a>
 
                     <a class="rh-link <%= "t_utility".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/tenant/utility">Utility</a>
+                       href="<%=ctx%>/tenant/utility">
+                        <i class="bi bi-lightning-charge me-2"></i> Utility
+                    </a>
 
                     <a class="rh-link <%= "t_profile".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/profile">Profile</a>
+                       href="<%=ctx%>/profile">
+                        <i class="bi bi-person-circle me-2"></i> Profile
+                    </a>
                     <% } %>
                     <% } %>
 
@@ -131,28 +153,44 @@
                     <div class="rh-section">Manager</div>
 
                     <a class="rh-link <%= "m_profile".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/profile">Manager Profile</a>
+                       href="<%=ctx%>/profile">
+                        <i class="bi bi-person-badge me-2"></i> Manager Profile
+                    </a>
 
                     <a class="rh-link <%= "m_rooms".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/manager/rooms">Manager Rooms</a>
+                       href="<%=ctx%>/manager/rooms">
+                        <i class="bi bi-building me-2"></i> Manager Rooms
+                    </a>
 
                     <a class="rh-link <%= "m_tenants".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/manager/tenants">Manager Tenants</a>
+                       href="<%=ctx%>/manager/tenants">
+                        <i class="bi bi-people me-2"></i> Manager Tenants
+                    </a>
 
                     <a class="rh-link <%= "m_utilities".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/manager/utilities">Utilities</a>
+                       href="<%=ctx%>/manager/utilities">
+                        <i class="bi bi-lightning me-2"></i> Utilities
+                    </a>
 
                     <a class="rh-link <%= "m_contracts".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/manager/contracts">Manager Contracts</a>
+                       href="<%=ctx%>/manager/contracts">
+                        <i class="bi bi-file-earmark-check me-2"></i> Manager Contracts
+                    </a>
 
                     <a class="rh-link <%= "m_billing".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/manager/billing">Manage Billing</a>
+                       href="<%=ctx%>/manager/billing">
+                        <i class="bi bi-cash-stack me-2"></i> Manage Billing
+                    </a>
 
                     <a class="rh-link <%= "m_maintenance".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/manager/maintenance">Manage Maintenance</a>
+                       href="<%=ctx%>/manager/maintenance">
+                        <i class="bi bi-wrench-adjustable me-2"></i> Manage Maintenance
+                    </a>
 
                     <a class="rh-link <%= "m_accounts".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/manager/accounts">Manage Accounts</a>
+                       href="<%=ctx%>/manager/accounts">
+                        <i class="bi bi-person-gear me-2"></i> Manage Accounts
+                    </a>
 
                     <div class="rh-spacer"></div>
                     <a class="rh-dashboard manager" href="<%=ctx%>/manager/home">Manager Dashboard</a>
@@ -162,25 +200,39 @@
                     <div class="rh-section">Admin</div>
 
                     <a class="rh-link <%= "a_home".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/home">Home</a>
+                       href="<%=ctx%>/home">
+                        <i class="bi bi-house-door me-2"></i> Home
+                    </a>
 
                     <a class="rh-link <%= "a_dashboard".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/admin/home">Admin Dashboard</a>
+                       href="<%=ctx%>/admin/home">
+                        <i class="bi bi-speedometer2 me-2"></i> Admin Dashboard
+                    </a>
 
                     <a class="rh-link <%= "a_profile".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/profile">Admin Profile</a>
+                       href="<%=ctx%>/profile">
+                        <i class="bi bi-person-circle me-2"></i> Admin Profile
+                    </a>
 
                     <a class="rh-link <%= "a_accounts".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/admin/accounts">Manage Accounts</a>
+                       href="<%=ctx%>/admin/accounts">
+                        <i class="bi bi-people-fill me-2"></i> Manage Accounts
+                    </a>
 
                     <a class="rh-link <%= "a_settings".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/admin/settings">Configure System Settings</a>
+                       href="<%=ctx%>/admin/settings">
+                        <i class="bi bi-gear me-2"></i> Configure System Settings
+                    </a>
 
                     <a class="rh-link <%= "a_contracts".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/admin/contracts">View All Contracts</a>
+                       href="<%=ctx%>/admin/contracts">
+                        <i class="bi bi-file-earmark-text me-2"></i> View All Contracts
+                    </a>
 
                     <a class="rh-link <%= "a_rooms".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/admin/rooms">Room Administration</a>
+                       href="<%=ctx%>/admin/rooms">
+                        <i class="bi bi-building-gear me-2"></i> Room Administration
+                    </a>
 
                     <div class="rh-spacer"></div>
                     <a class="rh-dashboard admin" href="<%=ctx%>/admin/home">Admin Dashboard</a>
@@ -192,7 +244,6 @@
             <!-- MAIN -->
             <main class="rh-main">
 
-                <!-- HEADER -->
                 <!-- HEADER -->
                 <header class="rh-topbar">
                     <div class="rh-topbar-left">
