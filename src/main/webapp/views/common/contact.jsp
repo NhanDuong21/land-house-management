@@ -1,4 +1,4 @@
-<%-- 
+<%--
     Document   : wrapper dùng layout.tag
     Created on : 02/06/2026, 6:22:57 AM
     Author     : Duong Thien Nhan - CE190741
@@ -10,7 +10,3 @@
           cssFile="${pageContext.request.contextPath}/assets/css/views/contact.css">
     <%@ include file="/views/common/contact_content.jsp" %>
 </t:layout>
-
-
-
-

@@ -1,7 +1,7 @@
-/* =========================
+/* /assets/css/views/contact.css
    CONTACT PAGE (clean + modern)
    Works inside layout .rh-content
-========================= */
+*/
 
 :root {
   --ct-bg: #ffffff;
@@ -29,13 +29,21 @@
   margin-bottom: 16px;
 }
 
-.ct-header h1 {
+.ct-title {
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-size: 34px;
   line-height: 1.15;
   font-weight: 900;
   color: var(--ct-text);
   letter-spacing: -0.02em;
+}
+
+.ct-title i {
+  font-size: 26px;
+  color: rgba(37, 99, 235, 0.95);
 }
 
 .ct-header p {
@@ -61,6 +69,13 @@
   color: var(--ct-text);
   font-size: 16px;
   letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ct-card-title i {
+  color: rgba(37, 99, 235, 0.9);
 }
 
 /* items */
@@ -92,12 +107,16 @@
   border-radius: 14px;
   display: grid;
   place-items: center;
-  font-size: 20px;
   flex: 0 0 46px;
   border: 1px solid rgba(17, 24, 39, 0.06);
 }
 
-/* calmer colors (less "AI") */
+.ct-icon i {
+  font-size: 20px;
+  color: rgba(17, 24, 39, 0.78);
+}
+
+/* calmer colors */
 .ct-user {
   background: #eef2ff;
 }
@@ -128,7 +147,6 @@
   color: var(--ct-text);
   line-height: 1.35;
 
-  /* prevent overflow */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -139,6 +157,14 @@
   color: var(--ct-link);
   text-decoration: none;
   font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ct-value a i {
+  font-size: 14px;
+  opacity: 0.9;
 }
 
 .ct-value a:hover {
@@ -157,6 +183,17 @@
   font-size: 14px;
 }
 
+.ct-note-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.ct-note-head i {
+  color: rgba(37, 99, 235, 0.9);
+}
+
 .ct-note b {
   color: var(--ct-primary);
 }
@@ -166,36 +203,37 @@
   margin: 12px 6px 2px;
   color: #374151;
   font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ct-company i {
+  color: rgba(37, 99, 235, 0.9);
 }
 
 .ct-company b {
   color: var(--ct-text);
 }
 
-/* =========================
-   Responsive
-========================= */
+/* Responsive */
 @media (max-width: 720px) {
-  .ct-header h1 {
+  .ct-title {
     font-size: 28px;
   }
-
   .ct-card {
     padding: 14px;
     border-radius: 16px;
   }
-
   .ct-item {
     padding: 12px;
     border-radius: 14px;
   }
-
   .ct-icon {
     width: 44px;
     height: 44px;
     border-radius: 14px;
   }
-
   .ct-value {
     font-size: 15px;
   }
@@ -205,7 +243,6 @@
   .ct-item {
     gap: 12px;
   }
-
   .ct-value {
     white-space: normal;
   }
