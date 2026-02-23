@@ -135,4 +135,33 @@ public class StaffDAO extends DBContext {
         }
         return null;
     }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public String getPasswordHashById(int staffId) {
+        String sql = "SELECT password_hash FROM STAFF WHERE staff_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, staffId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("password_hash");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean updatePasswordForStaff(int staffId, String newHash) {
+        String sql = "UPDATE STAFF SET password_hash = ?, updated_at = SYSDATETIME() WHERE staff_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newHash);
+            ps.setInt(2, staffId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
