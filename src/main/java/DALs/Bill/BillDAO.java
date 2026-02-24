@@ -1,24 +1,23 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+ 
 package DALs.Bill;
 
-import Models.dto.ManagerBillRowDTO;
-import Models.entity.Bill;
-import Utils.database.DBContext;
-import java.sql.Connection;
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
+import Models.dto.ManagerBillRowDTO;
+import Models.entity.Bill;
+import Models.entity.BillDetail;
+import Utils.database.DBContext;
 
 /**
  *
  * @author To Thi Thao Trang - CE191027
  */
 public class BillDAO  extends DBContext{
-    //get list manage bills
+    //get list manage bills - Manager
     @SuppressWarnings("CallToPrintStackTrace")
     public List<ManagerBillRowDTO> getManagerBills() {
         List<ManagerBillRowDTO> listBill = new ArrayList<>();
@@ -66,11 +65,11 @@ public class BillDAO  extends DBContext{
         return listBill;
     }
     
-    //find bill detail by id
-    public Bill findBillDetailById(int bill_id){
-        String sql ="SELECT bill_id, bill_month, due_date, status "
-                + "FROM     BILL "
-                + "WHERE bill_id = 1";
+    //find bill detail by id - Manager
+    public Bill findBillDetailForManager(int bill_id){
+        String sql ="SELECT *"
+                + "FROM BILL "
+                + "WHERE bill_id = ?";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, bill_id);
@@ -79,7 +78,7 @@ public class BillDAO  extends DBContext{
                  Bill b = new Bill();
                  b.setBillId(rs.getInt("bill_id"));
                  b.setContractId(rs.getInt("contract_id"));
-                 b.setBillMonth(rs.getDate("billing_month"));
+                 b.setBillMonth(rs.getDate("bill_month"));
                  b.setDueDate(rs.getDate("due_date"));
                  b.setStatus(rs.getString("status"));
                  b.setNote(rs.getString("note"));
@@ -95,12 +94,79 @@ public class BillDAO  extends DBContext{
         }
          return null;
     }
+        // ToTal - Manager
+    public BigDecimal totalAmout(int bill_id) {
+        String sql = "SELECT ROUND(SUM(unit_price * quantity), 0) AS total_amount "
+                + "FROM BILL_DETAIL "
+                + "where bill_id = ? "
+                + "GROUP BY bill_id;";
+        try{
+            PreparedStatement ps = connection.prepareStatement(sql);
+             ps.setInt(1, bill_id);
+             ResultSet rs = ps.executeQuery();
+             if (rs.next()) {
+                return  rs.getBigDecimal(1);
+            }
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+        // return 0 instead of null, advoid NullPointerException
+        return BigDecimal.ZERO;
+    }
+    
+    
+     //list bill detail for breakdown IU - Manager
+    public List<BillDetail> getListBillDetailByBillId(int bill_id) {
+        List<BillDetail> listBillDetail = new ArrayList<>();
+        String sql = "SELECT * "
+                + "FROM BILL_DETAIL "
+                + "WHERE bill_id = ?;";
+        try{            
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            ps.setInt(1, bill_id);
+             while (rs.next()) {
+                 BillDetail bd = new BillDetail();
+                 bd.setBillDetailId(rs.getInt("bill_detail_id"));
+                 bd.setBillId(rs.getInt("bill_id"));
+                 bd.setUtilityId(rs.getInt("utility_id"));
+                 bd.setItemName(rs.getString("item_name"));
+                 bd.setUnit(rs.getString("unit"));
+                 bd.setQuantity(rs.getBigDecimal("quantity"));
+                 bd.setUnitPrice(rs.getBigDecimal("unit_price"));   
+                 bd.setChargeType(rs.getString("charge_type"));   
+                 listBillDetail.add(bd);
+             }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return listBillDetail;
+    }
+    //get QR for Bill Detail - Manager
+    public String getQRFromContractByBillId(int bill_id) {
+        String sql ="SELECT c.payment_qr_data "
+                + "FROM BILL b "
+                + "JOIN CONTRACT c ON b.contract_id = c.contract_id "
+                + "WHERE b.bill_id = 1";
+               try{            
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            ps.setInt(1, bill_id);
+             if(rs.next()) {
+                 return rs.getString("payment_qr_data");
+             }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+       return null;
+    }
+    
     public static void main(String[] args) {
         BillDAO bd= new BillDAO();
-        List<ManagerBillRowDTO> list = bd.getManagerBills();
-        for (ManagerBillRowDTO m : list) {
-            System.out.println(m);
-        }
+
+        System.out.println(bd.totalAmout(1));
     }
     
 }
