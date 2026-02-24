@@ -13,7 +13,6 @@ Author     : To Thi Thao Trang - CE191027
                active="m_billing"
                cssFile="${pageContext.request.contextPath}/assets/css/views/managerBillDetail.css">
 
-
     <div class="tbd-container">
 
         <!-- PAGE HEADER -->
