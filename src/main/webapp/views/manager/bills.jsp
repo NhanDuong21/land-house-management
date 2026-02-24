@@ -9,7 +9,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<layout:layout title="Manage Billing"
+<layout:layout title="Billing detail"
                active="m_bills"
                cssFile="${pageContext.request.contextPath}/assets/css/views/managerBills.css">
 
