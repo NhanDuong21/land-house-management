@@ -5,6 +5,7 @@
 package DALs.Bill;
 
 import Models.dto.ManagerBillRowDTO;
+import Models.entity.Bill;
 import Utils.database.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -63,6 +64,36 @@ public class BillDAO  extends DBContext{
             e.printStackTrace();
         }
         return listBill;
+    }
+    
+    //find bill detail by id
+    public Bill findBillDetailById(int bill_id){
+        String sql ="SELECT bill_id, bill_month, due_date, status "
+                + "FROM     BILL "
+                + "WHERE bill_id = 1";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, bill_id);
+            ResultSet rs = ps.executeQuery();
+             if (rs.next()) {
+                 Bill b = new Bill();
+                 b.setBillId(rs.getInt("bill_id"));
+                 b.setContractId(rs.getInt("contract_id"));
+                 b.setBillMonth(rs.getDate("billing_month"));
+                 b.setDueDate(rs.getDate("due_date"));
+                 b.setStatus(rs.getString("status"));
+                 b.setNote(rs.getString("note"));
+                 b.setOldElectricNumber(rs.getInt("old_electric_number"));
+                 b.setNewElectricNumber(rs.getInt("new_electric_number"));  
+                 b.setOldWaterNumber(rs.getInt("old_water_number"));  
+                 b.setNewWaterNumber(rs.getInt("new_water_number")); 
+                 return b;
+               }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+         return null;
     }
     public static void main(String[] args) {
         BillDAO bd= new BillDAO();
