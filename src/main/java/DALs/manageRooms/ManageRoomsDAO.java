@@ -4,14 +4,14 @@
  */
 package DALs.manageRooms;
 
-import Models.entity.Room;
-import Utils.database.DBContext;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import Models.entity.Room;
+import Utils.database.DBContext;
 
 /**
  *
