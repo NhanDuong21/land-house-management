@@ -117,7 +117,15 @@ Author     : To Thi Thao Trang - CE191027
 
                     <c:forEach items="${ListBillDetail}" var="d">
                         <div class="tbd-row">
-                            <span>${d.itemName}</span>
+                            <span>
+                                ${d.itemName}
+                                <c:if test="${bill.billId == d.billId && d.utilityId == 1}">
+                                      (Old: ${bill.oldElectricNumber}, New : ${bill.newElectricNumber})
+                                </c:if>
+                                <c:if test="${bill.billId == d.billId && d.utilityId == 2}">
+                                       (Old: ${bill.oldWaterNumber}, New: ${bill.newWaterNumber})
+                                </c:if>
+                            </span>
                             <span>
                                 <fmt:formatNumber value="${d.unitPrice * d.quantity}" type="number"/> ₫
                             </span>
