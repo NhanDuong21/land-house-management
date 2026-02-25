@@ -121,7 +121,7 @@ public class BillDAO extends DBContext {
     // =========================
     // TOTAL AMOUNT - BILL DETAIL
     // =========================
-    public BigDecimal totalAmout(int bill_id) {
+    public BigDecimal totalAmount(int bill_id) {
         String sql = "SELECT ROUND(SUM(unit_price * quantity), 0) AS total_amount "
                 + "FROM BILL_DETAIL "
                 + "where bill_id = ? "
