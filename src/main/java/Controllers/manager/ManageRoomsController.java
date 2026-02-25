@@ -38,20 +38,15 @@ public class ManageRoomsController extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         ManageRoomsDAO dao = new ManageRoomsDAO();
-
         int pageIndex = 1;
         int pageSize = 10;
-
         String page = request.getParameter("page");
 
         if (page != null) {
             pageIndex = Integer.parseInt(page);
         }
-
         List<Room> Rooms = dao.fetchAllRoom(pageIndex, pageSize);
-
         int totalRoom = dao.countRoom();
         int totalPage = (int) Math.ceil((double) totalRoom / pageSize);
         request.setAttribute("totalRoom", totalRoom);
