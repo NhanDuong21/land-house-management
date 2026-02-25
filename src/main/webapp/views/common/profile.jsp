@@ -20,14 +20,45 @@
             <!-- Personal information card -->
             <div class="card rhp-card">
                 <div class="card-body p-4 p-md-5">
+
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <div class="rhp-card-title">Personal Information</div>
-
-                        <a class="btn btn-primary rhp-btn disabled" href="javascript:void(0)" aria-disabled="true">
-                            <i class="bi bi-pencil-square me-2"></i>
-                            Edit Profile
-                        </a>
                     </div>
+
+                    <!-- Phone update result (separate params from change-password) -->
+                    <c:if test="${param.p == '1'}">
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Phone number updated successfully.
+                        </div>
+                    </c:if>
+
+                    <c:if test="${param.perr == '1'}">
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <strong>Update phone failed:</strong>
+                            <c:choose>
+                                <c:when test="${param.pc == 'TENANT_NOT_ACTIVE'}">
+                                    Your account is not active.
+                                </c:when>
+                                <c:when test="${param.pc == 'PHONE_REQUIRED'}">
+                                    Phone number is required.
+                                </c:when>
+                                <c:when test="${param.pc == 'PHONE_FORMAT'}">
+                                    Invalid phone number format.
+                                </c:when>
+                                <c:when test="${param.pc == 'PHONE_EXISTS'}">
+                                    This phone number is already used.
+                                </c:when>
+                                <c:when test="${param.pc == 'UPDATE_FAILED'}">
+                                    Failed to update. Please try again.
+                                </c:when>
+                                <c:otherwise>
+                                    Unexpected error occurred.
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </c:if>
 
                     <div class="row g-4">
 
@@ -38,13 +69,30 @@
                             <input class="form-control rhp-input" value="${fullName}" readonly>
                         </div>
 
+                        <!-- PHONE: tenant can update (service will block if not ACTIVE) -->
                         <div class="col-12 col-md-6">
                             <label class="rhp-label">
                                 <i class="bi bi-telephone me-2"></i> Phone Number
                             </label>
-                            <input class="form-control rhp-input"
-                                   value="<c:out value='${empty phone ? "-" : phone}'/>"
-                                   readonly>
+
+                            <c:choose>
+                                <c:when test="${profileType == 'TENANT'}">
+                                    <form method="post" action="${pageContext.request.contextPath}/profile" class="d-flex gap-2">
+                                        <input type="hidden" name="action" value="updatePhone"/>
+                                        <input name="phone" class="form-control rhp-input"
+                                               value="<c:out value='${empty phone ? "" : phone}'/>"
+                                               placeholder="Enter phone number">
+                                        <button type="submit" class="btn btn-primary rhp-btn">
+                                            Save
+                                        </button>
+                                    </form>
+                                </c:when>
+                                <c:otherwise>
+                                    <input class="form-control rhp-input"
+                                           value="<c:out value='${empty phone ? "-" : phone}'/>"
+                                           readonly>
+                                </c:otherwise>
+                            </c:choose>
                         </div>
 
                         <div class="col-12 col-md-6">
@@ -116,7 +164,7 @@
                         </div>
                     </c:if>
 
-                    <!-- Error mapping -->
+                    <!-- Error mapping (password only) -->
                     <c:if test="${param.err == '1'}">
                         <div class="alert alert-danger">
                             <i class="bi bi-exclamation-triangle me-2"></i>
