@@ -5,8 +5,10 @@ import java.io.IOException;
 import DALs.auth.StaffDAO;
 import DALs.auth.TenantDAO;
 import Models.authentication.AuthResult;
+import Models.common.ServiceResult;
 import Models.entity.Staff;
 import Models.entity.Tenant;
+import Services.tenant.TenantService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +23,7 @@ public class ProfileController extends HttpServlet {
 
     private final TenantDAO tenantDAO = new TenantDAO();
     private final StaffDAO staffDAO = new StaffDAO();
+    private final TenantService tenantService = new TenantService();
 
     @Override
     @SuppressWarnings({"UseSpecificCatch", "CallToPrintStackTrace"})
@@ -68,7 +71,7 @@ public class ProfileController extends HttpServlet {
                 return;
             }
 
-            //  STAFF (MANAGER/ADMIN)
+            // STAFF (MANAGER/ADMIN)
             if (auth.getStaff() != null) {
                 int staffId = auth.getStaff().getStaffId();
                 Staff s = staffDAO.findById(staffId);
@@ -78,12 +81,11 @@ public class ProfileController extends HttpServlet {
                     return;
                 }
 
-                String role = resolveRole(auth, s); // MANAGER / ADMIN / STAFF fallback
+                String role = resolveRole(auth, s);
 
                 request.setAttribute("profileType", role);
                 request.setAttribute("roleDisplay", role);
 
-                // highlight menu
                 if ("MANAGER".equalsIgnoreCase(role)) {
                     request.setAttribute("active", "m_profile");
                 } else if ("ADMIN".equalsIgnoreCase(role)) {
@@ -109,13 +111,66 @@ public class ProfileController extends HttpServlet {
                 return;
             }
 
-            //weird state
             response.sendRedirect(request.getContextPath() + "/login");
 
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect(request.getContextPath() + "/home");
         }
+    }
+
+    @Override
+    @SuppressWarnings({"UseSpecificCatch", "CallToPrintStackTrace"})
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession(false);
+        AuthResult auth = (session == null) ? null : (AuthResult) session.getAttribute("auth");
+
+        if (auth == null || auth.getTenant() == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        String action = request.getParameter("action");
+        if (action == null || !action.equals("updatePhone")) {
+            response.sendRedirect(request.getContextPath() + "/profile");
+            return;
+        }
+
+        int tenantId = auth.getTenant().getTenantId();
+        String phoneRaw = request.getParameter("phone");
+
+        ServiceResult result;
+        try {
+            result = tenantService.updatePhone(tenantId, phoneRaw);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/profile?perr=1&pc=EXCEPTION");
+            return;
+        }
+
+        if (result == null) {
+            response.sendRedirect(request.getContextPath() + "/profile?perr=1&pc=UPDATE_FAILED");
+            return;
+        }
+
+        if (!result.isOk()) {
+            String code = (result.getMessage() == null || result.getMessage().isBlank())
+                    ? "UPDATE_FAILED"
+                    : result.getMessage();
+            response.sendRedirect(request.getContextPath() + "/profile?perr=1&pc=" + code);
+            return;
+        }
+
+        // refresh cached phone in session (only meaningful when changed)
+        Tenant latest = tenantDAO.findById(tenantId);
+        if (latest != null) {
+            auth.getTenant().setPhoneNumber(latest.getPhoneNumber());
+            session.setAttribute("auth", auth);
+        }
+
+        response.sendRedirect(request.getContextPath() + "/profile?p=1");
     }
 
     private static String nvl(String s) {
@@ -129,16 +184,12 @@ public class ProfileController extends HttpServlet {
         return (g == 1) ? "Male" : "Female";
     }
 
-    /**
-     * follow same fallback logic as layout.tag: - auth.role if not blank - else
-     * staff.staffRole (MANAGER/ADMIN) - else STAFF (rare)
-     */
     private static String resolveRole(AuthResult auth, Staff staff) {
         if (auth != null && auth.getRole() != null && !auth.getRole().isBlank()) {
             return auth.getRole().trim().toUpperCase();
         }
         if (staff != null && staff.getStaffRole() != null && !staff.getStaffRole().isBlank()) {
-            return staff.getStaffRole().trim().toUpperCase(); // MANAGER/ADMIN
+            return staff.getStaffRole().trim().toUpperCase();
         }
         return "STAFF";
     }
