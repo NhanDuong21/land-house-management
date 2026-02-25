@@ -149,7 +149,7 @@ Author     : To Thi Thao Trang - CE191027
                             </div>
                         </div>
 
-                        <form action="${pageContext.request.contextPath}/manager/bills/confirm"
+                        <form action="${pageContext.request.contextPath}/manager/bills/paymentConfirm"
                               method="post"
                               style="margin-top:20px;">
                             <input type="hidden" name="billId" value="${bill.billId}">
@@ -158,6 +158,11 @@ Author     : To Thi Thao Trang - CE191027
                                 Confirm Payment Received
                             </button>
                         </form>
+                        <c:if test="${not empty errorMessage}">
+                            <div class="alert alert-danger">
+                                ${errorMsg}
+                            </div>
+                        </c:if>
                     </div>
                 </c:if>
 
