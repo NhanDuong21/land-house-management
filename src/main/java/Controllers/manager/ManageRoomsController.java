@@ -4,6 +4,9 @@
  */
 package Controllers.manager;
 
+import java.io.IOException;
+import java.util.List;
+
 import DALs.manageRooms.ManageRoomsDAO;
 import Models.entity.Room;
 import jakarta.servlet.ServletException;
@@ -11,8 +14,6 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
 
 /**
  *
@@ -21,21 +22,7 @@ import java.util.List;
 @WebServlet("/manager/rooms")
 public class ManageRoomsController extends HttpServlet {
 
-    private void doGetRead(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, ServletException {
-        ManageRoomsDAO ManageRoomsDAO = new ManageRoomsDAO();
-        int pageIndex = 1;
-        int pageSize = 10;
-        String page = request.getParameter("page");
-        if (page != null) {
-            pageIndex = Integer.parseInt(page);
-        }
-        List<Room> Rooms = ManageRoomsDAO.fetchAllRoom(pageIndex, pageSize);
-        request.setAttribute("Rooms", Rooms);
-        request.getRequestDispatcher("/views/manager/viewListRoom.jsp")
-                .forward(request, response);
-    }
-
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         ManageRoomsDAO dao = new ManageRoomsDAO();
