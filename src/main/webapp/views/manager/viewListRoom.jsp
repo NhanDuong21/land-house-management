@@ -1,26 +1,30 @@
 <%-- 
     Document   : viewListRoom
-    Created on : Feb 25, 2026, 2:37:17 PM
+    Created on : Feb 25, 2026, 2:37:17 PM
     Author     : truon
 --%>
 
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
 <t:layout title="Room List"
           active="room"
           cssFile="${pageContext.request.contextPath}/assets/css/views/manageRooms.css">
+
     <div class="manage-room container-fluid">
         <div class="page-header">
             <h2>Room List</h2>
             <p>View all rooms in the system</p>
         </div>
+
         <div class="search-box">
             <i class="bi bi-search"></i>
             <input class="searchRoom"
                    type="text"
                    placeholder="Search by room number">
         </div>
+
         <div class="room-card">
             <h5>All Rooms (${totalRoom})</h5>
 
@@ -39,6 +43,7 @@
                         <th>Status</th>
                     </tr>
                 </thead>
+
                 <tbody id="roomTable">
                     <c:forEach items="${Rooms}" var="r">
                         <tr>
@@ -85,14 +90,42 @@
                     </c:if>
                 </tbody>
             </table>
+
+            <!-- SMART PAGINATION -->
             <div class="pagination-wrapper">
                 <ul class="pagination">
 
+                    <!-- Prev -->
                     <li class="${pageIndex == 1 ? 'disabled' : ''}">
-                        <a href="${pageContext.request.contextPath}/manager/rooms?page=${pageIndex-1}">‹</a>
+                        <a href="${pageContext.request.contextPath}/manager/rooms?page=${pageIndex - 1}">‹</a>
                     </li>
 
-                    <c:forEach begin="1" end="${totalPage}" var="i">
+                    <c:set var="window" value="2" />
+                    <c:set var="start" value="${pageIndex - window}" />
+                    <c:set var="end" value="${pageIndex + window}" />
+
+                    <c:if test="${start < 2}">
+                        <c:set var="start" value="2" />
+                    </c:if>
+
+                    <c:if test="${end > totalPage - 1}">
+                        <c:set var="end" value="${totalPage - 1}" />
+                    </c:if>
+
+                    <!-- Page 1 -->
+                    <li class="${pageIndex == 1 ? 'active' : ''}">
+                        <a href="${pageContext.request.contextPath}/manager/rooms?page=1">1</a>
+                    </li>
+
+                    <!-- Left dots -->
+                    <c:if test="${start > 2}">
+                        <li class="disabled">
+                            <a href="javascript:void(0)">...</a>
+                        </li>
+                    </c:if>
+
+                    <!-- Middle pages -->
+                    <c:forEach begin="${start}" end="${end}" var="i">
                         <li class="${i == pageIndex ? 'active' : ''}">
                             <a href="${pageContext.request.contextPath}/manager/rooms?page=${i}">
                                 ${i}
@@ -100,15 +133,33 @@
                         </li>
                     </c:forEach>
 
+                    <!-- Right dots -->
+                    <c:if test="${end < totalPage - 1}">
+                        <li class="disabled">
+                            <a href="javascript:void(0)">...</a>
+                        </li>
+                    </c:if>
+
+                    <!-- Last page -->
+                    <c:if test="${totalPage > 1}">
+                        <li class="${pageIndex == totalPage ? 'active' : ''}">
+                            <a href="${pageContext.request.contextPath}/manager/rooms?page=${totalPage}">
+                                ${totalPage}
+                            </a>
+                        </li>
+                    </c:if>
+
+                    <!-- Next -->
                     <li class="${pageIndex == totalPage ? 'disabled' : ''}">
-                        <a href="${pageContext.request.contextPath}/manager/rooms?page=${pageIndex+1}">›</a>
+                        <a href="${pageContext.request.contextPath}/manager/rooms?page=${pageIndex + 1}">›</a>
                     </li>
 
                 </ul>
             </div>
+            <!-- END SMART PAGINATION -->
 
         </div>
     </div>
-    <script src="${pageContext.request.contextPath}/assets/js/pages/manageRooms.js"></script>
 
+    <script src="${pageContext.request.contextPath}/assets/js/pages/manageRooms.js"></script>
 </t:layout>
