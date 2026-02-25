@@ -10,7 +10,6 @@ import java.util.List;
 import DALs.manageRooms.ManageRoomsDAO;
 import Models.entity.Room;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Truong Hoang Khang - CE190729
  */
-@WebServlet("/manager/rooms")
 public class ManageRoomsController extends HttpServlet {
 
     @Override
