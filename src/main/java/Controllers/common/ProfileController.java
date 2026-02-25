@@ -8,6 +8,7 @@ import Models.authentication.AuthResult;
 import Models.common.ServiceResult;
 import Models.entity.Staff;
 import Models.entity.Tenant;
+import Services.staff.StaffService;
 import Services.tenant.TenantService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -24,6 +25,7 @@ public class ProfileController extends HttpServlet {
     private final TenantDAO tenantDAO = new TenantDAO();
     private final StaffDAO staffDAO = new StaffDAO();
     private final TenantService tenantService = new TenantService();
+    private final StaffService staffService = new StaffService();
 
     @Override
     @SuppressWarnings({"UseSpecificCatch", "CallToPrintStackTrace"})
@@ -115,6 +117,7 @@ public class ProfileController extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
+            // throw new ServletException(e);
             response.sendRedirect(request.getContextPath() + "/home");
         }
     }
@@ -127,50 +130,139 @@ public class ProfileController extends HttpServlet {
         HttpSession session = request.getSession(false);
         AuthResult auth = (session == null) ? null : (AuthResult) session.getAttribute("auth");
 
-        if (auth == null || auth.getTenant() == null) {
+        if (auth == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
         String action = request.getParameter("action");
-        if (action == null || !action.equals("updatePhone")) {
+        if (action == null || action.isBlank()) {
             response.sendRedirect(request.getContextPath() + "/profile");
             return;
         }
 
-        int tenantId = auth.getTenant().getTenantId();
-        String phoneRaw = request.getParameter("phone");
+        // ===== TENANT: update phone =====
+        if ("updatePhone".equals(action)) {
+            if (auth.getTenant() == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
 
-        ServiceResult result;
-        try {
-            result = tenantService.updatePhone(tenantId, phoneRaw);
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/profile?perr=1&pc=EXCEPTION");
+            int tenantId = auth.getTenant().getTenantId();
+            String phoneRaw = request.getParameter("phone");
+
+            ServiceResult result;
+            try {
+                result = tenantService.updatePhone(tenantId, phoneRaw);
+            } catch (Exception e) {
+                e.printStackTrace();
+                response.sendRedirect(request.getContextPath() + "/profile?perr=1&pc=EXCEPTION");
+                return;
+            }
+
+            if (result == null || !result.isOk()) {
+                String code = (result == null || result.getMessage() == null || result.getMessage().isBlank())
+                        ? "UPDATE_FAILED" : result.getMessage();
+                response.sendRedirect(request.getContextPath() + "/profile?perr=1&pc=" + code);
+                return;
+            }
+
+            Tenant latest = tenantDAO.findById(tenantId);
+            if (latest != null) {
+                auth.getTenant().setPhoneNumber(latest.getPhoneNumber());
+                session.setAttribute("auth", auth);
+            }
+
+            response.sendRedirect(request.getContextPath() + "/profile?p=1");
             return;
         }
 
-        if (result == null) {
-            response.sendRedirect(request.getContextPath() + "/profile?perr=1&pc=UPDATE_FAILED");
+        // manager update phone voi email
+        if ("updateStaffContact".equals(action)) {
+            if (auth.getStaff() == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            int staffId = auth.getStaff().getStaffId();
+            Staff s = staffDAO.findById(staffId);
+            String role = resolveRole(auth, s);
+
+            if (!"MANAGER".equalsIgnoreCase(role)) {
+                response.sendRedirect(request.getContextPath() + "/profile?perr=1&pc=FORBIDDEN");
+                return;
+            }
+
+            String phoneRaw = request.getParameter("phone");
+            String emailRaw = request.getParameter("email");
+
+            ServiceResult result = staffService.updateManagerContact(staffId, phoneRaw, emailRaw);
+            if (result == null || !result.isOk()) {
+                String code = (result == null || result.getMessage() == null || result.getMessage().isBlank()) ? "UPDATE_FAILED" : result.getMessage();
+                response.sendRedirect(request.getContextPath() + "/profile?perr=1&pc=" + code);
+                return;
+            }
+
+            Staff latest = staffDAO.findById(staffId);
+            if (latest != null) {
+                auth.getStaff().setPhoneNumber(latest.getPhoneNumber());
+                auth.getStaff().setEmail(latest.getEmail());
+                session.setAttribute("auth", auth);
+            }
+
+            response.sendRedirect(request.getContextPath() + "/profile?p=1");
             return;
         }
 
-        if (!result.isOk()) {
-            String code = (result.getMessage() == null || result.getMessage().isBlank())
-                    ? "UPDATE_FAILED"
-                    : result.getMessage();
-            response.sendRedirect(request.getContextPath() + "/profile?perr=1&pc=" + code);
+        // admin update full
+        if ("updateStaffProfile".equals(action)) {
+            if (auth.getStaff() == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }
+
+            int staffId = auth.getStaff().getStaffId();
+            Staff s = staffDAO.findById(staffId);
+            String role = resolveRole(auth, s);
+
+            if (!"ADMIN".equalsIgnoreCase(role)) {
+                response.sendRedirect(request.getContextPath() + "/profile?perr=1&pc=FORBIDDEN");
+                return;
+            }
+
+            ServiceResult result = staffService.updateAdminProfile(
+                    staffId,
+                    request.getParameter("full_name"),
+                    request.getParameter("phone"),
+                    request.getParameter("email"),
+                    request.getParameter("identity"),
+                    request.getParameter("dob"),
+                    request.getParameter("gender")
+            );
+
+            if (result == null || !result.isOk()) {
+                String code = (result == null || result.getMessage() == null || result.getMessage().isBlank())
+                        ? "UPDATE_FAILED" : result.getMessage();
+                response.sendRedirect(request.getContextPath() + "/profile?perr=1&pc=" + code);
+                return;
+            }
+
+            Staff latest = staffDAO.findById(staffId);
+            if (latest != null) {
+                auth.getStaff().setFullName(latest.getFullName());
+                auth.getStaff().setPhoneNumber(latest.getPhoneNumber());
+                auth.getStaff().setEmail(latest.getEmail());
+                auth.getStaff().setIdentityCode(latest.getIdentityCode());
+                auth.getStaff().setDateOfBirth(latest.getDateOfBirth());
+                auth.getStaff().setGender(latest.getGender());
+                session.setAttribute("auth", auth);
+            }
+
+            response.sendRedirect(request.getContextPath() + "/profile?p=1");
             return;
         }
 
-        // refresh cached phone in session (only meaningful when changed)
-        Tenant latest = tenantDAO.findById(tenantId);
-        if (latest != null) {
-            auth.getTenant().setPhoneNumber(latest.getPhoneNumber());
-            session.setAttribute("auth", auth);
-        }
-
-        response.sendRedirect(request.getContextPath() + "/profile?p=1");
+        response.sendRedirect(request.getContextPath() + "/profile");
     }
 
     private static String nvl(String s) {
