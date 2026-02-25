@@ -28,10 +28,10 @@ public class ManagerBillDetailController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         BillDAO bd = new BillDAO();
-        int billId = Integer.parseInt(request.getParameter("id"));
+        int billId = Integer.parseInt(request.getParameter("billId"));
         Bill bill = bd.findBillDetailByIdForManager(billId);
         List<BillDetail> listBillDetail = bd.getListBillDetailByBillId(billId);
-        BigDecimal totalAmount = bd.totalAmout(billId);
+        BigDecimal totalAmount = bd.totalAmount(billId);
         String payment_qr =bd.getQRFromContractByBillId(billId);
         String roomNumber = bd.getStringRoomnumber(billId);
         if (payment_qr == null) {
