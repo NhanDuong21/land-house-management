@@ -79,7 +79,7 @@
                             </c:choose>
                         </td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/manager/bills/detail?id=${b.billId}"
+                            <a href="${pageContext.request.contextPath}/manager/bills/detail?billId=${b.billId}"
                                class="mb-view-btn">
                                 👁 View
                             </a>
