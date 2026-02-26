@@ -164,4 +164,85 @@ public class StaffDAO extends DBContext {
         }
         return false;
     }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean existsPhoneExceptStaff(int staffId, String phone) {
+        String sql = "SELECT 1 FROM STAFF WHERE phone_number = ? AND staff_id <> ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            ps.setInt(2, staffId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean existsEmailExceptStaff(int staffId, String email) {
+        String sql = "SELECT 1 FROM STAFF WHERE email = ? AND staff_id <> ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setInt(2, staffId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // update manager
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean updateContactForStaff(int staffId, String phone, String email) {
+        String sql = """
+        UPDATE STAFF
+        SET phone_number = ?, email = ?, updated_at = SYSDATETIME()
+        WHERE staff_id = ?
+    """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            ps.setString(2, email);
+            ps.setInt(3, staffId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // admin thi update full infor bth
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean updateProfileForAdmin(int staffId, String fullName, String phone, String email,
+            String identityCode, java.sql.Date dob, Integer gender) {
+
+        String sql = """
+    UPDATE STAFF SET full_name = ?, phone_number = ?, email = ?,
+            identity_code = ?, date_of_birth = ?,gender = ?,
+            updated_at = SYSDATETIME()
+        WHERE staff_id = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, fullName);
+            ps.setString(2, phone);
+            ps.setString(3, email);
+            ps.setString(4, identityCode);
+            ps.setDate(5, dob);
+            if (gender == null) {
+                ps.setNull(6, java.sql.Types.TINYINT);
+            } else {
+                ps.setInt(6, gender);
+            }
+            ps.setInt(7, staffId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+
+    }
 }

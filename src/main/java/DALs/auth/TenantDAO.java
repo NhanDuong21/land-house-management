@@ -252,4 +252,32 @@ public class TenantDAO extends DBContext {
         return null;
     }
 
+    //lọc ra những dòng có phone number giống nhưng mà phải khác tenant id ở giá trị thứ 2
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean existsPhoneExceptTenant(int tenantId, String phone) {
+        String sql = "SELECT 1 FROM TENANT WHERE phone_number = ? AND tenant_id <> ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            ps.setInt(2, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean updatePhoneForTenant(int tenantId, String newPhone) {
+        String sql = "UPDATE TENANT SET phone_number = ?, updated_at = SYSDATETIME() WHERE tenant_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newPhone);
+            ps.setInt(2, tenantId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
