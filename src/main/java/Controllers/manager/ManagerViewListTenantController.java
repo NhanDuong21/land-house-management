@@ -20,7 +20,7 @@ import java.util.List;
  * @author ADMIN
  */
 @WebServlet(name = "ManagerViewListTenant", urlPatterns = {"/manager/tenants"})
-public class ManagerViewListTenant extends HttpServlet {
+public class ManagerViewListTenantController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
