@@ -4,9 +4,9 @@
  */
 package Services.staff;
 
-
-import DALs.auth.StaffDAO;
+import DALs.auth.TenantDAO;
 import Models.entity.Tenant;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,9 +14,14 @@ import java.util.List;
  * @author ADMIN
  */
 public class TenantService {
-        private StaffDAO StaffDAO = new StaffDAO();
+
+    private TenantDAO TenantDAO = new TenantDAO();
 
     public List<Tenant> getAllTenants() {
-        return StaffDAO.getAllTenants();
+        return TenantDAO.getAllTenants();
+    }
+    
+  public List<Tenant> searchTenant(String keyword) {
+        return TenantDAO.searchTenant(keyword);
     }
 }
