@@ -264,6 +264,8 @@ public class StaffDAO extends DBContext {
         for (Tenant t : list) {
             System.out.println(t.getTenantId() + " - " + t.getFullName());
         }
+    }
+
     @SuppressWarnings("CallToPrintStackTrace")
     public boolean existsPhoneExceptStaff(int staffId, String phone) {
         String sql = "SELECT 1 FROM STAFF WHERE phone_number = ? AND staff_id <> ?";
