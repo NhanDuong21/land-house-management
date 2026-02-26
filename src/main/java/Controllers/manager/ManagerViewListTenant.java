@@ -60,14 +60,13 @@ public class ManagerViewListTenant extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-          TenantService service = new TenantService();
-List<Tenant> list = service.getAllTenants();
 
-        request.setAttribute("tenants", list);
-        request.getRequestDispatcher("/tenant-list.jsp").forward(request, response);
-   
-        
+        TenantService service = new TenantService();
+        List<Tenant> list = service.getAllTenants();
+
+      request.setAttribute("tenants", list);
+request.getRequestDispatcher("/views/manager/managerTenant.jsp")
+       .forward(request, response);
     }
 
     /**
