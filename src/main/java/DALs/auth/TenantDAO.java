@@ -280,4 +280,22 @@ public class TenantDAO extends DBContext {
         }
         return false;
     }
+
+    //same logic updatePasswordForTenant do not use must set pass
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean adminResetPasswordForTenant(int tenantId, String newHash) {
+        String sql = """
+        UPDATE TENANT
+        SET password_hash = ?, updated_at = SYSDATETIME()
+        WHERE tenant_id = ?
+                """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newHash);
+            ps.setInt(2, tenantId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
