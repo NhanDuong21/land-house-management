@@ -62,11 +62,21 @@ public class ManagerViewListTenant extends HttpServlet {
             throws ServletException, IOException {
 
         TenantService service = new TenantService();
-        List<Tenant> list = service.getAllTenants();
+        List<Tenant> list;
 
-      request.setAttribute("tenants", list);
-request.getRequestDispatcher("/views/manager/managerTenant.jsp")
-       .forward(request, response);
+        String keyword = request.getParameter("keyword");
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            list = service.getAllTenants(); // lấy hết
+        } else {
+            list = service.searchTenant(keyword); // tìm kiếm
+        }
+
+        request.setAttribute("tenants", list);
+        request.setAttribute("keyword", keyword);
+
+        request.getRequestDispatcher("/views/manager/managerTenant.jsp")
+                .forward(request, response);
     }
 
     /**
