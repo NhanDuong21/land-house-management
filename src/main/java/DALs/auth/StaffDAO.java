@@ -5,7 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import Models.entity.Staff;
+import Models.entity.Tenant;
 import Utils.database.DBContext;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Description
@@ -164,4 +167,33 @@ public class StaffDAO extends DBContext {
         }
         return false;
     }
+
+    public List<Tenant> getAllTenants() {
+        List<Tenant> list = new ArrayList<>();
+        try {
+            String sql = "SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth FROM TENANT";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Tenant t = new Tenant(
+                        rs.getInt("tenant_id"),
+                        rs.getString("full_name"),
+                        rs.getString("identity_code"),
+                        rs.getString("phone_number"),
+                        rs.getString("email"),
+                        rs.getDate("date_of_birth")
+                );
+                list.add(t);
+            }
+
+            rs.close();
+            ps.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }
