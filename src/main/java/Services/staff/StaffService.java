@@ -143,49 +143,46 @@ public class StaffService {
         return auth != null && auth.getStaff() != null && "ADMIN".equalsIgnoreCase(auth.getRole()) && "ACTIVE".equalsIgnoreCase(auth.getStaff().getStatus());
     }
 
-    public ServiceResult adminResetPassword(AuthResult auth, String targetType, int targetId,
-            String newPassword, String confirmPassword) {
+    public ServiceResult adminResetPassword(AuthResult auth, String accountType, int accountId, String newPassword, String confirmPassword) {
 
         if (!isAdmin(auth)) {
-            return ServiceResult.fail("You do not have permission to perform this function.");
+            return ServiceResult.fail("NO_PERMISSION");
         }
 
-        if (newPassword == null || confirmPassword == null
-                || newPassword.isBlank() || confirmPassword.isBlank()) {
-            return ServiceResult.fail("Please enter full password.");
+        if (newPassword == null || confirmPassword == null || newPassword.isBlank() || confirmPassword.isBlank()) {
+            return ServiceResult.fail("PASSWORD_REQUIRED");
         }
 
         if (!newPassword.equals(confirmPassword)) {
-            return ServiceResult.fail("The verification password doesn't match.");
+            return ServiceResult.fail("CONFIRM_MISMATCH");
         }
 
         if (newPassword.length() < 6) {
-            return ServiceResult.fail("Password must be at least 6 characters long.");
+            return ServiceResult.fail("PASSWORD_MINLEN");
         }
 
         String newHash = HashUtil.md5(newPassword);
 
-        if ("TENANT".equalsIgnoreCase(targetType)) {
-            Tenant tenant = tenantDAO.findById(targetId);
-            if (tenant == null) {
-                return ServiceResult.fail("Tenant does not exist.");
+        if ("TENANT".equalsIgnoreCase(accountType)) {
+            Tenant t = tenantDAO.findById(accountId);
+            if (t == null) {
+                return ServiceResult.fail("TENANT_NOT_FOUND");
             }
 
-            boolean ok = tenantDAO.adminResetPasswordForTenant(targetId, newHash);
-            return ok ? ServiceResult.ok("Password reset for TENANT was successful.") : ServiceResult.fail("Password reset for TENANT failed.");
+            boolean ok = tenantDAO.adminResetPasswordForTenant(accountId, newHash);
+            return ok ? ServiceResult.ok("RESET_OK") : ServiceResult.fail("RESET_FAILED");
         }
 
-        if ("MANAGER".equalsIgnoreCase(targetType)) {
-            Staff staff = staffDAO.findById(targetId);
-
-            if (staff == null || !"MANAGER".equalsIgnoreCase(staff.getStaffRole())) {
-                return ServiceResult.fail("Manager does not exist.");
+        if ("STAFF".equalsIgnoreCase(accountType)) {
+            Staff s = staffDAO.findById(accountId);
+            if (s == null || !"MANAGER".equalsIgnoreCase(s.getStaffRole())) {
+                return ServiceResult.fail("MANAGER_NOT_FOUND");
             }
 
-            boolean ok = staffDAO.updatePasswordForStaff(targetId, newHash);
-            return ok ? ServiceResult.ok("Password reset for MANAGER was successful.") : ServiceResult.fail("Password reset for MANAGER failed.");
+            boolean ok = staffDAO.updatePasswordForStaff(accountId, newHash);
+            return ok ? ServiceResult.ok("RESET_OK") : ServiceResult.fail("RESET_FAILED");
         }
 
-        return ServiceResult.fail("Invalid account type.");
+        return ServiceResult.fail("INVALID_TYPE");
     }
 }
