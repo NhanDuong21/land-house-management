@@ -100,17 +100,28 @@
     </div>
 
     <!-- SEARCH -->
-    <div class="mt-search-box">
-        <form method="get"
-              action="${pageContext.request.contextPath}/manager/tenants">
+ <div class="mt-search-box">
+    <form id="searchForm" method="get"
+          action="${pageContext.request.contextPath}/manager/tenants">
 
-            <input type="text" 
-                   name="q"
-                   value="${q}"
-                   class="mt-search-input"
-                   placeholder="Search by tenant ID or full name...">
-        </form>
-    </div>
+        <input type="text" 
+               name="keyword"
+               value="${q}"
+               class="mt-search-input"
+               placeholder="Search by tenant ID or full name..."
+               onkeyup="debounceSearch()">
+    </form>
+</div>
+
+<script>
+let timer;
+function debounceSearch() {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+        document.getElementById("searchForm").submit();
+    }, 500);
+}
+</script>
 
     <!-- CARD -->
     <div class="mt-card">
