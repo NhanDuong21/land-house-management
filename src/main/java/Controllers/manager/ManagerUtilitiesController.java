@@ -20,7 +20,7 @@ import java.util.List;
  * @author Bui Nhu Y
  */
 @WebServlet(name = "ManagerUtilities", urlPatterns = {"/manager/utilities"})
-public class ManagerUtilities extends HttpServlet {
+public class ManagerUtilitiesController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
