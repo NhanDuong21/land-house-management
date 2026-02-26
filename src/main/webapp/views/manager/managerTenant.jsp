@@ -99,17 +99,22 @@
         <p>View and manage all tenant information</p>
     </div>
 
-    <!-- SEARCH -->
- <div class="mt-search-box">
-    <form id="searchForm" method="get"
-          action="${pageContext.request.contextPath}/manager/tenants">
+<!-- SEARCH -->
+<div class="mt-search-box">
+    <form method="get"
+          action="${pageContext.request.contextPath}/manager/tenants"
+          style="display:flex; gap:10px;">
 
         <input type="text" 
                name="keyword"
-               value="${q}"
+               value="${keyword}"
                class="mt-search-input"
-               placeholder="Search by tenant ID or full name..."
-               onkeyup="debounceSearch()">
+               placeholder="Search by tenant ID, name, phone or email...">
+
+        <button type="submit" class="mt-btn-search">
+            Search
+        </button>
+
     </form>
 </div>
 
