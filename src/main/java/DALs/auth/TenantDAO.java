@@ -10,6 +10,7 @@ import java.util.List;
 
 import Models.entity.Tenant;
 import Utils.database.DBContext;
+import java.sql.Date;
 
 /**
  * Description
@@ -298,6 +299,7 @@ public class TenantDAO extends DBContext {
         }
         return false;
     }
+
     public List<Tenant> getAllTenants() {
         List<Tenant> list = new ArrayList<>();
         try {
@@ -333,7 +335,6 @@ public class TenantDAO extends DBContext {
             String sql;
             PreparedStatement ps;
 
-           
             if (keyword.matches("\\d+")) {
                 sql = """
                 SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth
@@ -342,8 +343,7 @@ public class TenantDAO extends DBContext {
             """;
                 ps = connection.prepareStatement(sql);
                 ps.setInt(1, Integer.parseInt(keyword));
-            } 
-            else {
+            } else {
                 sql = """
                 SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth
                 FROM TENANT
@@ -382,4 +382,38 @@ public class TenantDAO extends DBContext {
 
         return list;
     }
+
+    public boolean updateTenant(Tenant t) {
+        String sql = """
+        UPDATE TENANT
+        SET full_name = ?, 
+            identity_code = ?, 
+            phone_number = ?, 
+            email = ?, 
+            address = ?, 
+            date_of_birth = ?, 
+            gender = ?, 
+            avatar = ?, 
+            updated_at = GETDATE()
+        WHERE tenant_id = ?
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, t.getFullName());
+            ps.setString(2, t.getIdentityCode());
+            ps.setString(3, t.getPhoneNumber());
+            ps.setString(4, t.getEmail());
+            ps.setString(5, t.getAddress());
+            ps.setDate(6, t.getDateOfBirth());
+            ps.setObject(7, t.getGender());
+            ps.setString(8, t.getAvatar());
+            ps.setInt(9, t.getTenantId());
+
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
 }
