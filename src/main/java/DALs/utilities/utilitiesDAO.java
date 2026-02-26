@@ -43,6 +43,8 @@ public class utilitiesDAO extends DBContext {
         return listUntilities;
     }
 
+    
+    
     public static void main(String[] args) {
         utilitiesDAO ud = new utilitiesDAO();
         List<Utility> list = ud.getManagerUntilities();
