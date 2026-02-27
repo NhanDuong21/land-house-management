@@ -441,6 +441,12 @@
                                                         )">
                                     ✏️ Edit
                                 </button>
+                                <!-- DELETE -->
+                                <button class="mt-btn-edit"
+                                        style="background:#fee2e2; border-color:#fca5a5; color:#b91c1c;"
+                                        onclick="openDeleteConfirm('${t.tenantId}')">
+                                    🗑 Delete
+                                </button>                   
                             </td>
                         </tr>
                     </c:forEach>
@@ -555,6 +561,25 @@
             </div>
         </div>
     </div>
+    <!-- ===== DELETE CONFIRM ===== -->
+    <div class="confirm-overlay" id="deleteDialog">
+        <div class="confirm-box">
+            <div class="confirm-icon">⚠️</div>
+            <div class="confirm-title">Delete Tenant</div>
+            <div class="confirm-subtitle">
+                Are you sure you want to delete this tenant? This action cannot be undone.
+            </div>
+
+            <div class="confirm-actions">
+                <button class="confirm-btn-cancel" onclick="closeDeleteConfirm()">Cancel</button>
+                <button class="confirm-btn-ok" 
+                        style="background:#ef4444"
+                        onclick="confirmDelete()">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
     <!-- TOAST -->
     <div class="toast" id="errorToast">
         <div class="toast-icon">❌</div>
@@ -630,6 +655,23 @@
         function submitEditForm() {
             closeConfirm();
             document.querySelector('#editModal form').submit();
+        }
+        let deleteTenantId = null;
+
+        function openDeleteConfirm(id) {
+            deleteTenantId = id;
+            document.getElementById('deleteDialog').classList.add('active');
+        }
+
+        function closeDeleteConfirm() {
+            document.getElementById('deleteDialog').classList.remove('active');
+        }
+
+        function confirmDelete() {
+            if (deleteTenantId) {
+                window.location.href =
+                        "${pageContext.request.contextPath}/manager/tenant/delete?id=" + deleteTenantId;
+            }
         }
     </script>
 
