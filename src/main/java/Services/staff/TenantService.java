@@ -24,4 +24,12 @@ public class TenantService {
   public List<Tenant> searchTenant(String keyword) {
         return TenantDAO.searchTenant(keyword);
     }
+  public Tenant findById(int id) {
+        return TenantDAO.findById(id);
+    }
+
+   
+    public boolean updateTenant(Tenant t) {
+        return TenantDAO.updateTenant(t);
+    }
 }
