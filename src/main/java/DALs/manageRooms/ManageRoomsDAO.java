@@ -73,4 +73,32 @@ public class ManageRoomsDAO extends DBContext {
         }
         return 0;
     }
+
+    public Room getRoombyId(int id) {
+        String sql = "select room_id, status from Room where room_id=?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Room r = new Room();
+                r.setRoomId(rs.getInt("room_id"));
+                r.setStatus(rs.getString("status"));
+                return r;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void updateRoomStatus(int id, String status) {
+        String sql = "update Room set status=? where room_id=?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, id);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
