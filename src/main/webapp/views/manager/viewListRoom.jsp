@@ -78,16 +78,12 @@
                                     ${r.status}
                                 </span>
                             </td>
-
-                            <!-- ✅ SỬA ĐÚNG Ở ĐÂY -->
                             <td class="text-center align-middle">
-                                <button class="btn btn-primary btn-sm"
-                                        data-id="${r.roomId}"
-                                        data-status="${r.status}">
+                                <a href="${pageContext.request.contextPath}/manager/rooms?action=edit&id=${r.roomId}"
+                                   class="btn btn-primary btn-sm">
                                     <i class="bi bi-pencil-square"></i> Edit
-                                </button>
+                                </a>
                             </td>
-
                         </tr>
                     </c:forEach>
 
@@ -160,6 +156,6 @@
 
         </div>
     </div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets/js/pages/manageRooms.js"></script>
 </t:layout>
