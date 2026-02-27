@@ -63,6 +63,17 @@ public class TenantService {
         return tenantDAO.findById(id);
     }
 
+    public ServiceResult toggleStatus(int tenantId) {
+        Tenant t = tenantDAO.findById(tenantId);
+        if (t == null) {
+            return ServiceResult.fail("NOT_FOUND");
+        }
+        String current = t.getAccountStatus();
+        String next = "ACTIVE".equalsIgnoreCase(current) ? "LOCKED" : "ACTIVE";
+        boolean ok = tenantDAO.toggleStatus(tenantId, next);
+        return ok ? ServiceResult.ok(next) : ServiceResult.fail("UPDATE_FAILED");
+    }
+
     public boolean updateTenant(Tenant t) {
         validateTenant(t);
         return tenantDAO.updateTenant(t);
@@ -116,7 +127,4 @@ public class TenantService {
         }
     }
 
-    public boolean deleteTenant(int tenantId) {
-        return tenantDAO.deleteTenant(tenantId);
-    }
 }
