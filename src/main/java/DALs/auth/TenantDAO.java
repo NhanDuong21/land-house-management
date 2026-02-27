@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Models.entity.Tenant;
-import Services.tenant.TenantService;
 import Utils.database.DBContext;
-import java.sql.Date;
 
 /**
  * Description
@@ -436,7 +434,8 @@ public class TenantDAO extends DBContext {
 
     /**
      * Lấy danh sách tenant có phân trang (không tìm kiếm).
-     * @param page  trang hiện tại (bắt đầu từ 1)
+     *
+     * @param page trang hiện tại (bắt đầu từ 1)
      * @param pageSize số bản ghi mỗi trang
      */
     public List<Tenant> getTenantsPaged(int page, int pageSize) {
@@ -471,12 +470,15 @@ public class TenantDAO extends DBContext {
         return list;
     }
 
-    /** Đếm tổng số tenant (để tính tổng trang). */
+    /**
+     * Đếm tổng số tenant (để tính tổng trang).
+     */
     public int countAllTenants() {
         String sql = "SELECT COUNT(*) FROM TENANT";
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) return rs.getInt(1);
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -527,7 +529,9 @@ public class TenantDAO extends DBContext {
         return list;
     }
 
-    /** Đếm kết quả tìm kiếm (để tính tổng trang khi search). */
+    /**
+     * Đếm kết quả tìm kiếm (để tính tổng trang khi search).
+     */
     public int countSearchTenant(String keyword) {
         String sql = """
             SELECT COUNT(*) FROM TENANT
@@ -543,7 +547,9 @@ public class TenantDAO extends DBContext {
             ps.setString(3, key);
             ps.setString(4, key);
             try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) return rs.getInt(1);
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
