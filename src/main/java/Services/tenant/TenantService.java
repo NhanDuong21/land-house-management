@@ -106,17 +106,28 @@ public class TenantService {
             throw new IllegalArgumentException("Phone Number không được để trống.");
         }
 
-// Không cho nhập chữ
+        // Không cho nhập chữ
         if (!phone.matches("^\\d+$")) {
             throw new IllegalArgumentException("Phone Number không được chứa chữ hoặc ký tự đặc biệt.");
         }
 
-// Phải đủ 10 số và bắt đầu bằng 0
+        // Phải đủ 10 số và bắt đầu bằng 0
         if (!phone.matches("^0\\d{9}$")) {
             throw new IllegalArgumentException("Phone Number phải có 10 số và bắt đầu bằng 0.");
         }
 
-        // 4. Date of Birth
+        // 4. Email
+        String email = t.getEmail();
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("Email không được để trống.");
+        }
+
+        // Kiểm tra format email
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            throw new IllegalArgumentException("Email không đúng định dạng.");
+        }
+
+        // 5. Date of Birth
         if (t.getDateOfBirth() == null) {
             throw new IllegalArgumentException("Date of Birth không được để trống.");
         }
