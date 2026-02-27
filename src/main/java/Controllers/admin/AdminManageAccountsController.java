@@ -7,7 +7,6 @@ import DALs.admin.ManageAccountDAO;
 import Models.authentication.AuthResult;
 import Models.dto.AdminAccountRowDTO;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,7 +16,6 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author Duong Thien Nhan - CE190741
  */
-@WebServlet(name = "AdminManageAccountsController", urlPatterns = {"/admin/accounts"})
 public class AdminManageAccountsController extends HttpServlet {
 
     private final ManageAccountDAO accountDAO = new ManageAccountDAO();
@@ -47,9 +45,7 @@ public class AdminManageAccountsController extends HttpServlet {
             role = "ALL";
         } else {
             role = role.trim().toUpperCase();
-            if (!role.equals("ALL")
-                    && !role.equals("TENANT")
-                    && !role.equals("MANAGER")) {
+            if (!role.equals("ALL") && !role.equals("TENANT") && !role.equals("MANAGER")) {
                 role = "ALL";
             }
         }
@@ -79,13 +75,6 @@ public class AdminManageAccountsController extends HttpServlet {
         }
 
         int offset = (page - 1) * pageSize;
-
-        // ===== DEBUG BEFORE DAO =====
-        System.out.println("[APP][AdminAccounts] role=" + role
-                + ", keyword=" + keyword
-                + ", page=" + page
-                + ", pageSize=" + pageSize
-                + ", offset=" + offset);
 
         List<AdminAccountRowDTO> accounts = accountDAO.listAccounts(role, keyword, offset, pageSize);
 
