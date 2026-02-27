@@ -300,7 +300,7 @@ public class TenantDAO extends DBContext {
         return false;
     }
 
-public List<Tenant> getAllTenants() {
+    public List<Tenant> getAllTenants() {
         List<Tenant> list = new ArrayList<>();
         try {
             String sql = "SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth, gender, address FROM TENANT";
@@ -329,10 +329,10 @@ public List<Tenant> getAllTenants() {
         return list;
     }
 
-   public List<Tenant> searchTenant(String keyword) {
-    List<Tenant> list = new ArrayList<>();
-    try {
-        String sql = """
+    public List<Tenant> searchTenant(String keyword) {
+        List<Tenant> list = new ArrayList<>();
+        try {
+            String sql = """
             SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth, gender, address
             FROM TENANT
             WHERE full_name LIKE ?
@@ -341,37 +341,38 @@ public List<Tenant> getAllTenants() {
                OR identity_code LIKE ?
         """;
 
-        PreparedStatement ps = connection.prepareStatement(sql);
-        String key = "%" + keyword + "%";
-        ps.setString(1, key);
-        ps.setString(2, key);
-        ps.setString(3, key);
-        ps.setString(4, key);
+            PreparedStatement ps = connection.prepareStatement(sql);
+            String key = "%" + keyword + "%";
+            ps.setString(1, key);
+            ps.setString(2, key);
+            ps.setString(3, key);
+            ps.setString(4, key);
 
-        ResultSet rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
 
-        while (rs.next()) {
-            Tenant t = new Tenant();
-            t.setTenantId(rs.getInt("tenant_id"));
-            t.setFullName(rs.getString("full_name"));
-            t.setIdentityCode(rs.getString("identity_code"));
-            t.setPhoneNumber(rs.getString("phone_number"));
-            t.setEmail(rs.getString("email"));
-            t.setDateOfBirth(rs.getDate("date_of_birth"));
-            t.setGender(rs.getObject("gender") == null ? null : ((Number) rs.getObject("gender")).intValue());
-            t.setAddress(rs.getString("address"));
-            list.add(t);
+            while (rs.next()) {
+                Tenant t = new Tenant();
+                t.setTenantId(rs.getInt("tenant_id"));
+                t.setFullName(rs.getString("full_name"));
+                t.setIdentityCode(rs.getString("identity_code"));
+                t.setPhoneNumber(rs.getString("phone_number"));
+                t.setEmail(rs.getString("email"));
+                t.setDateOfBirth(rs.getDate("date_of_birth"));
+                t.setGender(rs.getObject("gender") == null ? null : ((Number) rs.getObject("gender")).intValue());
+                t.setAddress(rs.getString("address"));
+                list.add(t);
+            }
+
+            rs.close();
+            ps.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        rs.close();
-        ps.close();
-
-    } catch (Exception e) {
-        e.printStackTrace();
+        return list;
     }
 
-    return list;
-}
     public boolean updateTenant(Tenant t) {
         String sql = """
         UPDATE TENANT
@@ -404,5 +405,17 @@ public List<Tenant> getAllTenants() {
         }
         return false;
     }
-    
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean deleteTenant(int tenantId) {
+        String sql = "DELETE FROM TENANT WHERE tenant_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
