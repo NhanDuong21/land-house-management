@@ -4,7 +4,6 @@ package Controllers.manager;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 import Models.entity.Tenant;
 import Services.staff.TenantService;
 import java.io.IOException;
@@ -74,17 +73,12 @@ public class ManagerEditTenantController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         int id = Integer.parseInt(request.getParameter("tenantId"));
-
         TenantService service = new TenantService();
-
-        // 🔥 Lấy dữ liệu cũ
         Tenant t = service.findById(id);
 
         if (t != null) {
-
-            // 🔥 Update chỉ các field cần
             t.setFullName(request.getParameter("fullName"));
             t.setIdentityCode(request.getParameter("identityCode"));
             t.setPhoneNumber(request.getParameter("phoneNumber"));
@@ -103,10 +97,18 @@ public class ManagerEditTenantController extends HttpServlet {
 
             t.setAvatar(request.getParameter("avatar"));
 
-            service.updateTenant(t);
+            try {
+                service.updateTenant(t);
+            } catch (IllegalArgumentException ex) {
+                // Validation thất bại → redirect về kèm ?error=...
+                response.sendRedirect(request.getContextPath()
+                        + "/manager/tenants?error="
+                        + java.net.URLEncoder.encode(ex.getMessage(), "UTF-8"));
+                return;
+            }
         }
-        response.sendRedirect(request.getContextPath() + "/manager/tenants");
 
+        response.sendRedirect(request.getContextPath() + "/manager/tenants");
     }
 
     /**
