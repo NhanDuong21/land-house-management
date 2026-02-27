@@ -92,6 +92,34 @@
             color: gray;
         }
 
+        /* ===== STATUS BADGE BUTTONS ===== */
+        .mt-btn-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            white-space: nowrap;
+        }
+        .mt-btn-status:hover {
+            opacity: 0.8;
+            transform: scale(1.03);
+        }
+        .mt-btn-active {
+            background: #dcfce7;
+            color: #15803d;
+        }
+        .mt-btn-locked {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        .mt-btn-pending {
+            background: #fef9c3;
+            color: #92400e;
+        }
+
         /* ===== MODAL ===== */
         .modal-overlay {
             display: none;
@@ -411,6 +439,7 @@
                         <th>Email</th>
                         <th>Citizen ID</th>
                         <th>Date of Birth</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -428,6 +457,28 @@
                                 <fmt:formatDate value="${t.dateOfBirth}" pattern="yyyy-MM-dd"/>
                             </td>
                             <td>
+                                <c:choose>
+                                    <c:when test="${t.accountStatus == 'ACTIVE'}">
+                                        <button class="mt-btn-status mt-btn-active"
+                                                onclick="openToggleConfirm('${t.tenantId}', 'ACTIVE', '${t.fullName}')">
+                                            ✅ ACTIVE
+                                        </button>
+                                    </c:when>
+                                    <c:when test="${t.accountStatus == 'LOCKED'}">
+                                        <button class="mt-btn-status mt-btn-locked"
+                                                onclick="openToggleConfirm('${t.tenantId}', 'LOCKED', '${t.fullName}')">
+                                            🔒 LOCKED
+                                        </button>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <button class="mt-btn-status mt-btn-pending"
+                                                onclick="openToggleConfirm('${t.tenantId}', '${t.accountStatus}', '${t.fullName}')">
+                                            ⏳ ${t.accountStatus}
+                                        </button>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>
                                 <button class="mt-btn-edit"
                                         onclick="openEditModal(
                                                         '${t.tenantId}',
@@ -441,19 +492,14 @@
                                                         )">
                                     ✏️ Edit
                                 </button>
-                                <!-- DELETE -->
-                                <button class="mt-btn-edit"
-                                        style="background:#fee2e2; border-color:#fca5a5; color:#b91c1c;"
-                                        onclick="openDeleteConfirm('${t.tenantId}')">
-                                    🗑 Delete
-                                </button>                
+                                              
                             </td>
                         </tr>
                     </c:forEach>
 
                     <c:if test="${empty tenants}">
                         <tr>
-                            <td colspan="7" class="mt-empty">No tenants found</td>
+                            <td colspan="8" class="mt-empty">No tenants found</td>
                         </tr>
                     </c:if>
                 </tbody>
@@ -561,25 +607,19 @@
             </div>
         </div>
     </div>
-    <!-- ===== DELETE CONFIRM ===== -->
-    <div class="confirm-overlay" id="deleteDialog">
+    <!-- ===== TOGGLE STATUS CONFIRM ===== -->
+    <div class="confirm-overlay" id="toggleStatusDialog">
         <div class="confirm-box">
-            <div class="confirm-icon">⚠️</div>
-            <div class="confirm-title">Delete Tenant</div>
-            <div class="confirm-subtitle">
-                Are you sure you want to delete this tenant? This action cannot be undone.
-            </div>
-
+            <div class="confirm-icon" id="toggleStatusIcon">🔄</div>
+            <div class="confirm-title" id="toggleStatusTitle">Xác nhận thay đổi trạng thái</div>
+            <div class="confirm-subtitle" id="toggleStatusSubtitle"></div>
             <div class="confirm-actions">
-                <button class="confirm-btn-cancel" onclick="closeDeleteConfirm()">Cancel</button>
-                <button class="confirm-btn-ok" 
-                        style="background:#ef4444"
-                        onclick="confirmDelete()">
-                    Delete
-                </button>
+                <button class="confirm-btn-cancel" onclick="closeToggleConfirm()">✕ Hủy</button>
+                <button class="confirm-btn-ok" id="toggleStatusOkBtn" onclick="confirmToggleStatus()">✔ Đồng ý</button>
             </div>
         </div>
     </div>
+
     <!-- TOAST -->
     <div class="toast" id="errorToast">
         <div class="toast-icon">❌</div>
@@ -656,23 +696,36 @@
             closeConfirm();
             document.querySelector('#editModal form').submit();
         }
-        let deleteTenantId = null;
+        let toggleTenantId = null;
 
-        function openDeleteConfirm(id) {
-            deleteTenantId = id;
-            document.getElementById('deleteDialog').classList.add('active');
+        function openToggleConfirm(id, currentStatus, name) {
+            toggleTenantId = id;
+            const nextStatus = currentStatus === 'ACTIVE' ? 'LOCKED' : 'ACTIVE';
+            const icon = nextStatus === 'LOCKED' ? '🔒' : '✅';
+            const color = nextStatus === 'LOCKED' ? '#ef4444' : '#22c55e';
+
+            document.getElementById('toggleStatusIcon').textContent = icon;
+            document.getElementById('toggleStatusTitle').textContent = 'Xác nhận thay đổi trạng thái';
+            document.getElementById('toggleStatusSubtitle').textContent =
+                'Bạn có thật sự muốn chuyển tài khoản của "' + name + '" sang ' + nextStatus + ' không?';
+            document.getElementById('toggleStatusOkBtn').style.background = color;
+            document.getElementById('toggleStatusDialog').classList.add('active');
         }
 
-        function closeDeleteConfirm() {
-            document.getElementById('deleteDialog').classList.remove('active');
+        function closeToggleConfirm() {
+            document.getElementById('toggleStatusDialog').classList.remove('active');
         }
 
-        function confirmDelete() {
-            if (deleteTenantId) {
-                window.location.href =
-                        "${pageContext.request.contextPath}/manager/tenant/edit?action=delete&id=" + deleteTenantId;
+        function confirmToggleStatus() {
+            if (toggleTenantId) {
+                const keyword = new URLSearchParams(window.location.search).get('keyword') || '';
+                let url = '${pageContext.request.contextPath}/manager/tenants?action=toggleStatus&id=' + toggleTenantId;
+                if (keyword) url += '&keyword=' + encodeURIComponent(keyword);
+                window.location.href = url;
             }
         }
+
+ 
     </script>
 
 </layout:layout>
