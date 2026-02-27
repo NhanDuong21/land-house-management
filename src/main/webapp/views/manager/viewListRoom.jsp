@@ -41,6 +41,7 @@
                         <th>Mezzanine</th>
                         <th>AC</th>
                         <th>Status</th>
+                        <th>Edit Status</th>
                     </tr>
                 </thead>
 
@@ -50,7 +51,6 @@
                             <td>${r.roomId}</td>
                             <td>${r.blockName}</td>
                             <td class="fw-bold roomNumber">${r.roomNumber}</td>
-
                             <td>${r.area}</td>
                             <td class="price">${r.price} đ</td>
                             <td>${r.floor}</td>
@@ -78,24 +78,31 @@
                                     ${r.status}
                                 </span>
                             </td>
+
+                            <!-- ✅ SỬA ĐÚNG Ở ĐÂY -->
+                            <td class="text-center align-middle">
+                                <button class="btn btn-primary btn-sm"
+                                        data-id="${r.roomId}"
+                                        data-status="${r.status}">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </button>
+                            </td>
+
                         </tr>
                     </c:forEach>
 
                     <c:if test="${empty Rooms}">
                         <tr>
-                            <td colspan="10" style="text-align:center;color:#888">
+                            <td colspan="11" style="text-align:center;color:#888">
                                 No room found
                             </td>
                         </tr>
                     </c:if>
                 </tbody>
             </table>
-
-            <!-- SMART PAGINATION -->
             <div class="pagination-wrapper">
                 <ul class="pagination">
 
-                    <!-- Prev -->
                     <li class="${pageIndex == 1 ? 'disabled' : ''}">
                         <a href="${pageContext.request.contextPath}/manager/rooms?page=${pageIndex - 1}">‹</a>
                     </li>
@@ -112,19 +119,16 @@
                         <c:set var="end" value="${totalPage - 1}" />
                     </c:if>
 
-                    <!-- Page 1 -->
                     <li class="${pageIndex == 1 ? 'active' : ''}">
                         <a href="${pageContext.request.contextPath}/manager/rooms?page=1">1</a>
                     </li>
 
-                    <!-- Left dots -->
                     <c:if test="${start > 2}">
                         <li class="disabled">
                             <a href="javascript:void(0)">...</a>
                         </li>
                     </c:if>
 
-                    <!-- Middle pages -->
                     <c:forEach begin="${start}" end="${end}" var="i">
                         <li class="${i == pageIndex ? 'active' : ''}">
                             <a href="${pageContext.request.contextPath}/manager/rooms?page=${i}">
@@ -133,14 +137,12 @@
                         </li>
                     </c:forEach>
 
-                    <!-- Right dots -->
                     <c:if test="${end < totalPage - 1}">
                         <li class="disabled">
                             <a href="javascript:void(0)">...</a>
                         </li>
                     </c:if>
 
-                    <!-- Last page -->
                     <c:if test="${totalPage > 1}">
                         <li class="${pageIndex == totalPage ? 'active' : ''}">
                             <a href="${pageContext.request.contextPath}/manager/rooms?page=${totalPage}">
@@ -149,14 +151,12 @@
                         </li>
                     </c:if>
 
-                    <!-- Next -->
                     <li class="${pageIndex == totalPage ? 'disabled' : ''}">
                         <a href="${pageContext.request.contextPath}/manager/rooms?page=${pageIndex + 1}">›</a>
                     </li>
 
                 </ul>
             </div>
-            <!-- END SMART PAGINATION -->
 
         </div>
     </div>
