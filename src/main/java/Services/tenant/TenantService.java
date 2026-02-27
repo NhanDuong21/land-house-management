@@ -117,6 +117,6 @@ public class TenantService {
     }
 
     public boolean deleteTenant(int tenantId) {
-        return TenantDAO.deleteTenant(tenantId);
+        return tenantDAO.deleteTenant(tenantId);
     }
 }
