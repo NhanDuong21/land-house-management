@@ -91,14 +91,15 @@ public class ManageRoomsDAO extends DBContext {
         return null;
     }
 
-    public void updateRoomStatus(int id, String status) {
-        String sql = "update Room set status=? where room_id=?";
+    public boolean updateRoomStatus(int roomId, String status) {
+        String sql = "UPDATE Room SET status=? WHERE room_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, status);
-            ps.setInt(2, id);
-            ps.executeUpdate();
+            ps.setInt(2, roomId);
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 }
