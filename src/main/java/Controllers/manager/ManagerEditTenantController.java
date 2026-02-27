@@ -1,3 +1,5 @@
+package Controllers.manager;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
@@ -103,6 +105,7 @@ public class ManagerEditTenantController extends HttpServlet {
 
             service.updateTenant(t);
         }
+        response.sendRedirect(request.getContextPath() + "/manager/tenants");
 
     }
 

@@ -300,22 +300,23 @@ public class TenantDAO extends DBContext {
         return false;
     }
 
-    public List<Tenant> getAllTenants() {
+public List<Tenant> getAllTenants() {
         List<Tenant> list = new ArrayList<>();
         try {
-            String sql = "SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth FROM TENANT";
+            String sql = "SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth, gender, address FROM TENANT";
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Tenant t = new Tenant(
-                        rs.getInt("tenant_id"),
-                        rs.getString("full_name"),
-                        rs.getString("identity_code"),
-                        rs.getString("phone_number"),
-                        rs.getString("email"),
-                        rs.getDate("date_of_birth")
-                );
+                Tenant t = new Tenant();
+                t.setTenantId(rs.getInt("tenant_id"));
+                t.setFullName(rs.getString("full_name"));
+                t.setIdentityCode(rs.getString("identity_code"));
+                t.setPhoneNumber(rs.getString("phone_number"));
+                t.setEmail(rs.getString("email"));
+                t.setDateOfBirth(rs.getDate("date_of_birth"));
+                t.setGender(rs.getObject("gender") == null ? null : ((Number) rs.getObject("gender")).intValue());
+                t.setAddress(rs.getString("address"));
                 list.add(t);
             }
 
@@ -331,13 +332,12 @@ public class TenantDAO extends DBContext {
     public List<Tenant> searchTenant(String keyword) {
         List<Tenant> list = new ArrayList<>();
         try {
-
             String sql;
             PreparedStatement ps;
 
             if (keyword.matches("\\d+")) {
                 sql = """
-                SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth
+                SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth, gender, address
                 FROM TENANT
                 WHERE tenant_id = ?
             """;
@@ -345,14 +345,13 @@ public class TenantDAO extends DBContext {
                 ps.setInt(1, Integer.parseInt(keyword));
             } else {
                 sql = """
-                SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth
+                SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth, gender, address
                 FROM TENANT
                 WHERE full_name LIKE ?
                    OR phone_number LIKE ?
                    OR email LIKE ?
             """;
                 ps = connection.prepareStatement(sql);
-
                 String key = "%" + keyword + "%";
                 ps.setString(1, key);
                 ps.setString(2, key);
@@ -362,14 +361,15 @@ public class TenantDAO extends DBContext {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Tenant t = new Tenant(
-                        rs.getInt("tenant_id"),
-                        rs.getString("full_name"),
-                        rs.getString("identity_code"),
-                        rs.getString("phone_number"),
-                        rs.getString("email"),
-                        rs.getDate("date_of_birth")
-                );
+                Tenant t = new Tenant();
+                t.setTenantId(rs.getInt("tenant_id"));
+                t.setFullName(rs.getString("full_name"));
+                t.setIdentityCode(rs.getString("identity_code"));
+                t.setPhoneNumber(rs.getString("phone_number"));
+                t.setEmail(rs.getString("email"));
+                t.setDateOfBirth(rs.getDate("date_of_birth"));
+                t.setGender(rs.getObject("gender") == null ? null : ((Number) rs.getObject("gender")).intValue());
+                t.setAddress(rs.getString("address"));
                 list.add(t);
             }
 
@@ -382,7 +382,6 @@ public class TenantDAO extends DBContext {
 
         return list;
     }
-
     public boolean updateTenant(Tenant t) {
         String sql = """
         UPDATE TENANT
