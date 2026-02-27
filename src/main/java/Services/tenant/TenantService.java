@@ -115,4 +115,8 @@ public class TenantService {
             throw new IllegalArgumentException("Date of Birth không được lớn hơn ngày hiện tại.");
         }
     }
+
+    public boolean deleteTenant(int tenantId) {
+        return TenantDAO.deleteTenant(tenantId);
+    }
 }
