@@ -59,7 +59,39 @@ public class ManagerEditAndDeleteTenantController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getParameter("action");
+
+        if ("delete".equals(action)) {
+            deleteTenant(request, response);
+            return;
+        }
+
+        // nếu không phải delete thì có thể forward page hoặc bỏ trống
+        response.sendRedirect(request.getContextPath() + "/manager/tenants");
+    }
+
+    private void deleteTenant(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        TenantService service = new TenantService();
+
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+
+            boolean success = service.deleteTenant(id);
+
+            if (success) {
+                request.getSession().setAttribute("message", "Delete successful!");
+            } else {
+                request.getSession().setAttribute("error", "Delete failed!");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.getSession().setAttribute("error", "Invalid request!");
+        }
+
+        response.sendRedirect(request.getContextPath() + "/manager/tenants");
     }
 
     /**
