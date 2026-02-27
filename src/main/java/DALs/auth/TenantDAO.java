@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Models.entity.Tenant;
+import Services.tenant.TenantService;
 import Utils.database.DBContext;
 import java.sql.Date;
 
@@ -303,7 +304,7 @@ public class TenantDAO extends DBContext {
     public List<Tenant> getAllTenants() {
         List<Tenant> list = new ArrayList<>();
         try {
-            String sql = "SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth, gender, address FROM TENANT";
+            String sql = "SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth, gender, address, account_status FROM TENANT";
             PreparedStatement ps = connection.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
@@ -317,6 +318,7 @@ public class TenantDAO extends DBContext {
                 t.setDateOfBirth(rs.getDate("date_of_birth"));
                 t.setGender(rs.getObject("gender") == null ? null : ((Number) rs.getObject("gender")).intValue());
                 t.setAddress(rs.getString("address"));
+                t.setAccountStatus(rs.getString("account_status"));
                 list.add(t);
             }
 
@@ -406,9 +408,8 @@ public class TenantDAO extends DBContext {
         return false;
     }
 
-    @SuppressWarnings("CallToPrintStackTrace")
-    public boolean deleteTenant(int tenantId) {
-        String sql = "DELETE FROM TENANT WHERE tenant_id = ?";
+    public boolean lockTenant(int tenantId) {
+        String sql = "UPDATE TENANT SET account_status = 'LOCKED' WHERE tenant_id = ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, tenantId);
@@ -418,4 +419,18 @@ public class TenantDAO extends DBContext {
         }
         return false;
     }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean toggleStatus(int tenantId, String newStatus) {
+        String sql = "UPDATE TENANT SET account_status = ?, updated_at = SYSDATETIME() WHERE tenant_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, newStatus);
+            ps.setInt(2, tenantId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }
