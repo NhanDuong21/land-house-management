@@ -5,7 +5,7 @@
 package Controllers.manager;
 
 import Models.entity.Tenant;
-import Services.staff.TenantService;
+import Services.tenant.TenantService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
