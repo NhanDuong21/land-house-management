@@ -64,6 +64,24 @@ public class ManagerViewListTenantController extends HttpServlet {
         TenantService service = new TenantService();
         List<Tenant> list;
 
+        // Xử lý toggle status
+        String action = request.getParameter("action");
+        if ("toggleStatus".equals(action)) {
+            String idStr = request.getParameter("id");
+            try {
+                int id = Integer.parseInt(idStr);
+                service.toggleStatus(id);
+            } catch (NumberFormatException ignored) {
+            }
+            String keyword = request.getParameter("keyword");
+            String redirect = request.getContextPath() + "/manager/tenants";
+            if (keyword != null && !keyword.isBlank()) {
+                redirect += "?keyword=" + java.net.URLEncoder.encode(keyword, "UTF-8");
+            }
+            response.sendRedirect(redirect);
+            return;
+        }
+
         String keyword = request.getParameter("keyword");
 
         if (keyword == null || keyword.trim().isEmpty()) {
