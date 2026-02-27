@@ -444,235 +444,235 @@
                                 <!-- DELETE -->
                                 <button class="mt-btn-edit"
                                         style="background:#fee2e2; border-color:#fca5a5; color:#b91c1c;"
-                                        window.location.href =
-                                        "${pageContext.request.contextPath}/manager/tenant?action=delete&id=" + deleteTenantId;                                    🗑 Delete
-                            </button>                   
-                        </td>
-                    </tr>
-                </c:forEach>
+                                        onclick="openDeleteConfirm('${t.tenantId}')">
+                                    🗑 Delete
+                                </button>                
+                            </td>
+                        </tr>
+                    </c:forEach>
 
-                <c:if test="${empty tenants}">
-                    <tr>
-                        <td colspan="7" class="mt-empty">No tenants found</td>
-                    </tr>
-                </c:if>
-            </tbody>
-        </table>
+                    <c:if test="${empty tenants}">
+                        <tr>
+                            <td colspan="7" class="mt-empty">No tenants found</td>
+                        </tr>
+                    </c:if>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
-<!-- ===== EDIT MODAL ===== -->
-<div class="modal-overlay" id="editModal">
-    <div class="modal-box">
-        <button class="modal-close-btn" onclick="closeEditModal()">✕</button>
-        <div class="modal-title">Edit Tenant Information</div>
-        <div class="modal-subtitle">Update tenant details or remove incorrect information</div>
+    <!-- ===== EDIT MODAL ===== -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-box">
+            <button class="modal-close-btn" onclick="closeEditModal()">✕</button>
+            <div class="modal-title">Edit Tenant Information</div>
+            <div class="modal-subtitle">Update tenant details or remove incorrect information</div>
 
-        <form method="post" action="${pageContext.request.contextPath}/manager/tenant/edit">
-            <input type="hidden" name="tenantId" id="modal_tenantId"/>
+            <form method="post" action="${pageContext.request.contextPath}/manager/tenant/edit">
+                <input type="hidden" name="tenantId" id="modal_tenantId"/>
 
-            <div class="modal-grid">
+                <div class="modal-grid">
 
-                <!-- Full Name -->
-                <div class="modal-field">
-                    <label>Full Name</label>
-                    <div class="modal-field-row">
-                        <input type="text" name="fullName" id="modal_fullName" placeholder="Full Name"/>
-                        <button type="button" class="modal-clear-btn" onclick="clearField('modal_fullName')">🗑</button>
+                    <!-- Full Name -->
+                    <div class="modal-field">
+                        <label>Full Name</label>
+                        <div class="modal-field-row">
+                            <input type="text" name="fullName" id="modal_fullName" placeholder="Full Name"/>
+                            <button type="button" class="modal-clear-btn" onclick="clearField('modal_fullName')">🗑</button>
+                        </div>
                     </div>
+
+                    <!-- Phone Number -->
+                    <div class="modal-field">
+                        <label>Phone Number</label>
+                        <div class="modal-field-row">
+                            <input type="text" name="phoneNumber" id="modal_phoneNumber" placeholder="Phone Number"/>
+                            <button type="button" class="modal-clear-btn" onclick="clearField('modal_phoneNumber')">🗑</button>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="modal-field">
+                        <label>Email</label>
+                        <div class="modal-field-row">
+                            <input type="email" name="email" id="modal_email" placeholder="Email"/>
+                            <button type="button" class="modal-clear-btn" onclick="clearField('modal_email')">🗑</button>
+                        </div>
+                    </div>
+
+                    <!-- Citizen ID -->
+                    <div class="modal-field">
+                        <label>Citizen ID (12 digits)</label>
+                        <div class="modal-field-row">
+                            <input type="text" name="identityCode" id="modal_identityCode" placeholder="Citizen ID" maxlength="12"/>
+                            <button type="button" class="modal-clear-btn" onclick="clearField('modal_identityCode')">🗑</button>
+                        </div>
+                    </div>
+
+                    <!-- Date of Birth -->
+                    <div class="modal-field">
+                        <label>Date of Birth</label>
+                        <div class="modal-field-row">
+                            <input type="date" name="dateOfBirth" id="modal_dateOfBirth"/>
+                            <button type="button" class="modal-clear-btn" onclick="clearField('modal_dateOfBirth')">🗑</button>
+                        </div>
+                    </div>
+
+                    <!-- Gender -->
+                    <div class="modal-field">
+                        <label>Gender</label>
+                        <div class="modal-field-row">
+                            <select name="gender" id="modal_gender">
+                                <option value="">-- Select --</option>
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+                            </select>
+                            <button type="button" class="modal-clear-btn" onclick="document.getElementById('modal_gender').value = ''">🗑</button>
+                        </div>
+                    </div>
+
+                    <!-- Address (full width) -->
+                    <div class="modal-field" style="grid-column: span 2;">
+                        <label>Address</label>
+                        <div class="modal-field-row">
+                            <input type="text" name="address" id="modal_address" placeholder="Address"/>
+                            <button type="button" class="modal-clear-btn" onclick="clearField('modal_address')">🗑</button>
+                        </div>
+                    </div>
+
                 </div>
 
-                <!-- Phone Number -->
-                <div class="modal-field">
-                    <label>Phone Number</label>
-                    <div class="modal-field-row">
-                        <input type="text" name="phoneNumber" id="modal_phoneNumber" placeholder="Phone Number"/>
-                        <button type="button" class="modal-clear-btn" onclick="clearField('modal_phoneNumber')">🗑</button>
-                    </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn-cancel" onclick="closeEditModal()">✕ Cancel</button>
+                    <button type="button" class="modal-btn-save" onclick="openConfirm()">✔ Save Changes</button>
                 </div>
-
-                <!-- Email -->
-                <div class="modal-field">
-                    <label>Email</label>
-                    <div class="modal-field-row">
-                        <input type="email" name="email" id="modal_email" placeholder="Email"/>
-                        <button type="button" class="modal-clear-btn" onclick="clearField('modal_email')">🗑</button>
-                    </div>
-                </div>
-
-                <!-- Citizen ID -->
-                <div class="modal-field">
-                    <label>Citizen ID (12 digits)</label>
-                    <div class="modal-field-row">
-                        <input type="text" name="identityCode" id="modal_identityCode" placeholder="Citizen ID" maxlength="12"/>
-                        <button type="button" class="modal-clear-btn" onclick="clearField('modal_identityCode')">🗑</button>
-                    </div>
-                </div>
-
-                <!-- Date of Birth -->
-                <div class="modal-field">
-                    <label>Date of Birth</label>
-                    <div class="modal-field-row">
-                        <input type="date" name="dateOfBirth" id="modal_dateOfBirth"/>
-                        <button type="button" class="modal-clear-btn" onclick="clearField('modal_dateOfBirth')">🗑</button>
-                    </div>
-                </div>
-
-                <!-- Gender -->
-                <div class="modal-field">
-                    <label>Gender</label>
-                    <div class="modal-field-row">
-                        <select name="gender" id="modal_gender">
-                            <option value="">-- Select --</option>
-                            <option value="1">Male</option>
-                            <option value="0">Female</option>
-                        </select>
-                        <button type="button" class="modal-clear-btn" onclick="document.getElementById('modal_gender').value = ''">🗑</button>
-                    </div>
-                </div>
-
-                <!-- Address (full width) -->
-                <div class="modal-field" style="grid-column: span 2;">
-                    <label>Address</label>
-                    <div class="modal-field-row">
-                        <input type="text" name="address" id="modal_address" placeholder="Address"/>
-                        <button type="button" class="modal-clear-btn" onclick="clearField('modal_address')">🗑</button>
-                    </div>
-                </div>
-
+            </form>
+        </div>
+    </div>
+    <!-- ===== CONFIRM DIALOG ===== -->
+    <div class="confirm-overlay" id="confirmDialog">
+        <div class="confirm-box">
+            <div class="confirm-icon">💾</div>
+            <div class="confirm-title">Xác nhận lưu thay đổi</div>
+            <div class="confirm-subtitle">Bạn có chắc chắn muốn cập nhật thông tin tenant này không?</div>
+            <div class="confirm-actions">
+                <button class="confirm-btn-cancel" onclick="closeConfirm()">✕ Cancel</button>
+                <button class="confirm-btn-ok" onclick="submitEditForm()">✔ Đồng ý</button>
+            </div>
+        </div>
+    </div>
+    <!-- ===== DELETE CONFIRM ===== -->
+    <div class="confirm-overlay" id="deleteDialog">
+        <div class="confirm-box">
+            <div class="confirm-icon">⚠️</div>
+            <div class="confirm-title">Delete Tenant</div>
+            <div class="confirm-subtitle">
+                Are you sure you want to delete this tenant? This action cannot be undone.
             </div>
 
-            <div class="modal-actions">
-                <button type="button" class="modal-btn-cancel" onclick="closeEditModal()">✕ Cancel</button>
-                <button type="button" class="modal-btn-save" onclick="openConfirm()">✔ Save Changes</button>
+            <div class="confirm-actions">
+                <button class="confirm-btn-cancel" onclick="closeDeleteConfirm()">Cancel</button>
+                <button class="confirm-btn-ok" 
+                        style="background:#ef4444"
+                        onclick="confirmDelete()">
+                    Delete
+                </button>
             </div>
-        </form>
-    </div>
-</div>
-<!-- ===== CONFIRM DIALOG ===== -->
-<div class="confirm-overlay" id="confirmDialog">
-    <div class="confirm-box">
-        <div class="confirm-icon">💾</div>
-        <div class="confirm-title">Xác nhận lưu thay đổi</div>
-        <div class="confirm-subtitle">Bạn có chắc chắn muốn cập nhật thông tin tenant này không?</div>
-        <div class="confirm-actions">
-            <button class="confirm-btn-cancel" onclick="closeConfirm()">✕ Cancel</button>
-            <button class="confirm-btn-ok" onclick="submitEditForm()">✔ Đồng ý</button>
         </div>
     </div>
-</div>
-<!-- ===== DELETE CONFIRM ===== -->
-<div class="confirm-overlay" id="deleteDialog">
-    <div class="confirm-box">
-        <div class="confirm-icon">⚠️</div>
-        <div class="confirm-title">Delete Tenant</div>
-        <div class="confirm-subtitle">
-            Are you sure you want to delete this tenant? This action cannot be undone.
+    <!-- TOAST -->
+    <div class="toast" id="errorToast">
+        <div class="toast-icon">❌</div>
+        <div class="toast-body">
+            <div class="toast-title">Validation Error</div>
+            <div class="toast-message" id="toastMessage"></div>
         </div>
-
-        <div class="confirm-actions">
-            <button class="confirm-btn-cancel" onclick="closeDeleteConfirm()">Cancel</button>
-            <button class="confirm-btn-ok" 
-                    style="background:#ef4444"
-                    onclick="confirmDelete()">
-                Delete
-            </button>
-        </div>
+        <button class="toast-close" onclick="hideToast()">✕</button>
     </div>
-</div>
-<!-- TOAST -->
-<div class="toast" id="errorToast">
-    <div class="toast-icon">❌</div>
-    <div class="toast-body">
-        <div class="toast-title">Validation Error</div>
-        <div class="toast-message" id="toastMessage"></div>
-    </div>
-    <button class="toast-close" onclick="hideToast()">✕</button>
-</div>
-<script>
-    function showToast(message) {
-        document.getElementById('toastMessage').textContent = message;
-        const toast = document.getElementById('errorToast');
-        toast.classList.add('show');
-        setTimeout(hideToast, 4000); // tự ẩn sau 4 giây
-    }
-
-    function hideToast() {
-        document.getElementById('errorToast').classList.remove('show');
-    }
-
-    (function () {
-        const params = new URLSearchParams(window.location.search);
-        const err = params.get('error');
-        if (err) {
-            showToast(decodeURIComponent(err));
-            const url = new URL(window.location.href);
-            url.searchParams.delete('error');
-            window.history.replaceState({}, '', url);
+    <script>
+        function showToast(message) {
+            document.getElementById('toastMessage').textContent = message;
+            const toast = document.getElementById('errorToast');
+            toast.classList.add('show');
+            setTimeout(hideToast, 4000); // tự ẩn sau 4 giây
         }
-    })();
-    function openEditModal(id, fullName, identityCode, phone, email, dob, gender, address) {
-        document.getElementById('modal_tenantId').value = id;
-        document.getElementById('modal_fullName').value = fullName;
-        document.getElementById('modal_identityCode').value = identityCode;
-        document.getElementById('modal_phoneNumber').value = phone;
-        document.getElementById('modal_email').value = email;
-        document.getElementById('modal_dateOfBirth').value = dob;
-        document.getElementById('modal_address').value = (address === 'null' ? '' : address);
 
-        var genderSelect = document.getElementById('modal_gender');
-        if (gender === '0')
-            genderSelect.value = '0';
-        else if (gender === '1')
-            genderSelect.value = '1';
-        else
-            genderSelect.value = '';
-
-        document.getElementById('editModal').classList.add('active');
-    }
-
-    function closeEditModal() {
-        document.getElementById('editModal').classList.remove('active');
-    }
-
-    function clearField(id) {
-        document.getElementById(id).value = '';
-    }
-
-    // Close modal when clicking outside
-    document.getElementById('editModal').addEventListener('click', function (e) {
-        if (e.target === this)
-            closeEditModal();
-    });
-    function openConfirm() {
-        document.getElementById('confirmDialog').classList.add('active');
-    }
-
-    function closeConfirm() {
-        document.getElementById('confirmDialog').classList.remove('active');
-    }
-
-    function submitEditForm() {
-        closeConfirm();
-        document.querySelector('#editModal form').submit();
-    }
-    let deleteTenantId = null;
-
-    function openDeleteConfirm(id) {
-        deleteTenantId = id;
-        document.getElementById('deleteDialog').classList.add('active');
-    }
-
-    function closeDeleteConfirm() {
-        document.getElementById('deleteDialog').classList.remove('active');
-    }
-
-    function confirmDelete() {
-        if (deleteTenantId) {
-            window.location.href =
-                    "${pageContext.request.contextPath}/manager/tenant/delete?id=" + deleteTenantId;
+        function hideToast() {
+            document.getElementById('errorToast').classList.remove('show');
         }
-    }
-</script>
+
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const err = params.get('error');
+            if (err) {
+                showToast(decodeURIComponent(err));
+                const url = new URL(window.location.href);
+                url.searchParams.delete('error');
+                window.history.replaceState({}, '', url);
+            }
+        })();
+        function openEditModal(id, fullName, identityCode, phone, email, dob, gender, address) {
+            document.getElementById('modal_tenantId').value = id;
+            document.getElementById('modal_fullName').value = fullName;
+            document.getElementById('modal_identityCode').value = identityCode;
+            document.getElementById('modal_phoneNumber').value = phone;
+            document.getElementById('modal_email').value = email;
+            document.getElementById('modal_dateOfBirth').value = dob;
+            document.getElementById('modal_address').value = (address === 'null' ? '' : address);
+
+            var genderSelect = document.getElementById('modal_gender');
+            if (gender === '0')
+                genderSelect.value = '0';
+            else if (gender === '1')
+                genderSelect.value = '1';
+            else
+                genderSelect.value = '';
+
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+
+        function clearField(id) {
+            document.getElementById(id).value = '';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('editModal').addEventListener('click', function (e) {
+            if (e.target === this)
+                closeEditModal();
+        });
+        function openConfirm() {
+            document.getElementById('confirmDialog').classList.add('active');
+        }
+
+        function closeConfirm() {
+            document.getElementById('confirmDialog').classList.remove('active');
+        }
+
+        function submitEditForm() {
+            closeConfirm();
+            document.querySelector('#editModal form').submit();
+        }
+        let deleteTenantId = null;
+
+        function openDeleteConfirm(id) {
+            deleteTenantId = id;
+            document.getElementById('deleteDialog').classList.add('active');
+        }
+
+        function closeDeleteConfirm() {
+            document.getElementById('deleteDialog').classList.remove('active');
+        }
+
+        function confirmDelete() {
+            if (deleteTenantId) {
+                window.location.href =
+                        "${pageContext.request.contextPath}/manager/tenant/edit?action=delete&id=" + deleteTenantId;
+            }
+        }
+    </script>
 
 </layout:layout>
