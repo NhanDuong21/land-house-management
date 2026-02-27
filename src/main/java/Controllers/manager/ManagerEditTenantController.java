@@ -5,7 +5,7 @@ package Controllers.manager;
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 import Models.entity.Tenant;
-import Services.staff.TenantService;
+import Services.tenant.TenantService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
