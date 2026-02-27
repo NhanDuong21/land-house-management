@@ -59,6 +59,22 @@ public class TenantService {
         return tenantDAO.searchTenant(keyword);
     }
 
+    public List<Tenant> getTenantsPaged(int page, int pageSize) {
+        return tenantDAO.getTenantsPaged(page, pageSize);
+    }
+
+    public int countAllTenants() {
+        return tenantDAO.countAllTenants();
+    }
+
+    public List<Tenant> searchTenantPaged(String keyword, int page, int pageSize) {
+        return tenantDAO.searchTenantPaged(keyword, page, pageSize);
+    }
+
+    public int countSearchTenant(String keyword) {
+        return tenantDAO.countSearchTenant(keyword);
+    }
+
     public Tenant findById(int id) {
         return tenantDAO.findById(id);
     }

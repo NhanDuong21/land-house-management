@@ -74,24 +74,49 @@ public class ManagerViewListTenantController extends HttpServlet {
             } catch (NumberFormatException ignored) {
             }
             String keyword = request.getParameter("keyword");
+            String pageStr = request.getParameter("page");
             String redirect = request.getContextPath() + "/manager/tenants";
+            boolean hasQuery = false;
             if (keyword != null && !keyword.isBlank()) {
                 redirect += "?keyword=" + java.net.URLEncoder.encode(keyword, "UTF-8");
+                hasQuery = true;
+            }
+            if (pageStr != null && !pageStr.isBlank()) {
+                redirect += (hasQuery ? "&" : "?") + "page=" + pageStr;
             }
             response.sendRedirect(redirect);
             return;
         }
 
         String keyword = request.getParameter("keyword");
+        final int PAGE_SIZE = 10;
 
-        if (keyword == null || keyword.trim().isEmpty()) {
-            list = service.getAllTenants(); // lấy hết
-        } else {
-            list = service.searchTenant(keyword); // tìm kiếm
+        // Lấy số trang hiện tại
+        int currentPage = 1;
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            try { currentPage = Math.max(1, Integer.parseInt(pageParam)); }
+            catch (NumberFormatException ignored) {}
         }
+
+        int totalRecords;
+        if (keyword == null || keyword.trim().isEmpty()) {
+            keyword = null;
+            list = service.getTenantsPaged(currentPage, PAGE_SIZE);
+            totalRecords = service.countAllTenants();
+        } else {
+            list = service.searchTenantPaged(keyword, currentPage, PAGE_SIZE);
+            totalRecords = service.countSearchTenant(keyword);
+        }
+
+        int totalPages = (int) Math.ceil((double) totalRecords / PAGE_SIZE);
+        if (totalPages < 1) totalPages = 1;
 
         request.setAttribute("tenants", list);
         request.setAttribute("keyword", keyword);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("totalRecords", totalRecords);
 
         request.getRequestDispatcher("/views/manager/managerTenant.jsp")
                 .forward(request, response);

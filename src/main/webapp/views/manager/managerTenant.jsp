@@ -400,6 +400,62 @@
         .confirm-btn-ok:hover {
             background: #16a34a;
         }
+
+        /* ===== PAGINATION ===== */
+        .mt-pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .mt-page-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            padding: 0 10px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            color: #374151;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .mt-page-btn:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .mt-page-active {
+            background: #6366f1 !important;
+            border-color: #6366f1 !important;
+            color: white !important;
+            cursor: default;
+        }
+
+        .mt-page-disabled {
+            color: #d1d5db;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .mt-page-ellipsis {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 36px;
+            height: 36px;
+            font-size: 14px;
+            color: #6b7280;
+        }
     </style>
 
     <div class="mt-container">
@@ -427,7 +483,7 @@
         <!-- CARD -->
         <div class="mt-card">
             <div class="mt-card-title">
-                All Tenants (<c:out value="${empty tenants ? 0 : tenants.size()}"/>)
+                All Tenants (<c:out value="${totalRecords}"/>)
             </div>
 
             <table class="mt-table">
@@ -504,6 +560,67 @@
                     </c:if>
                 </tbody>
             </table>
+
+            <!-- ===== PAGINATION ===== -->
+            <c:if test="${totalPages > 1}">
+                <div class="mt-pagination">
+                    <%-- Build base URL --%>
+                    <c:set var="baseUrl" value="${pageContext.request.contextPath}/manager/tenants"/>
+                    <c:if test="${not empty keyword}">
+                        <c:set var="baseUrl" value="${baseUrl}?keyword=${keyword}&amp;page="/>
+                    </c:if>
+                    <c:if test="${empty keyword}">
+                        <c:set var="baseUrl" value="${baseUrl}?page="/>
+                    </c:if>
+
+                    <%-- Prev button --%>
+                    <c:choose>
+                        <c:when test="${currentPage <= 1}">
+                            <span class="mt-page-btn mt-page-disabled">‹</span>
+                        </c:when>
+                        <c:otherwise>
+                            <a class="mt-page-btn" href="${baseUrl}${currentPage - 1}">‹</a>
+                        </c:otherwise>
+                    </c:choose>
+
+                    <%-- Page numbers with ellipsis logic --%>
+                    <c:forEach var="i" begin="1" end="${totalPages}">
+                        <c:choose>
+                            <%-- Always show first 3, last page, and currentPage ±1 --%>
+                            <c:when test="${i == 1 || i == 2 || i == 3 || i == totalPages
+                                           || i == currentPage || i == currentPage - 1 || i == currentPage + 1}">
+                                <c:choose>
+                                    <c:when test="${i == currentPage}">
+                                        <span class="mt-page-btn mt-page-active">${i}</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a class="mt-page-btn" href="${baseUrl}${i}">${i}</a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </c:when>
+                            <%-- Ellipsis before last page --%>
+                            <c:when test="${i == totalPages - 1 && currentPage < totalPages - 2}">
+                                <span class="mt-page-ellipsis">...</span>
+                            </c:when>
+                            <%-- Ellipsis after page 3 --%>
+                            <c:when test="${i == 4 && currentPage > 5}">
+                                <span class="mt-page-ellipsis">...</span>
+                            </c:when>
+                        </c:choose>
+                    </c:forEach>
+
+                    <%-- Next button --%>
+                    <c:choose>
+                        <c:when test="${currentPage >= totalPages}">
+                            <span class="mt-page-btn mt-page-disabled">›</span>
+                        </c:when>
+                        <c:otherwise>
+                            <a class="mt-page-btn" href="${baseUrl}${currentPage + 1}">›</a>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+            </c:if>
+
         </div>
     </div>
 
@@ -718,9 +835,12 @@
 
         function confirmToggleStatus() {
             if (toggleTenantId) {
-                const keyword = new URLSearchParams(window.location.search).get('keyword') || '';
+                const params = new URLSearchParams(window.location.search);
+                const keyword = params.get('keyword') || '';
+                const page = params.get('page') || '1';
                 let url = '${pageContext.request.contextPath}/manager/tenants?action=toggleStatus&id=' + toggleTenantId;
                 if (keyword) url += '&keyword=' + encodeURIComponent(keyword);
+                url += '&page=' + page;
                 window.location.href = url;
             }
         }
