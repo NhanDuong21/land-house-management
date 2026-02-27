@@ -335,7 +335,7 @@ public class TenantDAO extends DBContext {
         List<Tenant> list = new ArrayList<>();
         try {
             String sql = """
-            SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth, gender, address
+            SELECT tenant_id, full_name, identity_code, phone_number, email, date_of_birth, gender, address, account_status
             FROM TENANT
             WHERE full_name LIKE ?
                OR phone_number LIKE ?
@@ -362,6 +362,7 @@ public class TenantDAO extends DBContext {
                 t.setDateOfBirth(rs.getDate("date_of_birth"));
                 t.setGender(rs.getObject("gender") == null ? null : ((Number) rs.getObject("gender")).intValue());
                 t.setAddress(rs.getString("address"));
+                t.setAccountStatus(rs.getString("account_status"));
                 list.add(t);
             }
 

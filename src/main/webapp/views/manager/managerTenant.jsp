@@ -633,6 +633,8 @@
 
             <form method="post" action="${pageContext.request.contextPath}/manager/tenant/edit">
                 <input type="hidden" name="tenantId" id="modal_tenantId"/>
+                <input type="hidden" name="page" value="${currentPage}"/>
+                <input type="hidden" name="keyword" value="${keyword}"/>
 
                 <div class="modal-grid">
 

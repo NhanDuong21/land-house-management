@@ -100,14 +100,34 @@ public class ManagerEditAndDeleteTenantController extends HttpServlet {
                 service.updateTenant(t);
             } catch (IllegalArgumentException ex) {
                 // Validation thất bại → redirect về kèm ?error=...
-                response.sendRedirect(request.getContextPath()
-                        + "/manager/tenants?error="
+                String page = request.getParameter("page");
+                String keyword = request.getParameter("keyword");
+                StringBuilder redirectUrl = new StringBuilder(request.getContextPath() + "/manager/tenants?error="
                         + java.net.URLEncoder.encode(ex.getMessage(), "UTF-8"));
+                if (keyword != null && !keyword.isBlank()) {
+                    redirectUrl.append("&keyword=").append(java.net.URLEncoder.encode(keyword, "UTF-8"));
+                }
+                if (page != null && !page.isBlank()) {
+                    redirectUrl.append("&page=").append(page);
+                }
+                response.sendRedirect(redirectUrl.toString());
                 return;
             }
         }
 
-        response.sendRedirect(request.getContextPath() + "/manager/tenants");
+        // Redirect về đúng trang sau khi edit thành công
+        String page = request.getParameter("page");
+        String keyword = request.getParameter("keyword");
+        StringBuilder redirectUrl = new StringBuilder(request.getContextPath() + "/manager/tenants");
+        boolean hasQuery = false;
+        if (keyword != null && !keyword.isBlank()) {
+            redirectUrl.append("?keyword=").append(java.net.URLEncoder.encode(keyword, "UTF-8"));
+            hasQuery = true;
+        }
+        if (page != null && !page.isBlank()) {
+            redirectUrl.append(hasQuery ? "&" : "?").append("page=").append(page);
+        }
+        response.sendRedirect(redirectUrl.toString());
     }
 
     /**
