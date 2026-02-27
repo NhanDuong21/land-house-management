@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author ADMIN
  */
 @WebServlet(urlPatterns = {"/manager/tenant/edit"})
-public class ManagerEditTenantController extends HttpServlet {
+public class ManagerEditAndDeleteTenantController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
