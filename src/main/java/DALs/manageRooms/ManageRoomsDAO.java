@@ -74,7 +74,7 @@ public class ManageRoomsDAO extends DBContext {
         return 0;
     }
 
-    public Room getRoombyId(int id) {
+    public Room getRoomById(int id) {
         String sql = "select room_id, status from Room where room_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
