@@ -199,3 +199,8 @@
   opacity: 0.45;
   pointer-events: none;
 }
+.pagination .dots {
+    padding: 6px 10px;
+    color: #888;
+}
+

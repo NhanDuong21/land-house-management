@@ -95,9 +95,7 @@ public class ManageRoomsController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/manager/rooms");
     }
 
-    private void showEditRoom(HttpServletRequest request,
-            HttpServletResponse response,
-            ManageRoomsDAO dao)
+    private void showEditRoom(HttpServletRequest request, HttpServletResponse response, ManageRoomsDAO dao)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Room room = dao.getRoomById(id);
