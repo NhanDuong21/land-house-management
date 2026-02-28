@@ -222,4 +222,14 @@
         <servlet-name>AdminManageAccountsController</servlet-name>
         <url-pattern>/admin/accounts</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TenantMyRoomController</servlet-name>
+        <servlet-class>Controllers.tenant.TenantMyRoomController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TenantMyRoomController</servlet-name>
+        <url-pattern>/tenant/room</url-pattern>
+    </servlet-mapping>
 </web-app>
