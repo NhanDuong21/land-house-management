@@ -24,7 +24,49 @@
             </a>
         </div>
 
-        <!-- SEARCH (client-side filter) -->
+        <!-- ALERTS (server redirect msg/err) -->
+        <c:if test="${not empty param.msg || not empty param.err}">
+            <div class="ar-alert-wrap" id="arAlertWrap">
+                <c:choose>
+                    <c:when test="${param.msg == 'deleted'}">
+                        <div class="ar-alert success">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Room has been set to <b>INACTIVE</b> successfully.
+                        </div>
+                    </c:when>
+
+                    <c:when test="${param.err == 'room_in_use'}">
+                        <div class="ar-alert danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            Cannot set this room to INACTIVE because it has an <b>ACTIVE/PENDING</b> contract.
+                        </div>
+                    </c:when>
+
+                    <c:when test="${param.err == 'delete_fail'}">
+                        <div class="ar-alert danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            Action failed. Please try again.
+                        </div>
+                    </c:when>
+
+                    <c:when test="${param.err == 'invalid_room'}">
+                        <div class="ar-alert danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            Invalid room id.
+                        </div>
+                    </c:when>
+
+                    <c:otherwise>
+                        <div class="ar-alert info">
+                            <i class="bi bi-info-circle-fill"></i>
+                            Action completed.
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </c:if>
+
+        <!-- SEARCH -->
         <div class="ar-search-box">
             <i class="bi bi-search"></i>
             <input id="arSearchInput"
@@ -33,6 +75,25 @@
                    autocomplete="off">
             <button type="button" class="ar-clear" id="arClearBtn" title="Clear">
                 <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <!-- STATUS TABS -->
+        <div class="ar-tabs" id="arTabs">
+            <button type="button" class="ar-tab active" data-filter="ALL">
+                <i class="bi bi-grid-3x3-gap-fill"></i> All
+            </button>
+            <button type="button" class="ar-tab" data-filter="AVAILABLE">
+                <i class="bi bi-check-circle-fill"></i> Available
+            </button>
+            <button type="button" class="ar-tab" data-filter="OCCUPIED">
+                <i class="bi bi-people-fill"></i> Occupied
+            </button>
+            <button type="button" class="ar-tab" data-filter="MAINTENANCE">
+                <i class="bi bi-tools"></i> Maintenance
+            </button>
+            <button type="button" class="ar-tab" data-filter="INACTIVE">
+                <i class="bi bi-slash-circle-fill"></i> Inactive
             </button>
         </div>
 
@@ -53,7 +114,7 @@
                             <th style="width:110px;">Area (m²)</th>
                             <th style="width:160px;">Price</th>
                             <th style="width:160px;">Status</th>
-                            <th style="width:260px;">Actions</th>
+                            <th style="width:280px;">Actions</th>
                         </tr>
                     </thead>
 
@@ -94,6 +155,11 @@
                                                 <i class="bi bi-tools"></i> MAINTENANCE
                                             </span>
                                         </c:when>
+                                        <c:when test="${r.status == 'INACTIVE'}">
+                                            <span class="ar-badge status-inactive">
+                                                <i class="bi bi-slash-circle-fill"></i> INACTIVE
+                                            </span>
+                                        </c:when>
                                         <c:otherwise>
                                             <span class="ar-badge status-other">
                                                 <i class="bi bi-info-circle-fill"></i> ${r.status}
@@ -111,21 +177,31 @@
                                             Edit
                                         </a>
 
-                                        <a class="ar-action-btn dark"
-                                           href="${ctx}/admin/rooms/hide?id=${r.roomId}">
-                                            <span class="ar-action-ico"><i class="bi bi-eye-slash-fill"></i></span>
-                                            Hide
-                                        </a>
+                                        <!-- AVAILABLE / MAINTENANCE: allow set inactive -->
+                                        <c:if test="${r.status == 'AVAILABLE' || r.status == 'MAINTENANCE'}">
+                                            <button type="button"
+                                                    class="ar-action-btn danger js-delete-room"
+                                                    data-delete-url="${ctx}/admin/rooms/delete?id=${r.roomId}"
+                                                    data-room-name="${r.roomNumber}">
+                                                <span class="ar-action-ico"><i class="bi bi-trash3-fill"></i></span>
+                                                Set INACTIVE
+                                            </button>
+                                        </c:if>
 
-                                        <!-- Delete -> open modal, không confirm() -->
-                                        <button type="button"
-                                                class="ar-action-btn danger js-delete-room"
-                                                data-delete-url="${ctx}/admin/rooms/delete?id=${r.roomId}"
-                                                data-room-name="${r.roomNumber}">
-                                            <span class="ar-action-ico"><i class="bi bi-trash3-fill"></i></span>
-                                            Delete
-                                        </button>
+                                        <!-- OCCUPIED: show disabled + tooltip -->
+                                        <c:if test="${r.status == 'OCCUPIED'}">
+                                            <div class="ar-tooltip"
+                                                 data-tip="Room has active contract. Cannot set INACTIVE.">
+                                                <button type="button"
+                                                        class="ar-action-btn danger is-disabled"
+                                                        disabled>
+                                                    <span class="ar-action-ico"><i class="bi bi-lock-fill"></i></span>
+                                                    Set INACTIVE
+                                                </button>
+                                            </div>
+                                        </c:if>
 
+                                        <!-- INACTIVE: do not show button -->
                                     </div>
                                 </td>
                             </tr>
@@ -238,9 +314,9 @@
                 <i class="bi bi-exclamation-triangle-fill"></i>
             </div>
 
-            <div class="ar-modal-title">Confirm delete room</div>
+            <div class="ar-modal-title">Confirm action</div>
             <div class="ar-modal-sub" id="arDeleteText">
-                Are you sure you want to delete this room?
+                Are you sure you want to set this room to INACTIVE?
             </div>
 
             <div class="ar-modal-actions">
@@ -249,7 +325,7 @@
                 </button>
 
                 <a href="#" class="ar-modal-btn danger" id="arDeleteGo">
-                    <i class="bi bi-trash3-fill"></i> Delete
+                    <i class="bi bi-trash3-fill"></i> Set INACTIVE
                 </a>
             </div>
         </div>
