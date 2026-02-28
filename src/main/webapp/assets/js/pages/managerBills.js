@@ -39,12 +39,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 const parts = dateBill.split("/");
                 const monthBill = parts[1];
                 const yearBill = parts[2];
-                
+
                 matchDate = (monthBill === month && yearBill === year);
-                 console.log("month:", month);
-                 console.log("monthBill:", monthBill);
-                 console.log("year:" ,year);
-                console.log("yearBill:", yearBill);
             }
            
             
