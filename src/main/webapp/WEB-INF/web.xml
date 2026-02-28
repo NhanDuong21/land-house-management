@@ -232,4 +232,24 @@
         <servlet-name>TenantMyRoomController</servlet-name>
         <url-pattern>/tenant/room</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminRoomAdministrationController</servlet-name>
+        <servlet-class>Controllers.admin.AdminRoomAdministrationController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminRoomAdministrationController</servlet-name>
+        <url-pattern>/admin/rooms</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminDeleteRoomController</servlet-name>
+        <servlet-class>Controllers.admin.AdminDeleteRoomController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminDeleteRoomController</servlet-name>
+        <url-pattern>/admin/rooms/delete</url-pattern>
+    </servlet-mapping>
 </web-app>
