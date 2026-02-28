@@ -21,7 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author To Thi Thao Trang - CE191027
  */
-@WebServlet(name = "ManagerBillDetailController",urlPatterns = {"/manager/bills/detail"})
+@WebServlet(name = "ManagerBillDetailController",urlPatterns = {"/manager/billing/detail"})
 public class ManagerBillDetailController extends HttpServlet {
  
     @Override
