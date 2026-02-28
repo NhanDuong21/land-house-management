@@ -11,6 +11,7 @@ import java.util.List;
 import DALs.payment.PaymentDAO;
 import Models.common.ServiceResult;
 import Models.dto.ManagerContractRowDTO;
+import Models.dto.TenantMyRoomDTO;
 import Models.entity.Contract;
 import Utils.database.DBContext;
 
@@ -829,4 +830,46 @@ FROM     CONTRACT INNER JOIN
         }
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
+    public TenantMyRoomDTO findActiveMyRoomByTenantId(int tenantId) {
+        String sql = """
+            SELECT TOP 1
+                c.contract_id,
+                r.room_id, r.block_id, b.block_name, r.room_number, r.area, r.price, r.status AS room_status, r.floor, r.max_tenants, r.is_mezzanine, r.has_air_conditioning, r.description, 
+                img.image_url AS cover_image
+            FROM CONTRACT c
+            JOIN ROOM r ON r.room_id = c.room_id
+            JOIN BLOCK b ON b.block_id = r.block_id
+            LEFT JOIN ROOM_IMAGE img ON img.room_id = r.room_id AND img.is_cover = 1
+            WHERE c.tenant_id = ? AND c.status = 'ACTIVE'
+            ORDER BY c.created_at DESC
+        """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, tenantId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    TenantMyRoomDTO dto = new TenantMyRoomDTO();
+                    dto.setContractId(rs.getInt("contract_id"));
+                    dto.setRoomId(rs.getInt("room_id"));
+                    dto.setBlockId(rs.getInt("block_id"));
+                    dto.setBlockName(rs.getString("block_name"));
+                    dto.setRoomNumber(rs.getString("room_number"));
+                    dto.setArea(rs.getBigDecimal("area"));
+                    dto.setPrice(rs.getBigDecimal("price"));
+                    dto.setRoomStatus(rs.getString("room_status"));
+                    dto.setFloor((Integer) rs.getObject("floor"));
+                    dto.setMaxTenants((Integer) rs.getObject("max_tenants"));
+                    dto.setMezzanine(rs.getBoolean("is_mezzanine"));
+                    dto.setAirConditioning(rs.getBoolean("has_air_conditioning"));
+                    dto.setDescription(rs.getString("description"));
+                    dto.setCoverImage(rs.getString("cover_image"));
+                    return dto;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
