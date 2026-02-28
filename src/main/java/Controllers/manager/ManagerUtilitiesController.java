@@ -13,6 +13,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -60,10 +61,38 @@ public class ManagerUtilitiesController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String action = request.getParameter("action");
         utilitiesDAO dao = new utilitiesDAO();
-        List<Utility> listU = dao.getManagerUntilities();
-        request.setAttribute("utilities", listU);
-        request.getRequestDispatcher("/views/manager/utilities.jsp").forward(request, response);
+        if (action == null) {
+            action = "all";
+        }
+        switch (action) {
+            case "all":
+                List<Utility> listU = dao.getManagerUntilities();
+                request.setAttribute("utilities", listU);
+                request.getRequestDispatcher("/views/manager/utilities.jsp").forward(request, response);
+                break;
+            case "add":
+                List<Utility> listAdd = dao.getManagerUntilities();
+                request.setAttribute("utilities", listAdd);
+                request.getRequestDispatcher("/views/manager/utilities.jsp").forward(request, response);
+                break;
+                
+            case "delete":
+                int idDelete = Integer.parseInt(request.getParameter("id"));
+                dao.deleteUtilities(idDelete);
+                response.sendRedirect(request.getContextPath() + "/manager/utilities");
+                break;
+                
+            case "edit":
+                int idEdit = Integer.parseInt(request.getParameter("id"));
+                Utility uEdit = dao.getUtilityById(idEdit);
+                List<Utility> listEdit = dao.getManagerUntilities();
+                request.setAttribute("utilities", listEdit);
+                request.setAttribute("editUtility", uEdit);
+                request.getRequestDispatcher("/views/manager/utilities.jsp").forward(request, response);
+                break; 
+        }
     }
 
     /**
@@ -77,7 +106,34 @@ public class ManagerUtilitiesController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String action = request.getParameter("action");
+        utilitiesDAO dao = new utilitiesDAO();
+        if (action == null) {
+            action = "all";
+        }
+        switch (action) {
+            case "add": 
+                String utilityName = request.getParameter("utilityName");
+                BigDecimal price = new BigDecimal(request.getParameter("price"));
+                String unit = request.getParameter("unit");
+
+                Boolean result = dao.addUtility(utilityName, price, unit);
+                response.sendRedirect(request.getContextPath() + "/manager/utilities");
+                break;
+            
+            case "delete": 
+                int id = Integer.parseInt(request.getParameter("id"));
+                Boolean resDelete = dao.deleteUtilities(id);
+                response.sendRedirect(request.getContextPath() + "/manager/utilities");
+                break;
+            
+            case "edit": 
+               int idU = Integer.parseInt(request.getParameter("id"));
+               BigDecimal priceU = new BigDecimal(request.getParameter("price"));
+               Boolean resUpdate = dao.updateUtilities(idU, priceU);
+               response.sendRedirect(request.getContextPath()+"/manager/utilities");
+               break;
+        }
     }
 
     /**
