@@ -17,11 +17,16 @@
 
   let lastFocused = null;
 
+  function setInputsType(type) {
+    if (newPass) newPass.type = type;
+    if (confirmPass) confirmPass.type = type;
+  }
+
   function openModal(btn) {
     lastFocused = document.activeElement;
 
-    const accountId = btn.dataset.accountId || "";
-    const accountType = btn.dataset.accountType || "";
+    const accountId = (btn.dataset.accountId || "").trim();
+    const accountType = (btn.dataset.accountType || "").trim();
     const fullName = btn.dataset.fullname || "User";
     const email = btn.dataset.email || "";
 
@@ -32,6 +37,7 @@
     if (newPass) newPass.value = "";
     if (confirmPass) confirmPass.value = "";
     if (errorBox) errorBox.textContent = "";
+
     if (showPass) showPass.checked = false;
     setInputsType("password");
 
@@ -52,12 +58,21 @@
     }
   }
 
-  function setInputsType(type) {
-    if (newPass) newPass.type = type;
-    if (confirmPass) confirmPass.type = type;
+  function mapErr(code) {
+    const m = {
+      NO_PERMISSION: "Bạn không có quyền thao tác.",
+      PASSWORD_REQUIRED: "Vui lòng nhập mật khẩu.",
+      CONFIRM_MISMATCH: "Xác nhận mật khẩu không khớp.",
+      PASSWORD_MINLEN: "Mật khẩu tối thiểu 6 ký tự.",
+      TENANT_NOT_FOUND: "Không tìm thấy tenant.",
+      MANAGER_NOT_FOUND: "Không tìm thấy manager.",
+      INVALID_TYPE: "Loại tài khoản không hợp lệ.",
+      RESET_FAILED: "Reset thất bại, vui lòng thử lại.",
+    };
+    return m[code] || code || "Có lỗi xảy ra.";
   }
 
-  // Open buttons
+  // Open buttons + close via backdrop/cancel
   document.addEventListener("click", (e) => {
     const btn = e.target.closest(".ma-open-pass");
     if (btn) {
@@ -66,7 +81,6 @@
       return;
     }
 
-    // close via backdrop / cancel button
     const closeTarget = e.target.closest("[data-close='1']");
     if (closeTarget && modal.classList.contains("is-open")) {
       e.preventDefault();
@@ -96,27 +110,66 @@
     });
   }
 
-  // Simple client validation (frontend only)
+  // AJAX submit
   if (form) {
-    form.addEventListener("submit", (e) => {
-      if (!newPass || !confirmPass) return;
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-      const p1 = (newPass.value || "").trim();
-      const p2 = (confirmPass.value || "").trim();
+      const p1 = (newPass?.value || "").trim();
+      const p2 = (confirmPass?.value || "").trim();
 
-      if (p1.length < 8) {
-        e.preventDefault();
+      // client validate
+      if (p1.length < 6) {
         if (errorBox)
-          errorBox.textContent = "Password must be at least 8 characters.";
-        newPass.focus();
+          errorBox.textContent = "Password must be at least 6 characters.";
+        newPass && newPass.focus();
+        return;
+      }
+      if (p1 !== p2) {
+        if (errorBox) errorBox.textContent = "Confirm password does not match.";
+        confirmPass && confirmPass.focus();
         return;
       }
 
-      if (p1 !== p2) {
-        e.preventDefault();
-        if (errorBox) errorBox.textContent = "Confirm password does not match.";
-        confirmPass.focus();
-        return;
+      if (errorBox) errorBox.textContent = "";
+
+      const params = new URLSearchParams(new FormData(form));
+
+      try {
+        const res = await fetch(form.action, {
+          method: "POST",
+          body: params,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            Accept: "application/json",
+            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+          },
+        });
+
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok || !data || !data.ok) {
+          const msg = data && data.message ? data.message : "RESET_FAILED";
+          if (errorBox) errorBox.textContent = mapErr(msg);
+          return;
+        }
+
+        // success
+        if (errorBox) errorBox.textContent = "";
+        if (sub) sub.textContent = " Reset password thành công";
+
+        // Optional: disable submit briefly
+        const submitBtn = form.querySelector("button[type='submit']");
+        if (submitBtn) submitBtn.disabled = true;
+
+        setTimeout(() => {
+          if (submitBtn) submitBtn.disabled = false;
+          closeModal();
+          // reload để list/alert đồng bộ
+          window.location.reload();
+        }, 600);
+      } catch (err) {
+        if (errorBox) errorBox.textContent = "Network error. Please try again.";
       }
     });
   }
