@@ -244,7 +244,7 @@
                     </button>
                 </div>
 
-                <form id="maPassForm" class="ma-modal-body" method="post" action="${ctx}/admin/accounts/set-password">
+                <form id="maPassForm" class="ma-modal-body" method="post" action="${ctx}/admin/accounts/reset-password">
                     <input type="hidden" name="accountId" id="maPassAccountId">
                     <input type="hidden" name="accountType" id="maPassAccountType">
 
@@ -254,7 +254,7 @@
                             <span class="ma-input-ico"><i class="bi bi-key"></i></span>
                             <input id="maNewPass" name="newPassword" type="password" placeholder="Enter new password">
                         </div>
-                        <div class="ma-hint">Use at least 8 characters.</div>
+                        <div class="ma-hint">Use at least 6 characters.</div>
                     </div>
 
                     <div class="ma-field">
