@@ -252,4 +252,44 @@
         <servlet-name>AdminDeleteRoomController</servlet-name>
         <url-pattern>/admin/rooms/delete</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminEditRoomController</servlet-name>
+        <servlet-class>Controllers.admin.AdminEditRoomController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminEditRoomController</servlet-name>
+        <url-pattern>/admin/rooms/edit</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminRoomImageUploadController</servlet-name>
+        <servlet-class>Controllers.admin.AdminRoomImageUploadController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminRoomImageUploadController</servlet-name>
+        <url-pattern>/admin/rooms/images/upload</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminRoomImageSetCoverController</servlet-name>
+        <servlet-class>Controllers.admin.AdminRoomImageSetCoverController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminRoomImageSetCoverController</servlet-name>
+        <url-pattern>/admin/rooms/images/cover</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminRoomImageDeleteController</servlet-name>
+        <servlet-class>Controllers.admin.AdminRoomImageDeleteController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminRoomImageDeleteController</servlet-name>
+        <url-pattern>/admin/rooms/images/delete</url-pattern>
+    </servlet-mapping>
 </web-app>

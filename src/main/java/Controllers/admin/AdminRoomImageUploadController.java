@@ -11,7 +11,6 @@ import java.util.UUID;
 import DALs.room.RoomImageDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +20,6 @@ import jakarta.servlet.http.Part;
  *
  * @author Duong Thien Nhan - CE190741
  */
-@WebServlet("/admin/rooms/images/upload")
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024,
         maxFileSize = 5L * 1024 * 1024, //Mỗi file ảnh không được quá 5MB.

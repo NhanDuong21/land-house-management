@@ -8,7 +8,6 @@ import DALs.room.RoomDAO;
 import DALs.room.RoomImageDAO;
 import Models.entity.Room;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,7 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Duong Thien Nhan - CE190741
  */
-@WebServlet("/admin/rooms/edit")
 public class AdminEditRoomController extends HttpServlet {
 
     private final RoomDAO roomDAO = new RoomDAO();
