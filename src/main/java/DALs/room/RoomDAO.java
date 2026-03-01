@@ -511,7 +511,7 @@ WHERE   ROOM.room_id = ?
                     Room r = new Room();
                     r.setRoomId(rs.getInt("room_id"));
                     r.setBlockId(rs.getInt("block_id"));
-                    r.setBlockName(rs.getString("block_name")); // IMPORTANT for dashboard
+                    r.setBlockName(rs.getString("block_name"));
                     r.setRoomNumber(rs.getString("room_number"));
                     r.setArea(rs.getBigDecimal("area"));
                     r.setPrice(rs.getBigDecimal("price"));
@@ -531,5 +531,33 @@ WHERE   ROOM.room_id = ?
         }
 
         return list;
+    }
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    public boolean updateRoom(Room r) {
+        String sql = """
+        UPDATE ROOM SET block_id=?, room_number=?, area=?,price=?,
+                        status=?, floor=?, max_tenants=?, is_mezzanine=?,
+                        has_air_conditioning=?, description=?
+        WHERE room_id=?
+                """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            int i = 1;
+            ps.setInt(i++, r.getBlockId());
+            ps.setString(i++, r.getRoomNumber());
+            ps.setBigDecimal(i++, r.getArea());
+            ps.setBigDecimal(i++, r.getPrice());
+            ps.setString(i++, r.getStatus());
+            ps.setObject(i++, r.getFloor());
+            ps.setObject(i++, r.getMaxTenants());
+            ps.setBoolean(i++, r.isMezzanine());
+            ps.setBoolean(i++, r.isAirConditioning());
+            ps.setString(i++, r.getDescription());
+            ps.setInt(i++, r.getRoomId());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
