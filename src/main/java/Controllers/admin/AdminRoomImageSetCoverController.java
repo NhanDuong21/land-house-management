@@ -3,7 +3,6 @@ package Controllers.admin;
 import java.io.IOException;
 
 import DALs.room.RoomImageDAO;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author Duong Thien Nhan - CE190741
  */
-@WebServlet("/admin/rooms/images/cover")
 public class AdminRoomImageSetCoverController extends HttpServlet {
 
     private final RoomImageDAO imgDao = new RoomImageDAO();
