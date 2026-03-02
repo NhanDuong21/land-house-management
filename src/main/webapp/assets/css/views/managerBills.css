@@ -39,66 +39,67 @@
 
 /* SEARCH & FILTER */
 .mb-search-box {
-    margin: 20px 0;
+  background: #f3f4f6;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  width: 100%;
 }
 
-.mb-search-box form {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.mb-search-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mb-search-form input {
+  flex: 1;                
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  min-width: 0;            
+}
+
+/* wrapper */
+.date-btn {
+    height: 35px;
+    width: 40px;              
+    border: 1px solid #ddd;
+    border-radius: 8px;
     background: #f5f6f8;
-    padding: 10px 12px;
-    border-radius: 14px;
+    padding: 0;
+    overflow: hidden;
 }
 
-/* Input search */
-.mb-search-box input[type="text"] {
-    flex: 1;
-    padding: 12px 14px;
+/* input */
+.bill-date {
+    height: 100%;
     border: none;
     background: transparent;
-    font-size: 15px;
-    outline: none;
-    color: #333;
-}
-
-.mb-search-box input::placeholder {
-    color: #9ca3af;
-}
-
-/* Select status + page size */
-.mb-search-box select {
-    padding: 10px 14px;
-    border: none;
-    border-radius: 10px;
-    background: #fff;
-    font-size: 14px;
     cursor: pointer;
     outline: none;
-    color: #111827;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
-/* Button */
-.mb-search-box button {
-    padding: 10px 18px;
-    background: #4f46e5;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 500;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.1s ease;
+/* Ẩn text mặc định */
+.bill-date::-webkit-datetime-edit {
+    display: none;
 }
 
-.mb-search-box button:hover {
-    background: #4338ca;
+/* Khi có giá trị thì hiện lại text */
+.bill-date.has-value::-webkit-datetime-edit {
+    display: inline-block;
+}
+.mb-search-form select {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: white;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
 }
 
-.mb-search-box button:active {
-    transform: scale(0.96);
-}
 
 /* CARD */
 .mb-card {
