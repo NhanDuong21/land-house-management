@@ -22,7 +22,7 @@
                 <p>View and manage all tenant bills</p>
             </div>
 
-            <a href="${pageContext.request.contextPath}/manager/bills/create"
+            <a href="${pageContext.request.contextPath}/manager/billing/create"
                class="mb-generate-btn">
                 + Generate Bill
             </a>
@@ -30,18 +30,18 @@
 
         <!-- SEARCH -->
         <div class="mb-search-box">
-            <form action="${pageContext.request.contextPath}/manager/billing" method="get">
-                <input type="text" name="keyword" placeholder="search by Bill ID, room number..." value="${param.keyword}">
-                <select name="status" onchange="this.form.submit()">
+            <div class="mb-search-form">
+                <input type="text" id="keyword" class="searchBill"
+                       placeholder="Search by Bill ID, room number...">
+                <button class="date-btn">
+                    <input type="month" class="bill-date">
+                </button>
+                <select id="status">
                     <option value="">All status</option>
-                    <option value="PAID"   ${param.status == 'PAID'   ? 'selected' : ''}>PAID</option>
-                    <option value="UNPAID" ${param.status == 'UNPAID' ? 'selected' : ''}>UNPAID</option>
+                    <option value="PAID">PAID</option>
+                    <option value="UNPAID">UNPAID</option>
                 </select>
-                <button type="submit">Search</button>
-
-                <!-- Quan trọng: reset về trang 1 khi tìm kiếm mới -->
-                <input type="hidden" name="page" value="1">
-            </form>
+            </div>
         </div>
 
         <!-- TABLE CARD -->
@@ -57,27 +57,29 @@
                         <th>Bill ID</th>
                         <th>Room</th>
                         <th>Month</th>
-                        <th>Total Amount</th>
                         <th>Due Date</th>
+                        <th>Total Amount</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody  id="billTable">
                     <c:forEach var="b" items="${bill}">
                         <tr>
-                            <td>${b.billId}</td>
-                            <td>${b.roomNumber}</td>
+                            <td class="billId">${b.billId}</td>
+                            <td class="roomNumber">${b.roomNumber}</td>
                             <td>
-                                <fmt:formatDate value="${b.month}" pattern="MMMM"/>
+                                <span  class="dateBill">
+                                <fmt:formatDate value="${b.month}"  pattern="dd/MM/yyyy"/>
+                                </span>
+                            </td>
+                            <td>
+                                <fmt:formatDate value="${b.dueDate}" pattern="dd/MM/yyyy"/>
                             </td>
                             <td>
                                 <fmt:formatNumber value="${b.totalAmount}" 
                                                   type="number" groupingUsed="true"/> đ
-                            </td>
-                            <td>
-                                <fmt:formatDate value="${b.dueDate}" pattern="dd/MM/yyyy"/>
                             </td>
                             <td>
                                 <c:choose>
@@ -90,7 +92,7 @@
                                 </c:choose>
                             </td>
                             <td>
-                                <a href="${pageContext.request.contextPath}/manager/bills/detail?billId=${b.billId}"
+                                <a href="${pageContext.request.contextPath}/manager/billing/detail?billId=${b.billId}"
                                    class="mb-view-btn">
                                     👁 View
                                 </a>
@@ -98,41 +100,41 @@
                         </tr>
                     </c:forEach>
 
-                    <c:if test="${empty bill}">
-                        <tr>
-                            <td colspan="7" class="mb-empty">
-                                No bills found.
-                            </td>
-                        </tr>
-                    </c:if>
+                    <tr id="notFoundBill" style="display: none;">
+                        <td colspan="7" class="mb-empty">
+                            No bills found.
+                        </td>
+                    </tr>
+
 
                 </tbody>
             </table>
+
             <!-- PAGINATION -->
             <c:if test="${totalPages > 1}">
                 <div class="mb-pagination">
 
-                    <!-- Nút Previous -->
+                    <!-- Previous -->
                     <c:if test="${currentPage > 1}">
                         <a class="page-btn"
-                           href="${pageContext.request.contextPath}/manager/billing?page=${currentPage - 1}&keyword=${param.keyword}&status=${param.status}">
-                            « Trước
+                           href="${pageContext.request.contextPath}/manager/billing?page=${currentPage - 1}">
+                            « Previous
                         </a>
                     </c:if>
 
-                    <!-- Các số trang -->
+                    <!-- Page numbers -->
                     <c:forEach begin="1" end="${totalPages}" var="p">
                         <a class="page-btn ${p == currentPage ? 'active' : ''}"
-                           href="${pageContext.request.contextPath}/manager/billing?page=${p}&keyword=${param.keyword}&status=${param.status}">
+                           href="${pageContext.request.contextPath}/manager/billing?page=${p}">
                             ${p}
                         </a>
                     </c:forEach>
 
-                    <!-- Nút Next -->
+                    <!-- Next -->
                     <c:if test="${currentPage < totalPages}">
                         <a class="page-btn"
-                           href="${pageContext.request.contextPath}/manager/billing?page=${currentPage + 1}&keyword=${param.keyword}&status=${param.status}">
-                            Sau »
+                           href="${pageContext.request.contextPath}/manager/billing?page=${currentPage + 1}">
+                            Next »
                         </a>
                     </c:if>
 
@@ -141,5 +143,5 @@
 
         </div>
     </div>
-
+    <script src="${pageContext.request.contextPath}/assets/js/pages/managerBills.js"></script>
 </layout:layout>

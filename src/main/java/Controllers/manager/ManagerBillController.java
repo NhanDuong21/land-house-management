@@ -27,8 +27,6 @@ public class ManagerBillController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String keyword = request.getParameter("keyword");
-        String status = request.getParameter("status");
         int page = 1;
         int pageSize = 10;
 
@@ -36,9 +34,9 @@ public class ManagerBillController extends HttpServlet {
         if (pageParameter != null) {
             page = Integer.parseInt(pageParameter);
         }
-        int totalBills = billDAO.countSearchManagerBills(status, keyword);
+        int totalBills = billDAO.countManagerBills();
         int totalPages = (int) Math.ceil((double) totalBills / pageSize);
-        List<ManagerBillRowDTO> list = billDAO.getManagerBills(keyword, status, page, pageSize);
+        List<ManagerBillRowDTO> list = billDAO.getManagerBills(page, pageSize);
         request.setAttribute("totalBills", totalBills);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);

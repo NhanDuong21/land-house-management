@@ -79,8 +79,8 @@ public class ManageRoomsController extends HttpServlet {
             String status = request.getParameter("status");
             Room room = dao.getRoomById(roomId);
 
-            if (room != null && "OCCUPIED".equalsIgnoreCase(room.getStatus())) {
-                request.setAttribute("error", "Room is OCCUPIED and cannot be edited");
+            if (room != null && "OCCUPIED".equalsIgnoreCase(room.getStatus()) || "INACTIVE".equalsIgnoreCase(room.getStatus())) {
+                request.setAttribute("error", "Room is OCCUPIED or INACTIVE and cannot be edited");
                 request.setAttribute("room", room);
                 request.getRequestDispatcher("/views/manager/editRoom.jsp")
                         .forward(request, response);
@@ -95,9 +95,7 @@ public class ManageRoomsController extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/manager/rooms");
     }
 
-    private void showEditRoom(HttpServletRequest request,
-            HttpServletResponse response,
-            ManageRoomsDAO dao)
+    private void showEditRoom(HttpServletRequest request, HttpServletResponse response, ManageRoomsDAO dao)
             throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
         Room room = dao.getRoomById(id);
