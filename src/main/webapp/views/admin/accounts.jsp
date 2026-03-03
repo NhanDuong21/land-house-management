@@ -27,7 +27,7 @@
             </a>
         </div>
 
-        <!-- ALERT -->
+        <!-- ALERT (server-side, từ redirect) -->
         <c:if test="${not empty success}">
             <div class="ma-alert ma-alert-success">
                 <span class="ma-alert-ico">
@@ -45,6 +45,9 @@
                 <div class="ma-alert-title">${error}</div>
             </div>
         </c:if>
+
+        <!-- TOAST (client-side, sau fetch) -->
+        <div id="maToast" style="display:none;" aria-live="polite"></div>
 
         <!-- SEARCH + FILTER -->
         <div class="ma-search-box">
@@ -108,7 +111,8 @@
                                 </td>
 
                                 <td>
-                                    <span class="ma-badge status-${fn:toLowerCase(a.status)}">
+                                    <span class="ma-badge status-${fn:toLowerCase(a.status)}"
+                                          id="statusBadge-${a.accountType}-${a.accountId}">
                                         ${a.status}
                                     </span>
                                 </td>
@@ -120,34 +124,30 @@
                                     <div class="ma-actions">
 
                                         <!-- TOGGLE STATUS -->
-                                        <form method="post"
-                                              action="${ctx}/admin/accounts/toggle-status"
-                                              class="ma-inline">
+                                        <button type="button"
+                                                class="ma-switch ${fn:toLowerCase(a.status) == 'active' ? 'on' : 'off'} ma-open-toggle"
+                                                id="toggleBtn-${a.accountType}-${a.accountId}"
+                                                title="Toggle Active / Locked"
+                                                data-account-id="${a.accountId}"
+                                                data-account-type="${a.accountType}"
+                                                data-current-status="${a.status}"
+                                                data-fullname="${fn:escapeXml(a.fullName)}">
 
-                                            <input type="hidden" name="accountType" value="${a.accountType}">
-                                            <input type="hidden" name="accountId" value="${a.accountId}">
-                                            <input type="hidden" name="currentStatus" value="${a.status}">
+                                            <span class="ma-switch-track">
+                                                <span class="ma-switch-thumb"></span>
+                                            </span>
 
-                                            <button type="submit"
-                                                    class="ma-switch ${fn:toLowerCase(a.status) == 'active' ? 'on' : 'off'}"
-                                                    title="Toggle Active / Locked">
-
-                                                <span class="ma-switch-track">
-                                                    <span class="ma-switch-thumb"></span>
-                                                </span>
-
-                                                <span class="ma-switch-label">
-                                                    <c:choose>
-                                                        <c:when test="${fn:toLowerCase(a.status) == 'active'}">
-                                                            <i class="bi bi-unlock-fill"></i> Active
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <i class="bi bi-lock-fill"></i> Locked
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </span>
-                                            </button>
-                                        </form>
+                                            <span class="ma-switch-label">
+                                                <c:choose>
+                                                    <c:when test="${fn:toLowerCase(a.status) == 'active'}">
+                                                        <i class="bi bi-unlock-fill"></i> Active
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <i class="bi bi-lock-fill"></i> Locked
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                        </button>
 
                                         <!-- SET PASSWORD (OPEN MODAL) -->
                                         <button type="button"
@@ -223,6 +223,48 @@
 
     </div>
 
+    <!-- ===== CONFIRM TOGGLE STATUS MODAL ===== -->
+    <div class="ma-modal" id="maToggleModal" aria-hidden="true"
+         style="display:none; position:fixed; inset:0; z-index:9999;
+         align-items:center; justify-content:center;">
+        <div class="ma-modal-backdrop" id="maToggleBackdrop"
+             style="position:fixed; inset:0; background:rgba(0,0,0,.45);"></div>
+
+        <div class="ma-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="maToggleTitle"
+             style="position:relative; z-index:1; width:100%; max-width:480px; margin:1rem;">
+            <div class="ma-modal-card">
+
+                <div class="ma-modal-head">
+                    <div>
+                        <div class="ma-modal-title" id="maToggleTitle">
+                            <i class="bi bi-arrow-left-right"></i>
+                            Change Account Status
+                        </div>
+                        <div class="ma-modal-sub" id="maToggleSub">—</div>
+                    </div>
+                    <button type="button" class="ma-modal-x" id="maToggleClose" aria-label="Close">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <div class="ma-modal-body">
+                    <p id="maToggleMsg" style="margin:0 0 1.4rem; line-height:1.6;"></p>
+
+                    <div class="ma-modal-foot">
+                        <button type="button" class="ma-btn ghost" id="maToggleCancel">
+                            Cancel
+                        </button>
+                        <button type="button" class="ma-btn primary" id="maToggleConfirm">
+                            <i class="bi bi-check-lg"></i>
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- ===== SET PASSWORD MODAL (ONE TIME) ===== -->
     <div class="ma-modal" id="maPassModal" aria-hidden="true">
         <div class="ma-modal-backdrop" data-close="1"></div>
@@ -287,32 +329,11 @@
         </div>
     </div>
 
-    <!-- REALTIME SEARCH -->
+    <!-- JS: realtime search + modals + toggle + reset password -->
     <script>
-        (function () {
-            const form = document.getElementById("maSearchForm");
-            const keyword = document.getElementById("maKeyword");
-            const role = document.getElementById("maRole");
-
-            let timer = null;
-
-            function debounceSubmit() {
-                if (timer)
-                    clearTimeout(timer);
-                timer = setTimeout(() => {
-                    if (form)
-                        form.submit();
-                }, 350);
-            }
-
-            if (keyword)
-                keyword.addEventListener("input", debounceSubmit);
-            if (role)
-                role.addEventListener("change", () => form && form.submit());
-        })();
+        // expose ctx for external js
+        window.MA_CTX = "${ctx}";
     </script>
-
-    <!-- MODAL JS (separate file) -->
     <script src="${ctx}/assets/js/pages/admin/accounts.js"></script>
 
 </t:layout>

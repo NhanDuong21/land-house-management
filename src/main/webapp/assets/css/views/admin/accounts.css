@@ -531,7 +531,7 @@
   filter: brightness(0.95);
 }
 
-/* ================= (optional) PAGER styling if you need ================= */
+/* ================= PAGER ================= */
 .ma-pager {
   margin-top: 16px;
   display: flex;
@@ -570,4 +570,43 @@
 .ma-page-btn.disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+/* ================= TOAST ================= */
+.ma-toast {
+  position: fixed;
+  top: 1.2rem;
+  right: 1.4rem;
+  z-index: 9999;
+  min-width: 280px;
+  max-width: 440px;
+  padding: 0.85rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  animation: maToastIn 0.2s ease;
+}
+.ma-toast.toast-success {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #6ee7b7;
+}
+.ma-toast.toast-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+@keyframes maToastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
