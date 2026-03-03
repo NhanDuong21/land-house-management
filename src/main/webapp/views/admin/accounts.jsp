@@ -226,7 +226,7 @@
     <!-- ===== CONFIRM TOGGLE STATUS MODAL ===== -->
     <div class="ma-modal" id="maToggleModal" aria-hidden="true"
          style="display:none; position:fixed; inset:0; z-index:9999;
-                align-items:center; justify-content:center;">
+         align-items:center; justify-content:center;">
         <div class="ma-modal-backdrop" id="maToggleBackdrop"
              style="position:fixed; inset:0; background:rgba(0,0,0,.45);"></div>
 
@@ -329,169 +329,11 @@
         </div>
     </div>
 
-    <!-- REALTIME SEARCH -->
+    <!-- JS: realtime search + modals + toggle + reset password -->
     <script>
-        (function () {
-            const form = document.getElementById("maSearchForm");
-            const keyword = document.getElementById("maKeyword");
-            const role = document.getElementById("maRole");
-            let timer = null;
-
-            function debounceSubmit() {
-                if (timer) clearTimeout(timer);
-                timer = setTimeout(() => { if (form) form.submit(); }, 350);
-            }
-
-            if (keyword) keyword.addEventListener("input", debounceSubmit);
-            if (role) role.addEventListener("change", () => form && form.submit());
-        })();
+        // expose ctx for external js
+        window.MA_CTX = "${ctx}";
     </script>
-
-    <!-- MODAL JS (separate file) -->
     <script src="${ctx}/assets/js/pages/admin/accounts.js"></script>
-
-    <!-- ===== TOGGLE STATUS: CONFIRM MODAL + FETCH (không chuyển trang) ===== -->
-    <style>
-        .ma-toast {
-            position: fixed;
-            top: 1.2rem;
-            right: 1.4rem;
-            z-index: 9999;
-            min-width: 280px;
-            max-width: 440px;
-            padding: .85rem 1.2rem;
-            border-radius: 8px;
-            font-size: .92rem;
-            font-weight: 500;
-            box-shadow: 0 4px 20px rgba(0,0,0,.18);
-            display: flex;
-            align-items: center;
-            gap: .65rem;
-            animation: maToastIn .2s ease;
-        }
-        .ma-toast.toast-success { background:#d1fae5; color:#065f46; border:1px solid #6ee7b7; }
-        .ma-toast.toast-error   { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
-        @keyframes maToastIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
-    </style>
-
-    <script>
-        (function () {
-            /* ---------- state ---------- */
-            var _id = null, _type = null, _status = null;
-
-            var modal       = document.getElementById("maToggleModal");
-            var msgEl       = document.getElementById("maToggleMsg");
-            var subEl       = document.getElementById("maToggleSub");
-            var confirmBtn  = document.getElementById("maToggleConfirm");
-            var cancelBtn   = document.getElementById("maToggleCancel");
-            var closeBtn    = document.getElementById("maToggleClose");
-            var backdrop    = document.getElementById("maToggleBackdrop");
-            var ctxPath     = "${ctx}";
-
-            /* ---------- open ---------- */
-            function openModal(btn) {
-                _id     = btn.dataset.accountId;
-                _type   = btn.dataset.accountType;
-                _status = btn.dataset.currentStatus;
-
-                var name       = btn.dataset.fullname || "this account";
-                var nextStatus = _status.toUpperCase() === "ACTIVE" ? "LOCKED" : "ACTIVE";
-
-                subEl.textContent = name + " (" + _type + ")";
-                msgEl.innerHTML   = "Do you really want to change status from <strong>"
-                                  + _status + "</strong> to <strong>" + nextStatus + "</strong>?";
-
-                modal.style.display = "flex";
-                modal.setAttribute("aria-hidden", "false");
-            }
-
-            /* ---------- close ---------- */
-            function closeModal() {
-                modal.style.display = "none";
-                modal.setAttribute("aria-hidden", "true");
-            }
-
-            /* ---------- toast ---------- */
-            function showToast(msg, type) {
-                var t = document.getElementById("maToast");
-                t.className = "ma-toast toast-" + type;
-                t.innerHTML = (type === "success"
-                    ? '<i class="bi bi-check-circle-fill"></i>'
-                    : '<i class="bi bi-x-circle-fill"></i>') + " " + msg;
-                t.style.display = "flex";
-                clearTimeout(t._tid);
-                t._tid = setTimeout(function () { t.style.display = "none"; }, 4000);
-            }
-
-            /* ---------- update UI ---------- */
-            function applyUI(type, id, newStatus) {
-                var key    = type + "-" + id;
-                var badge  = document.getElementById("statusBadge-" + key);
-                var btn    = document.getElementById("toggleBtn-" + key);
-
-                if (badge) {
-                    badge.className   = "ma-badge status-" + newStatus.toLowerCase();
-                    badge.textContent = newStatus;
-                }
-
-                if (btn) {
-                    var isActive = newStatus.toUpperCase() === "ACTIVE";
-                    btn.classList.toggle("on",  isActive);
-                    btn.classList.toggle("off", !isActive);
-                    btn.dataset.currentStatus = newStatus;
-
-                    var lbl = btn.querySelector(".ma-switch-label");
-                    if (lbl) {
-                        lbl.innerHTML = isActive
-                            ? '<i class="bi bi-unlock-fill"></i> Active'
-                            : '<i class="bi bi-lock-fill"></i> Locked';
-                    }
-                }
-            }
-
-            /* ---------- confirm: fetch POST /admin/accounts ---------- */
-            confirmBtn.addEventListener("click", function () {
-                closeModal();
-
-                var params = new URLSearchParams();
-                params.append("action",        "toggle-status");
-                params.append("accountId",     _id);
-                params.append("accountType",   _type);
-                params.append("currentStatus", _status);
-
-                fetch(ctxPath + "/admin/accounts", {
-                    method:  "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body:    params.toString()
-                })
-                .then(function (res) { return res.json(); })
-                .then(function (data) {
-                    if (data.ok) {
-                        var newStatus = _status.toUpperCase() === "ACTIVE" ? "LOCKED" : "ACTIVE";
-                        applyUI(_type, _id, newStatus);
-                        showToast(data.message || "Status updated successfully.", "success");
-                    } else {
-                        showToast(data.message || "Failed to update status.", "error");
-                    }
-                })
-                .catch(function () {
-                    showToast("Network error. Please try again.", "error");
-                });
-            });
-
-            /* ---------- bind open buttons ---------- */
-            document.querySelectorAll(".ma-open-toggle").forEach(function (btn) {
-                btn.addEventListener("click", function () { openModal(btn); });
-            });
-
-            /* ---------- close handlers ---------- */
-            closeBtn.addEventListener("click",   closeModal);
-            cancelBtn.addEventListener("click",  closeModal);
-            backdrop.addEventListener("click",   closeModal);
-            document.addEventListener("keydown", function (e) {
-                if (e.key === "Escape") closeModal();
-            });
-        })();
-    </script>
 
 </t:layout>
