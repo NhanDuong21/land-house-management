@@ -492,7 +492,8 @@ WHERE   ROOM.room_id = ?
         } catch (SQLException e) {
             System.out.println(e);
         }
-
+        return false;
+    }
     @SuppressWarnings("CallToPrintStackTrace")
     public List<Room> searchAllPagedV2(RoomFilterDTO filterDTO, int page, int pageSize) {
         List<Room> list = new ArrayList<>();

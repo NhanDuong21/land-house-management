@@ -79,7 +79,7 @@ public class ManageRoomsController extends HttpServlet {
             String status = request.getParameter("status");
             Room room = dao.getRoomById(roomId);
 
-            if (room != null && "OCCUPIED".equalsIgnoreCase(room.getStatus()) && "INACTIVE".equalsIgnoreCase(room.getStatus())) {
+            if (room != null && "OCCUPIED".equalsIgnoreCase(room.getStatus()) || "INACTIVE".equalsIgnoreCase(room.getStatus())) {
                 request.setAttribute("error", "Room is OCCUPIED or INACTIVE and cannot be edited");
                 request.setAttribute("room", room);
                 request.getRequestDispatcher("/views/manager/editRoom.jsp")
