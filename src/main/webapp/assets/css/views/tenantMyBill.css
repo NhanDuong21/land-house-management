@@ -1,5 +1,7 @@
 .tb-container {
     padding: 30px;
+    padding-top: 0px;
+    min-height: calc(100vh - 80px); /* giả sử navbar/header ~80px, điều chỉnh nếu khác */
 }
 
 /* HEADER */
@@ -8,6 +10,13 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+}
+.tb-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+    color: #111827;
 }
 
 .tb-sub {
@@ -42,9 +51,10 @@
 /* GRID */
 .tb-grid {
     display: grid;
-    grid-template-columns: 1.7fr 1fr; /* chỉnh lại cân hơn */
+    grid-template-columns: 1.7fr 1fr;
     gap: 25px;
     align-items: start;
+    flex: 1;
 }
 
 /* LEFT CARD */
@@ -117,80 +127,6 @@
     font-weight: 700;
     color: #2563eb;
 }
-/* COMMON BOX */
-.tb-paid-box {
-    padding: 20px 20px;
-    border-radius: 16px;
-    text-align: center;
-    margin-top: 25px;
-}
-
-/* SUCCESS (PAID) */
-.tb-paid-box.success {
-    background: #e6f4ea;
-}
-
-.tb-paid-box.success .tb-paid-icon {
-    background: #16a34a;
-}
-
-.tb-paid-box.success .tb-paid-title {
-    color: #166534;
-}
-
-.tb-paid-box.success .tb-paid-sub {
-    color: #15803d;
-}
-
-/* DANGER (UNPAID) */
-.tb-paid-box.danger {
-    background: #fdecea;
-}
-
-.tb-paid-box.danger .tb-paid-icon {
-    background: #dc3545;
-}
-
-.tb-paid-box.danger .tb-paid-title {
-    color: #b02a37;
-}
-
-.tb-paid-box.danger .tb-paid-sub {
-    color: #dc3545;
-}
-
-/* ICON */
-.tb-paid-icon {
-    width: 30px;
-    height: 30px;
-    margin: 0 auto 10px;
-    border-radius: 50%;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* VIEW DETAIL BUTTON */
-.tb-detail-btn {
-    display: inline-block;
-    margin-top: 18px;
-    padding: 10px 20px;
-    background-color: #0d6efd;
-    color: white;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: 0.2s ease;
-    float: right;
-}
-
-.tb-detail-btn:hover {
-    background-color: #0b5ed7;
-    color: #fff;
-}
 
 /* BADGE */
 .tb-badge {
@@ -210,14 +146,131 @@
     color: #dc3545;
 }
 
-/* RIGHT SIDE SUMMARY */
+.tb-badge.overdue {
+    background: #fff3cd;
+    color: #d97706;
+}
+
+.tb-badge.cancelled {
+    background: #6c757d;
+    color: white;
+}
+
+/* STATUS BOX */
+.tb-paid-box {
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    margin-top: 25px;
+}
+
+.tb-paid-icon {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* PAID */
+.tb-paid-box.success {
+    background: #e6f4ea;
+}
+
+.tb-paid-box.success .tb-paid-icon {
+    background: #16a34a;
+}
+
+.tb-paid-box.success .tb-paid-title {
+    color: #166534;
+}
+
+.tb-paid-box.success .tb-paid-sub {
+    color: #15803d;
+}
+
+/* UNPAID */
+.tb-paid-box.danger {
+    background: #fdecea;
+}
+
+.tb-paid-box.danger .tb-paid-icon {
+    background: #dc3545;
+}
+
+.tb-paid-box.danger .tb-paid-title {
+    color: #b02a37;
+}
+
+.tb-paid-box.danger .tb-paid-sub {
+    color: #dc3545;
+}
+
+/* OVERDUE */
+.tb-paid-box.overdue {
+    background: #fff3cd;
+}
+
+.tb-paid-box.overdue .tb-paid-icon {
+    background: #ff9800;
+}
+
+.tb-paid-box.overdue .tb-paid-title {
+    color: #b26a00;
+}
+
+.tb-paid-box.overdue .tb-paid-sub {
+    color: #d97706;
+}
+
+/* CANCELLED */
+.tb-paid-box.cancelled {
+    background: #f1f3f5;
+}
+
+.tb-paid-box.cancelled .tb-paid-icon {
+    background: #6c757d;
+}
+
+.tb-paid-box.cancelled .tb-paid-title {
+    color: #495057;
+}
+
+.tb-paid-box.cancelled .tb-paid-sub {
+    color: #6c757d;
+}
+
+/* VIEW DETAIL BUTTON */
+.tb-detail-btn {
+    display: block;
+    margin-top: 18px;
+    margin-left: auto;
+    padding: 10px 20px;
+    background-color: #0d6efd;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.tb-detail-btn:hover {
+    background-color: #0b5ed7;
+    color: #fff;
+}
+
+/* SUMMARY SIDE */
 .tb-summary {
     display: flex;
     flex-direction: column;
-    gap: 20px; 
+    gap: 20px;
 }
 
-/* CARD */
 .tb-summary-card {
     display: flex;
     align-items: center;
@@ -234,7 +287,6 @@
     box-shadow: 0 12px 28px rgba(0,0,0,0.08);
 }
 
-/* ICON */
 .tb-summary-icon {
     width: 60px;
     height: 60px;
@@ -244,18 +296,7 @@
     justify-content: center;
     font-size: 24px;
 }
-/* last payment */
-.tb-summary-card.secondary .tb-summary-icon {
-    background: #f1f3f5;
-    color: #6c757d;
-}
 
-.tb-no-payment {
-    font-size: 14px;
-    color: #6c757d;
-    font-style: italic;
-}
-/* TEXT */
 .tb-summary-label {
     font-size: 14px;
     color: #6c757d;
@@ -263,7 +304,6 @@
     margin-bottom: 6px;
 }
 
-/* BIG VALUE */
 .tb-summary-card h4 {
     font-size: 20px;
     font-weight: 700;
@@ -282,6 +322,13 @@
     font-weight: 700;
     color: #198754;
 }
+
+.tb-no-payment {
+    font-size: 14px;
+    color: #6c757d;
+    font-style: italic;
+}
+
 /* COLORS */
 .tb-summary-card.danger .tb-summary-icon {
     background: #fdecea;
@@ -296,4 +343,279 @@
 .tb-summary-card.primary .tb-summary-icon {
     background: #e7f1ff;
     color: #0d6efd;
+}
+
+.tb-summary-card.secondary .tb-summary-icon {
+    background: #f1f3f5;
+    color: #6c757d;
+}
+
+/* ============================= */
+/* MODAL OVERLAY + SCROLL FIX   */
+/* ============================= */
+
+.custom-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;           /* ngăn scroll nền khi modal mở */
+}
+
+.custom-modal-content {
+    position: relative;
+    background: #ffffff;
+    width: 620px;
+    max-width: 94vw;
+    max-height: 92vh;           /* ← giới hạn chiều cao modal */
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 20px 50px -12px rgba(0,0,0,0.25);
+    overflow-y: auto;           /* ← scroll chính ở đây */
+    overscroll-behavior: contain; /* mượt hơn trên mobile */
+    animation: fadeIn 0.25s ease;
+}
+
+/* Scrollbar đẹp (tùy chọn) */
+.custom-modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+.custom-modal-content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+.custom-modal-content::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* ============================= */
+/* HEADER */
+/* ============================= */
+
+.custom-modal-header {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.custom-modal-header h5 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.close-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #6b7280;
+    transition: 0.2s ease;
+}
+
+.close-btn:hover {
+    color: #dc3545;
+}
+
+/* ============================= */
+/* SECTION BOX */
+/* ============================= */
+
+.modal-section {
+    background: #f8f9fb;
+    padding: 20px 22px;
+    border-radius: 16px;
+    margin-bottom: 22px;
+}
+
+.modal-section h6 {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 18px;
+    color: #374151;
+}
+
+/* ============================= */
+/* BILL INFO GRID */
+/* ============================= */
+
+.modal-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 45px;
+}
+
+.modal-info-label {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 4px;
+}
+
+.modal-info-value {
+    font-weight: 600;
+    font-size: 14px;
+    color: #111827;
+}
+
+/* ============================= */
+/* BREAKDOWN - SCROLL NẾU DÀI   */
+/* ============================= */
+
+.custom-modal-body {
+    margin-top: 10px;
+    max-height: 58vh;           
+    overflow-y: auto;
+    margin-right: -10px;       
+    padding-right: 10px;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+/* Scrollbar đẹp cho breakdown */
+.custom-modal-body::-webkit-scrollbar {
+    width: 5px;
+}
+.custom-modal-body::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 999px;
+}
+
+.tb-break-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 14px;
+}
+
+.tb-break-row:not(.tb-break-total) {
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.tb-break-total {
+    font-weight: 700;
+    font-size: 16px;
+    padding-top: 14px;
+    margin-top: 10px;
+    border-top: 2px solid #e5e7eb;
+}
+
+.tb-break-total span:last-child {
+    color: #2563eb;
+    font-size: 17px;
+}
+
+/* ============================= */
+/* PAYMENT FORM */
+/* ============================= */
+
+.custom-modal form {
+    margin-top: 20px;
+}
+
+.custom-modal label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.custom-modal select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    margin-top: 8px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.custom-modal select:focus {
+    outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13,110,253,0.15);
+}
+
+/* ============================= */
+/* SUBMIT BUTTON */
+/* ============================= */
+
+.submit-btn {
+    width: 100%;
+    margin-top: 5px;
+    padding: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 12px;
+    border: none;
+    background: #0d6efd;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.submit-btn:hover {
+    background: #0b5ed7;
+    transform: translateY(-2px);
+}
+
+/* ============================= */
+/* ANIMATION */
+/* ============================= */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 992px) {
+    .tb-container {
+        padding: 16px;
+    }
+
+    .tb-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .tb-grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .tb-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .tb-summary {
+        order: -1; /* đẩy summary lên trên */
+    }
+
+    .custom-modal-content {
+        max-height: 96vh;
+        margin: 2vh auto;
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .custom-modal-body {
+        max-height: 50vh; /* nhỏ hơn tí trên mobile */
+    }
 }
