@@ -9,96 +9,139 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<layout:layout title="Manage Billing"
+<layout:layout title="Billing detail"
                active="m_bills"
                cssFile="${pageContext.request.contextPath}/assets/css/views/managerBills.css">
 
-<div class="mb-container">
+    <div class="mb-container">
 
-    <!-- HEADER -->
-    <div class="mb-header">
-        <div>
-            <h2>Manage Billing</h2>
-            <p>View and manage all tenant bills</p>
+        <!-- HEADER -->
+        <div class="mb-header">
+            <div>
+                <h2>Manage Billing</h2>
+                <p>View and manage all tenant bills</p>
+            </div>
+
+            <a href="${pageContext.request.contextPath}/manager/billing/create"
+               class="mb-generate-btn">
+                + Generate Bill
+            </a>
         </div>
 
-        <a href="${pageContext.request.contextPath}/manager/bills/create"
-           class="mb-generate-btn">
-            + Generate Bill
-        </a>
-    </div>
-
-    <!-- SEARCH -->
-    <div class="mb-search-box">
-        <input type="text" placeholder="Search by room number...">
-    </div>
-
-    <!-- TABLE CARD -->
-    <div class="mb-card">
-
-        <div class="mb-card-title">
-            All Bills (<c:out value="${empty bill ? 0 : bill.size()}"/>)
+        <!-- SEARCH -->
+        <div class="mb-search-box">
+            <div class="mb-search-form">
+                <input type="text" id="keyword" class="searchBill"
+                       placeholder="Search by Bill ID, room number...">
+                <button class="date-btn">
+                    <input type="month" class="bill-date">
+                </button>
+                <select id="status">
+                    <option value="">All status</option>
+                    <option value="PAID">PAID</option>
+                    <option value="UNPAID">UNPAID</option>
+                </select>
+            </div>
         </div>
 
-        <table class="mb-table">
-            <thead>
-                <tr>
-                    <th>Bill ID</th>
-                    <th>Room</th>
-                    <th>Month</th>
-                    <th>Total Amount</th>
-                    <th>Due Date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+        <!-- TABLE CARD -->
+        <div class="mb-card">
 
-            <tbody>
-                <c:forEach var="b" items="${bill}">
+            <div class="mb-card-title">
+                All Bills (${totalBills})
+            </div>
+
+            <table class="mb-table">
+                <thead>
                     <tr>
-                        <td>${b.billId}</td>
-                        <td>${b.roomNumber}</td>
-                        <td>
-                            <fmt:formatDate value="${b.month}" pattern="MMMM"/>
-                        </td>
-                        <td>
-                            <fmt:formatNumber value="${b.totalAmount}" 
-                                              type="number" groupingUsed="true"/> đ
-                        </td>
-                        <td>
-                            <fmt:formatDate value="${b.dueDate}" pattern="dd/MM/yyyy"/>
-                        </td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${b.status eq 'PAID'}">
-                                    <span class="mb-badge paid">PAID</span>
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="mb-badge unpaid">UNPAID</span>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td>
-                            <a href="${pageContext.request.contextPath}/manager/bills/detail?id=${b.billId}"
-                               class="mb-view-btn">
-                                👁 View
-                            </a>
-                        </td>
+                        <th>Bill ID</th>
+                        <th>Room</th>
+                        <th>Month</th>
+                        <th>Due Date</th>
+                        <th>Total Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
-                </c:forEach>
+                </thead>
 
-                <c:if test="${empty bill}">
-                    <tr>
+                <tbody  id="billTable">
+                    <c:forEach var="b" items="${bill}">
+                        <tr>
+                            <td class="billId">${b.billId}</td>
+                            <td class="roomNumber">${b.roomNumber}</td>
+                            <td>
+                                <span  class="dateBill">
+                                <fmt:formatDate value="${b.month}"  pattern="dd/MM/yyyy"/>
+                                </span>
+                            </td>
+                            <td>
+                                <fmt:formatDate value="${b.dueDate}" pattern="dd/MM/yyyy"/>
+                            </td>
+                            <td>
+                                <fmt:formatNumber value="${b.totalAmount}" 
+                                                  type="number" groupingUsed="true"/> đ
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${b.status eq 'PAID'}">
+                                        <span class="mb-badge paid">PAID</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="mb-badge unpaid">UNPAID</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <a href="${pageContext.request.contextPath}/manager/billing/detail?billId=${b.billId}"
+                                   class="mb-view-btn">
+                                    👁 View
+                                </a>
+                            </td>
+                        </tr>
+                    </c:forEach>
+
+                    <tr id="notFoundBill" style="display: none;">
                         <td colspan="7" class="mb-empty">
                             No bills found.
                         </td>
                     </tr>
-                </c:if>
 
-            </tbody>
-        </table>
 
+                </tbody>
+            </table>
+
+            <!-- PAGINATION -->
+            <c:if test="${totalPages > 1}">
+                <div class="mb-pagination">
+
+                    <!-- Previous -->
+                    <c:if test="${currentPage > 1}">
+                        <a class="page-btn"
+                           href="${pageContext.request.contextPath}/manager/billing?page=${currentPage - 1}">
+                            « Previous
+                        </a>
+                    </c:if>
+
+                    <!-- Page numbers -->
+                    <c:forEach begin="1" end="${totalPages}" var="p">
+                        <a class="page-btn ${p == currentPage ? 'active' : ''}"
+                           href="${pageContext.request.contextPath}/manager/billing?page=${p}">
+                            ${p}
+                        </a>
+                    </c:forEach>
+
+                    <!-- Next -->
+                    <c:if test="${currentPage < totalPages}">
+                        <a class="page-btn"
+                           href="${pageContext.request.contextPath}/manager/billing?page=${currentPage + 1}">
+                            Next »
+                        </a>
+                    </c:if>
+
+                </div>
+            </c:if>
+
+        </div>
     </div>
-</div>
-
+    <script src="${pageContext.request.contextPath}/assets/js/pages/managerBills.js"></script>
 </layout:layout>

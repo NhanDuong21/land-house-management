@@ -192,4 +192,104 @@
         <servlet-name>ChangePasswordController</servlet-name>
         <url-pattern>/change-password</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ManageRoomsController</servlet-name>
+        <servlet-class>Controllers.manager.ManageRoomsController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ManageRoomsController</servlet-name>
+        <url-pattern>/manager/rooms</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminAccountResetPasswordController</servlet-name>
+        <servlet-class>Controllers.admin.AdminAccountResetPasswordController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminAccountResetPasswordController</servlet-name>
+        <url-pattern>/admin/accounts/reset-password</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminManageAccountsController</servlet-name>
+        <servlet-class>Controllers.admin.AdminManageAccountsController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminManageAccountsController</servlet-name>
+        <url-pattern>/admin/accounts</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TenantMyRoomController</servlet-name>
+        <servlet-class>Controllers.tenant.TenantMyRoomController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TenantMyRoomController</servlet-name>
+        <url-pattern>/tenant/room</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminRoomAdministrationController</servlet-name>
+        <servlet-class>Controllers.admin.AdminRoomAdministrationController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminRoomAdministrationController</servlet-name>
+        <url-pattern>/admin/rooms</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminDeleteRoomController</servlet-name>
+        <servlet-class>Controllers.admin.AdminDeleteRoomController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminDeleteRoomController</servlet-name>
+        <url-pattern>/admin/rooms/delete</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminEditRoomController</servlet-name>
+        <servlet-class>Controllers.admin.AdminEditRoomController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminEditRoomController</servlet-name>
+        <url-pattern>/admin/rooms/edit</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminRoomImageUploadController</servlet-name>
+        <servlet-class>Controllers.admin.AdminRoomImageUploadController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminRoomImageUploadController</servlet-name>
+        <url-pattern>/admin/rooms/images/upload</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminRoomImageSetCoverController</servlet-name>
+        <servlet-class>Controllers.admin.AdminRoomImageSetCoverController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminRoomImageSetCoverController</servlet-name>
+        <url-pattern>/admin/rooms/images/cover</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminRoomImageDeleteController</servlet-name>
+        <servlet-class>Controllers.admin.AdminRoomImageDeleteController</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AdminRoomImageDeleteController</servlet-name>
+        <url-pattern>/admin/rooms/images/delete</url-pattern>
+    </servlet-mapping>
 </web-app>
