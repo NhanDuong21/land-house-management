@@ -91,7 +91,13 @@
 .tbd-badge.unpaid {
   background: #d97706;
 }
-
+.tbd-badge.cancelled {
+    background: #6c757d;
+    color: white;
+}
+.tbd-badge.overdue {
+  background: #ff0101;
+}
 /* ===============================
    DIVIDER
 ================================= */
