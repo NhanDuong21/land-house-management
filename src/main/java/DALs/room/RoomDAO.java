@@ -458,6 +458,7 @@ WHERE   ROOM.room_id = ?
         return false;
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public boolean restoreRoom(int roomId) {
         String sql = "UPDATE ROOM SET status='AVAILABLE' WHERE room_id=? AND status='INACTIVE'";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

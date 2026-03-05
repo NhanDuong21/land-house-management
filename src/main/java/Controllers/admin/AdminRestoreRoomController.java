@@ -36,7 +36,7 @@ public class AdminRestoreRoomController extends HttpServlet {
                 return null;
             }
             return Integer.valueOf(s.trim());
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             return null;
         }
     }
