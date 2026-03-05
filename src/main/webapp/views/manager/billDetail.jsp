@@ -62,10 +62,6 @@ Author     : To Thi Thao Trang - CE191027
                             <span class="tbd-badge paid">PAID</span>
                         </c:when>
 
-                        <c:when test="${bill.status eq 'OVERDUE'}">
-                            <span class="tbd-badge overdue">OVERDUE</span>
-                        </c:when>
-
                         <c:when test="${bill.status eq 'CANCELLED'}">
                             <span class="tbd-badge cancelled">CANCELLED</span>
                         </c:when>
@@ -148,7 +144,7 @@ Author     : To Thi Thao Trang - CE191027
                 </div>
 
                 <!-- QR -->
-                <c:if test="${bill.status eq 'UNPAID' or bill.status eq 'OVERDUE'}">
+                <c:if test="${bill.status eq 'UNPAID'}">
                     <div class="tbd-divider"></div>
 
                     <div class="tbd-qr-section">
