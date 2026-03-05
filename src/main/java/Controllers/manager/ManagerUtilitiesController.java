@@ -72,6 +72,7 @@ public class ManagerUtilitiesController extends HttpServlet {
                 request.setAttribute("utilities", listU);
                 request.getRequestDispatcher("/views/manager/utilities.jsp").forward(request, response);
                 break;
+                
             case "add":
                 List<Utility> listAdd = dao.getManagerUntilities();
                 request.setAttribute("utilities", listAdd);
@@ -92,6 +93,19 @@ public class ManagerUtilitiesController extends HttpServlet {
                 request.setAttribute("editUtility", uEdit);
                 request.getRequestDispatcher("/views/manager/utilities.jsp").forward(request, response);
                 break; 
+                
+            case "subscribers":
+                int idSub = Integer.parseInt(request.getParameter("id"));
+                String nameSub = request.getParameter("name");
+                List<Utility> subscribers = dao.getSubscribersByUtilityId(idSub);
+                List<Utility> listSub = dao.getManagerUntilities();
+                request.setAttribute("utilities", listSub);
+                request.setAttribute("subscribers", subscribers);
+                request.setAttribute("utilityName", nameSub);
+                request.getRequestDispatcher("/views/manager/utilities.jsp").forward(request, response);
+                break;
+           
+                
         }
     }
 
