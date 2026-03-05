@@ -2,85 +2,14 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
-<t:layout title="Create Tenant" active="a_accounts">
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 
-    <style>
+<t:layout 
+    title="Create Account"
+    active="a_accounts"
+    cssFile="${ctx}/assets/css/views/admin/create-account.css">
 
-        .create-container{
-            max-width:1000px;
-            margin:40px auto;
-        }
 
-        .profile-card{
-            background:#fff;
-            padding:35px;
-            border-radius:12px;
-            box-shadow:0 6px 15px rgba(0,0,0,0.08);
-        }
-
-        .section-title{
-            font-size:22px;
-            font-weight:600;
-            margin-bottom:25px;
-        }
-
-        .profile-form{
-            width:100%;
-        }
-
-        .form-grid{
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            gap:22px;
-        }
-
-        .form-group{
-            display:flex;
-            flex-direction:column;
-        }
-
-        .form-group label{
-            font-weight:500;
-            margin-bottom:6px;
-        }
-
-        .form-group input,
-        .form-group select{
-            width:100%;
-            padding:11px 14px;
-            border:1px solid #d1d5db;
-            border-radius:8px;
-        }
-
-        .form-actions{
-            margin-top:30px;
-            display:flex;
-            justify-content:flex-end;
-            gap:12px;
-        }
-
-        .btn-save{
-            background:#0B5ED7;
-            color:#fff;
-            border:none;
-            padding:11px 20px;
-            border-radius:8px;
-            cursor:pointer;
-        }
-
-        .btn-save:hover{
-            background:#2563eb;
-        }
-
-        .btn-cancel{
-            background:#e5e7eb;
-            padding:11px 20px;
-            border-radius:8px;
-            text-decoration:none;
-            color:#374151;
-        }
-
-    </style>
 
 
     <div class="create-container">
@@ -156,8 +85,7 @@
 
                 <div class="form-actions">
 
-                    <a href="${pageContext.request.contextPath}/admin/accounts"
-                       class="btn-cancel">
+                    <a href="${ctx}/admin/accounts" class="btn-cancel">
                         Cancel
                     </a>
 
@@ -172,5 +100,6 @@
         </div>
 
     </div>
+    <script src="${ctx}/assets/js/pages/admin/create-account.js"></script>
 
 </t:layout>

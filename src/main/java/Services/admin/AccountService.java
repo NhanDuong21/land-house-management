@@ -1,7 +1,7 @@
 package Services.admin;
 
 import DALs.admin.ManageAccountDAO;
-import org.mindrot.jbcrypt.BCrypt;
+import static Utils.security.HashUtil.md5;
 
 public class AccountService {
 
@@ -27,7 +27,7 @@ public class AccountService {
             throw new RuntimeException("Email already exists.");
         }
 
-        String hashed = BCrypt.hashpw(password, BCrypt.gensalt());
+        String hashed = md5(password);
 
         switch (role.toUpperCase()) {
 
