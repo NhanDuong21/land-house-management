@@ -446,7 +446,7 @@ WHERE   ROOM.room_id = ?
 
     @SuppressWarnings("CallToPrintStackTrace")
     public boolean updateStatus(int roomId, String status) {
-        String sql = "UPDATE ROOM SET status = ? WHERE room_id = ?";
+        String sql = "UPDATE ROOM SET status=? WHERE room_id=? AND status <> 'INACTIVE'";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, status);
@@ -456,6 +456,17 @@ WHERE   ROOM.room_id = ?
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean restoreRoom(int roomId) {
+        String sql = "UPDATE ROOM SET status='AVAILABLE' WHERE room_id=? AND status='INACTIVE'";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, roomId);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean insertRoom(int blockId,
@@ -494,6 +505,7 @@ WHERE   ROOM.room_id = ?
         }
         return false;
     }
+
     @SuppressWarnings("CallToPrintStackTrace")
     public List<Room> searchAllPagedV2(RoomFilterDTO filterDTO, int page, int pageSize) {
         List<Room> list = new ArrayList<>();
@@ -575,7 +587,7 @@ WHERE   ROOM.room_id = ?
         UPDATE ROOM SET block_id=?, room_number=?, area=?,price=?,
                         status=?, floor=?, max_tenants=?, is_mezzanine=?,
                         has_air_conditioning=?, description=?
-        WHERE room_id=?
+        WHERE room_id=? AND status <> 'INACTIVE' 
                 """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             int i = 1;

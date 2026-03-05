@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
+<web-app version="5.0" xmlns="https://jakarta.ee/xml/ns/jakartaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd">
     <servlet-mapping>
         <servlet-name>AdminAddRoomControllerNewServlet</servlet-name>
         <url-pattern>/admin/rooms/create</url-pattern>
@@ -249,5 +251,14 @@
     <servlet-mapping>
         <servlet-name>AdminRoomImageDeleteController</servlet-name>
         <url-pattern>/admin/rooms/images/delete</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminRestoreRoomController</servlet-name>
+        <servlet-class>Controllers.admin.AdminRestoreRoomController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminRestoreRoomController</servlet-name>
+        <url-pattern>/admin/rooms/restore</url-pattern>
     </servlet-mapping>
 </web-app>

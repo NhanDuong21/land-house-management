@@ -39,6 +39,7 @@ public class AdminEditRoomController extends HttpServlet {
             return;
         }
 
+        req.setAttribute("isInactive", "INACTIVE".equalsIgnoreCase(room.getStatus()));
         req.setAttribute("room", room);
         req.setAttribute("images", imgDAO.findByRoomId(id));
         req.setAttribute("blocks", blockDAO.findAllActive());
@@ -59,8 +60,14 @@ public class AdminEditRoomController extends HttpServlet {
         int roomId = roomIdObj;
 
         Room r = roomDAO.findById(roomId);
+
         if (r == null) {
             resp.sendRedirect(req.getContextPath() + "/admin/rooms?err=invalid_room");
+            return;
+        }
+
+        if ("INACTIVE".equalsIgnoreCase(r.getStatus())) {
+            resp.sendRedirect(req.getContextPath() + "/admin/rooms/edit?id=" + roomId + "&err=room_inactive_locked");
             return;
         }
 
