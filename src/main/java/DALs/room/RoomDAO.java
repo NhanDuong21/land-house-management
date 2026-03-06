@@ -585,11 +585,10 @@ WHERE   ROOM.room_id = ?
     @SuppressWarnings("CallToPrintStackTrace")
     public boolean updateRoom(Room r) {
         String sql = """
-        UPDATE ROOM SET block_id=?, room_number=?, area=?,price=?,
-                        status=?, floor=?, max_tenants=?, is_mezzanine=?,
+        UPDATE ROOM SET block_id=?, room_number=?, area=?, price=?, status=?, floor=?, max_tenants=?, is_mezzanine=?,
                         has_air_conditioning=?, description=?
-        WHERE room_id=? AND status <> 'INACTIVE' 
-                """;
+        WHERE room_id=? AND status NOT IN ('INACTIVE','OCCUPIED')
+        """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             int i = 1;
             ps.setInt(i++, r.getBlockId());
