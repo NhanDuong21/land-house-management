@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Models.dto.MaintenanceRequestDTO;
+import Models.dto.TenantMyRoomDTO;
 import Utils.database.DBContext;
 
 /**
@@ -18,21 +19,27 @@ import Utils.database.DBContext;
  */
 public class MaintenanceRequestDAO extends DBContext {
 
-    public List<MaintenanceRequestDTO> getAllRequests() {
+    public List<MaintenanceRequestDTO> getAllRequests(int page, int pageSize) {
         List<MaintenanceRequestDTO> list = new ArrayList<>();
-        String sql = "SELECT "
-                + "mr.request_id, "
-                + "mr.tenant_id, "
-                + "r.room_number, "
-                + "t.full_name, "
-                + "mr.issue_category, "
-                + "mr.status, "
-                + "mr.description "
-                + "FROM MAINTENANCE_REQUEST mr "
-                + "JOIN ROOM r ON mr.room_id = r.room_id "
-                + "JOIN TENANT t ON mr.tenant_id = t.tenant_id "
-                + "ORDER BY mr.created_at DESC";
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        String sql = """
+        SELECT
+            mr.request_id,
+            mr.tenant_id,
+            r.room_number,
+            t.full_name,
+            mr.issue_category,
+            mr.status,
+            mr.description
+        FROM MAINTENANCE_REQUEST mr
+        JOIN ROOM r ON mr.room_id = r.room_id
+        JOIN TENANT t ON mr.tenant_id = t.tenant_id
+        ORDER BY mr.created_at DESC
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, (page - 1) * pageSize);
+            ps.setInt(2, pageSize);
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 MaintenanceRequestDTO dto = new MaintenanceRequestDTO();
                 dto.setRequestId(rs.getInt("request_id"));
@@ -90,7 +97,6 @@ public class MaintenanceRequestDAO extends DBContext {
         return null;
     }
 
-    @SuppressWarnings("CallToPrintStackTrace")
     public int countRequest() {
         String sql = "SELECT COUNT(*) FROM MAINTENANCE_REQUEST";
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
@@ -124,27 +130,23 @@ public class MaintenanceRequestDAO extends DBContext {
         }
     }
 
-    public List<MaintenanceRequestDTO> getRequestsByTenantId(int tenantId) {
+    public List<MaintenanceRequestDTO> getRequestsByTenantId(int tenantId, int page, int pageSize) {
         List<MaintenanceRequestDTO> list = new ArrayList<>();
         String sql = """
-        SELECT 
-            mr.request_id,
-            mr.tenant_id,
-            r.room_number,
-            t.full_name,
-            mr.issue_category,
-            mr.status,
-            mr.description,
-            mr.created_at
+        SELECT
+            mr.request_id, mr.tenant_id, r.room_number, t.full_name,
+            mr.issue_category, mr.status, mr.description, mr.created_at
         FROM MAINTENANCE_REQUEST mr
         JOIN ROOM r ON mr.room_id = r.room_id
         JOIN TENANT t ON mr.tenant_id = t.tenant_id
         WHERE mr.tenant_id = ?
         ORDER BY mr.created_at DESC
-        """;
-
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+    """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, tenantId);
+            ps.setInt(2, (page - 1) * pageSize);
+            ps.setInt(3, pageSize);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 MaintenanceRequestDTO dto = new MaintenanceRequestDTO();
@@ -158,10 +160,10 @@ public class MaintenanceRequestDAO extends DBContext {
                 dto.setCreatedAt(rs.getTimestamp("created_at"));
                 list.add(dto);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         return list;
     }
+
 }
