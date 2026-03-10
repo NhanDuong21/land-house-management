@@ -180,4 +180,49 @@ public class utilitiesDAO extends DBContext {
         }
         return list;
     }
+
+    public int getUnpaidBillIdByTenantId(int tenantId) {
+        String sql = "SELECT TOP 1 b.bill_id FROM BILL b "
+                + "JOIN CONTRACT c ON b.contract_id = c.contract_id "
+                + "WHERE c.tenant_id = ? AND b.status = 'UNPAID' "
+                + "ORDER BY b.bill_id DESC";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, tenantId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("bill_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public boolean addBillDetail(int billId, String itemName, String unit, BigDecimal unitPrice) {
+        String sql = "INSERT INTO BILL_DETAIL(bill_id, utility_id, item_name, unit, unit_price, quantity, charge_type) "
+                + "VALUES(?, NULL, ?, ?, ?, 1, 'OTHER')";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, billId);
+            ps.setString(2, itemName);
+            ps.setString(3, unit);
+            ps.setBigDecimal(4, unitPrice);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void removeAllOtherBillDetail(int billId) {
+        String sql = "DELETE FROM BILL_DETAIL WHERE bill_id = ? AND charge_type = 'OTHER'";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, billId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
