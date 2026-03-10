@@ -255,4 +255,13 @@
         <servlet-name>AdminRestoreRoomController</servlet-name>
         <url-pattern>/admin/rooms/restore</url-pattern>
     </servlet-mapping>
+
+        <servlet>
+        <servlet-name>AdminCreateAccountController</servlet-name>
+        <servlet-class>Controllers.admin.AdminCreateAccountController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminCreateAccountController</servlet-name>
+        <url-pattern>/admin/accounts/create</url-pattern>
+    </servlet-mapping>
 </web-app>
