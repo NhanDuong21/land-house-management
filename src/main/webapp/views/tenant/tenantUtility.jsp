@@ -96,58 +96,47 @@
                 </p>
 
                 <!-- Utilities Checkbox List -->
-                <div class="tu-utilities-list">
-                    <c:forEach var="u" items="${utility}">
-                        <label class="tu-utility-label">
-                            <input type="checkbox" value="${u.utilityId}">
-
-                            <div class="tu-utility-icon">
-                                <c:choose>
-                                    <c:when test="${u.utilityName.toLowerCase().contains('electric')}">
-                                        <i class="bi bi-lightning-charge-fill" style="color:#f59e0b;"></i>
-                                    </c:when>
-                                    <c:when test="${u.utilityName.toLowerCase().contains('water')}">
-                                        <i class="bi bi-droplet-fill" style="color:#3b82f6;"></i>
-                                    </c:when>
-                                    <c:when test="${u.utilityName.toLowerCase().contains('internet') || u.utilityName.toLowerCase().contains('wifi')}">
-                                        <i class="bi bi-wifi" style="color:#8b5cf6;"></i>
-                                    </c:when>
-                                    <c:when test="${u.utilityName.toLowerCase().contains('trash') || u.utilityName.toLowerCase().contains('garbage')}">
-                                        <i class="bi bi-trash-fill" style="color:#22c55e;"></i>
-                                    </c:when>
-                                    <c:when test="${u.utilityName.toLowerCase().contains('laundry')}">
-                                        <i class="bi bi-bag-fill" style="color:#3b82f6;"></i>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <i class="bi bi-gear-fill" style="color:#6b7280;"></i>
-                                    </c:otherwise>
-                                </c:choose>
-                            </div>
-
-                            <div class="tu-utility-info">
-                                <div class="tu-utility-name">${u.utilityName}</div>
-                                <div class="tu-utility-price">
-                                    <fmt:formatNumber value="${u.standardPrice}" type="number" groupingUsed="true"/>
-                                    VND/${u.unit}
+                <form action="${pageContext.request.contextPath}/tenant/utility" method="POST">
+                    <div class="tu-utilities-list">
+                        <c:forEach var="u" items="${utility}">
+                            <label class="tu-utility-label">
+                                <input type="checkbox" name="utilityIds" value="${u.utilityId}">
+                                <div class="tu-utility-icon">
+                                    <c:choose>
+                                        <c:when test="${u.utilityName.toLowerCase().contains('trash') || u.utilityName.toLowerCase().contains('garbage')}">
+                                            <i class="bi bi-trash-fill" style="color:#22c55e;"></i>
+                                        </c:when>
+                                        <c:when test="${u.utilityName.toLowerCase().contains('laundry')}">
+                                            <i class="bi bi-bag-fill" style="color:#3b82f6;"></i>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <i class="bi bi-gear-fill" style="color:#6b7280;"></i>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </div>
-                            </div>
-                        </label>
-                    </c:forEach>
-                </div>
+                                <div class="tu-utility-info">
+                                    <div class="tu-utility-name">${u.utilityName}</div>
+                                    <div class="tu-utility-price">
+                                        <fmt:formatNumber value="${u.standardPrice}" type="number" groupingUsed="true"/>
+                                        VND/${u.unit}
+                                    </div>
+                                </div>
+                            </label>
+                        </c:forEach>
+                    </div>
 
-                <!-- Modal Footer Buttons -->
-                <div class="tu-modal-footer">
-                    <button class="tu-btn-cancel"
-                            onclick="document.getElementById('manageModal').classList.remove('active')">
-                        Cancel
-                    </button>
-                    <button class="tu-btn-confirm">
-                        <i class="bi bi-check"></i> 
-                        Confirm Selection
-                    </button>
-                </div>
+                    <!-- Modal Footer Buttons -->
+                    <div class="tu-modal-footer">
+                        <button type="button" class="tu-btn-cancel"
+                                onclick="document.getElementById('manageModal').classList.remove('active')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="tu-btn-confirm">
+                            <i class="bi bi-check"></i> Confirm Selection
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-
     </div>
 </layout:layout>
