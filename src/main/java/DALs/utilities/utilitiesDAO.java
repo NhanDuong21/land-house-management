@@ -106,7 +106,7 @@ public class utilitiesDAO extends DBContext {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
+            while (rs.next()) {
                 Utility u = new Utility();
                 u.setUtilityId(rs.getInt("room_id"));
                 u.setUtilityName(rs.getString("room_number"));
@@ -152,6 +152,21 @@ public class utilitiesDAO extends DBContext {
         return false;
     }
 
+    public boolean isUtilityUsedInBill(int id) {
+        String sql = "SELECT COUNT(*) FROM BILL_DETAIL WHERE utility_id = ?";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public List<Utility> getExtraUtility() {
         List<Utility> list = new ArrayList<>();
         String sql = "SELECT [utility_id],\n"
@@ -184,7 +199,8 @@ public class utilitiesDAO extends DBContext {
     public int getUnpaidBillIdByTenantId(int tenantId) {
         String sql = "SELECT TOP 1 b.bill_id FROM BILL b "
                 + "JOIN CONTRACT c ON b.contract_id = c.contract_id "
-                + "WHERE c.tenant_id = ? AND b.status = 'UNPAID' "
+                + "WHERE c.tenant_id = ? "
+                + "AND b.status != 'PAID' "
                 + "ORDER BY b.bill_id DESC";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
@@ -199,9 +215,9 @@ public class utilitiesDAO extends DBContext {
         return -1;
     }
 
-    public boolean addBillDetail(int billId, String itemName, String unit, BigDecimal unitPrice) {
+    public boolean addBillDetail(int billId, int utilityId, String itemName, String unit, BigDecimal unitPrice) {
         String sql = "INSERT INTO BILL_DETAIL(bill_id, utility_id, item_name, unit, unit_price, quantity, charge_type) "
-                + "VALUES(?, NULL, ?, ?, ?, 1, 'OTHER')";
+                + "VALUES(?, NULL, ?, ?, ?, 1, 'UTILITY')";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, billId);
@@ -216,7 +232,7 @@ public class utilitiesDAO extends DBContext {
     }
 
     public void removeAllOtherBillDetail(int billId) {
-        String sql = "DELETE FROM BILL_DETAIL WHERE bill_id = ? AND charge_type = 'OTHER'";
+        String sql = "DELETE FROM BILL_DETAIL WHERE bill_id = ? AND charge_type = 'UTILITY'";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, billId);
