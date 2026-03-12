@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -102,7 +103,7 @@ public class TenantUtilityController extends HttpServlet {
                 int utilityId = Integer.parseInt(idStr);
                 Utility u = dao.getUtilityById(utilityId);
                 if (u != null) {
-                    dao.addBillDetail(billId, u.getUtilityName(), u.getUnit(), u.getStandardPrice());
+                    dao.addBillDetail(billId, utilityId, idStr, idStr, BigDecimal.ONE);
                 }
             }
         }
