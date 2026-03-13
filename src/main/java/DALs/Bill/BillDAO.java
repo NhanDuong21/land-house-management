@@ -30,24 +30,24 @@ public class BillDAO extends DBContext {
         List<ManagerBillRowDTO> listBill = new ArrayList<>();
 
         String sql = "SELECT b.bill_id, r.room_number, b.bill_month, "
-                    + "       t.full_name AS tenant_name, bl.block_name, "
-                    + "       b.due_date, x.total_amount, "
-                    + "       b.status, "
-                    + "       p.status AS payment_status "
-                    + "FROM BILL b "
-                    + "JOIN CONTRACT c ON b.contract_id = c.contract_id "
-                    + "JOIN TENANT t ON c.tenant_id = t.tenant_id "
-                    + "JOIN ROOM r ON c.room_id = r.room_id "
-                    + "JOIN BLOCK bl ON r.block_id = bl.block_id "
-                    + "JOIN ( "
-                    + "   SELECT bill_id, SUM(unit_price * quantity) AS total_amount "
-                    + "   FROM BILL_DETAIL GROUP BY bill_id "
-                    + ") x ON b.bill_id = x.bill_id "
-                    + "LEFT JOIN PAYMENT p ON p.bill_id = b.bill_id "
-                    + "ORDER BY "
-                    + "CASE WHEN b.status = 'UNPAID' THEN 0 ELSE 1 END, "
-                    + "b.bill_month DESC "
-                    + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+                + "       t.full_name AS tenant_name, bl.block_name, "
+                + "       b.due_date, x.total_amount, "
+                + "       b.status, "
+                + "       p.status AS payment_status "
+                + "FROM BILL b "
+                + "JOIN CONTRACT c ON b.contract_id = c.contract_id "
+                + "JOIN TENANT t ON c.tenant_id = t.tenant_id "
+                + "JOIN ROOM r ON c.room_id = r.room_id "
+                + "JOIN BLOCK bl ON r.block_id = bl.block_id "
+                + "JOIN ( "
+                + "   SELECT bill_id, SUM(unit_price * quantity) AS total_amount "
+                + "   FROM BILL_DETAIL GROUP BY bill_id "
+                + ") x ON b.bill_id = x.bill_id "
+                + "LEFT JOIN PAYMENT p ON p.bill_id = b.bill_id "
+                + "ORDER BY "
+                + "CASE WHEN b.status = 'UNPAID' THEN 0 ELSE 1 END, "
+                + "b.bill_month DESC "
+                + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         int offset = (page - 1) * pageSize;
 
@@ -475,6 +475,43 @@ public class BillDAO extends DBContext {
             connection.setAutoCommit(true);
         }
     }
+
+  
+    public boolean updateBillMeter(int billId, java.sql.Date billMonth, java.sql.Date dueDate, int oldElectric, int newElectric, int oldWater, int newWater) {
+
+    try {
+
+        String sql = """
+            UPDATE BILL
+            SET bill_month = ?,
+                due_date = ?,
+                old_electric_number = ?,
+                new_electric_number = ?,
+                old_water_number = ?,
+                new_water_number = ?
+            WHERE bill_id = ?
+        """;
+
+        PreparedStatement ps = connection.prepareStatement(sql);
+
+        ps.setDate(1, billMonth);
+        ps.setDate(2, dueDate);
+        ps.setInt(3, oldElectric);
+        ps.setInt(4, newElectric);
+        ps.setInt(5, oldWater);
+        ps.setInt(6, newWater);
+        ps.setInt(7, billId);
+
+        int row = ps.executeUpdate();
+
+        return row > 0;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return false;
+}
 
     public boolean isBillExist(int roomId, int month, int year) throws SQLException {
 
