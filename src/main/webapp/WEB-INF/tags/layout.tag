@@ -187,11 +187,6 @@
                         <i class="bi bi-wrench-adjustable me-2"></i> Manage Maintenance
                     </a>
 
-                    <a class="rh-link <%= "m_accounts".equals(_active) ? "active" : ""%>"
-                       href="<%=ctx%>/manager/accounts">
-                        <i class="bi bi-person-gear me-2"></i> Manage Accounts
-                    </a>
-
                     <div class="rh-spacer"></div>
                     <a class="rh-dashboard manager" href="<%=ctx%>/manager/home">Manager Dashboard</a>
                     <% } %>
