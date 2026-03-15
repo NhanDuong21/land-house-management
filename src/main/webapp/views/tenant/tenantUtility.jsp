@@ -1,7 +1,7 @@
 <%-- 
     Document   : tenantUtility
     Created on : Mar 5, 2026, 1:26:29 PM
-    Author     : DELL
+    Author     : Bui Nhu Y
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -94,14 +94,20 @@
                 <p class="tu-modal-description">
                     Choose the services you want to subscribe to. These will be added to your monthly bill.
                 </p>
-
+                <c:if test="${isBillPaid}">
+                    <div style="background:#fef3c7; color:#92400e; padding:8px 12px; border-radius:6px; margin-bottom:12px; font-size:13px;">
+                        <i class="bi bi-lock-fill"></i> 
+                        Your bill is currently being processed and cannot be modified.
+                    </div>
+                </c:if>
                 <!-- Utilities Checkbox List -->
                 <form action="${pageContext.request.contextPath}/tenant/utility" method="POST">
                     <div class="tu-utilities-list">
                         <c:forEach var="u" items="${utility}">
                             <label class="tu-utility-label">
-                                <input type="checkbox" name="utilityIds" value="${u.utilityId}">
-                                <div class="tu-utility-icon">
+                                <input type="checkbox" name="utilityIds" value="${u.utilityId}"
+                                       ${subscribedIds.contains(u.utilityId) ? 'checked' : ''}
+                                       ${isBillPaid ? 'disabled' : ''}>                               <div class="tu-utility-icon">
                                     <c:choose>
                                         <c:when test="${u.utilityName.toLowerCase().contains('trash') || u.utilityName.toLowerCase().contains('garbage')}">
                                             <i class="bi bi-trash-fill" style="color:#22c55e;"></i>
