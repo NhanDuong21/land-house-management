@@ -163,6 +163,118 @@
         }
         .rp-error.is-show { display: block; }
 
+        /* ===== TOGGLE STATUS BUTTON ===== */
+        .mt-btn-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.15s, transform 0.1s;
+            user-select: none;
+        }
+        .mt-btn-toggle:hover { opacity: 0.85; transform: scale(1.03); }
+        .mt-btn-toggle:active { transform: scale(0.97); }
+        .mt-btn-toggle-active {
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+        }
+        .mt-btn-toggle-locked {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+        /* ACTIVE + có hợp đồng đang active: nút disabled, không cho lock */
+        .mt-btn-toggle-active-contract {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            background-color: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+            cursor: not-allowed;
+            opacity: 0.72;
+            user-select: none;
+        }
+
+        /* ===== TOGGLE CONFIRM DIALOG ===== */
+        .toggle-confirm-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 1200;
+            align-items: center;
+            justify-content: center;
+        }
+        .toggle-confirm-overlay.is-open { display: flex; }
+        .toggle-confirm-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px 28px 24px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+            text-align: center;
+        }
+        .toggle-confirm-icon {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+        }
+        .toggle-confirm-icon.to-lock { color: #b91c1c; }
+        .toggle-confirm-icon.to-unlock { color: #15803d; }
+        .toggle-confirm-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 6px;
+        }
+        .toggle-confirm-sub {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 22px;
+        }
+        .toggle-confirm-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .toggle-confirm-cancel {
+            padding: 9px 22px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            background: #f8fafc;
+            color: #374151;
+            font-size: 0.88rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .toggle-confirm-cancel:hover { background: #e2e8f0; }
+        .toggle-confirm-ok {
+            padding: 9px 22px;
+            border-radius: 8px;
+            border: none;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #fff;
+        }
+        .toggle-confirm-ok.btn-lock { background: #ef4444; }
+        .toggle-confirm-ok.btn-lock:hover { background: #dc2626; }
+        .toggle-confirm-ok.btn-unlock { background: #22c55e; }
+        .toggle-confirm-ok.btn-unlock:hover { background: #16a34a; }
+
         /* nút Reset Password trong modal */
         .modal-btn-reset {
             padding: 8px 16px;
@@ -256,26 +368,51 @@
                                     </c:choose>
                                 </td>
 
-                                <!-- STATUS BADGE -->
+                                <!-- STATUS:
+                                     - PENDING         → badge tĩnh (không toggle)
+                                     - ACTIVE + có contract → badge tĩnh (không được lock)
+                                     - ACTIVE + không có contract → nút toggle (có thể lock)
+                                     - LOCKED          → luôn là nút toggle (có thể activate) -->
                                 <td>
-                                    <span class="mt-status-badge
-                                        <c:choose>
-                                            <c:when test="${t.accountStatus == 'ACTIVE'}">mt-badge-active</c:when>
-                                            <c:when test="${t.accountStatus == 'LOCKED'}">mt-badge-locked</c:when>
-                                            <c:otherwise>mt-badge-pending</c:otherwise>
-                                        </c:choose>">
-                                        <c:choose>
-                                            <c:when test="${t.accountStatus == 'ACTIVE'}">
-                                                <i class="bi bi-unlock-fill"></i> ACTIVE
-                                            </c:when>
-                                            <c:when test="${t.accountStatus == 'LOCKED'}">
+                                    <c:choose>
+                                        <%-- PENDING: luôn badge tĩnh --%>
+                                        <c:when test="${t.accountStatus == 'PENDING'}">
+                                            <span class="mt-status-badge mt-badge-pending">
+                                                <i class="bi bi-hourglass-split"></i> PENDING
+                                            </span>
+                                        </c:when>
+                                        <%-- LOCKED: luôn cho toggle sang ACTIVE --%>
+                                        <c:when test="${t.accountStatus == 'LOCKED'}">
+                                            <button type="button"
+                                                    class="mt-btn-toggle mt-btn-toggle-locked js-toggle-status"
+                                                    data-tenant-id="${t.tenantId}"
+                                                    data-tenant-name="${t.fullName}"
+                                                    data-current-status="LOCKED"
+                                                    title="Click to activate this tenant">
                                                 <i class="bi bi-lock-fill"></i> LOCKED
-                                            </c:when>
-                                            <c:otherwise>
-                                                <i class="bi bi-hourglass-split"></i> ${t.accountStatus}
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </span>
+                                            </button>
+                                        </c:when>
+                                        <%-- ACTIVE + có contract: nút disabled, không cho lock --%>
+                                        <c:when test="${t.accountStatus == 'ACTIVE' and hasRoom}">
+                                            <button type="button"
+                                                    class="mt-btn-toggle-active-contract"
+                                                    disabled
+                                                    title="Tenant đang có hợp đồng active — không thể lock">
+                                                <i class="bi bi-unlock-fill"></i> ACTIVE
+                                            </button>
+                                        </c:when>
+                                        <%-- ACTIVE + không có contract: nút toggle --%>
+                                        <c:otherwise>
+                                            <button type="button"
+                                                    class="mt-btn-toggle mt-btn-toggle-active js-toggle-status"
+                                                    data-tenant-id="${t.tenantId}"
+                                                    data-tenant-name="${t.fullName}"
+                                                    data-current-status="ACTIVE"
+                                                    title="Click to lock this tenant">
+                                                <i class="bi bi-unlock-fill"></i> ACTIVE
+                                            </button>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </td>
 
                                 <!-- ACTION: Edit (active contract) hoặc View (không có) -->
@@ -476,7 +613,7 @@
 
                 <div class="modal-actions">
                     <button type="button" class="modal-btn-cancel" data-close="1">
-                        <i class="bi bi-x-circle"></i> Cancel
+                        <i class="bi bi-x-circle"></i> Cannncel
                     </button>
                     <!-- Chỉ hiện khi có active contract -->
                     <button type="button" class="modal-btn-reset" id="btnOpenResetPassword" style="display:none;">
@@ -506,6 +643,35 @@
             </div>
         </div>
     </div>
+
+    <!-- ===== TOGGLE STATUS CONFIRM DIALOG ===== -->
+    <div class="toggle-confirm-overlay" id="toggleStatusDialog" aria-hidden="true">
+        <div class="toggle-confirm-box" role="dialog" aria-modal="true">
+            <div class="toggle-confirm-icon" id="toggleConfirmIcon">
+                <i class="bi bi-lock-fill"></i>
+            </div>
+            <div class="toggle-confirm-title" id="toggleConfirmTitle">Lock Tenant?</div>
+            <div class="toggle-confirm-sub" id="toggleConfirmSub">
+                Are you sure you want to change the status of this tenant?
+            </div>
+            <div class="toggle-confirm-actions">
+                <button type="button" class="toggle-confirm-cancel" id="btnCancelToggle">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </button>
+                <button type="button" class="toggle-confirm-ok" id="btnConfirmToggle">
+                    <i class="bi bi-check2-circle"></i> Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- hidden form để submit toggle -->
+    <form id="toggleStatusForm" method="post" action="${ctx}/manager/tenant/edit" style="display:none;">
+        <input type="hidden" name="action"   value="toggleStatus"/>
+        <input type="hidden" name="tenantId" id="toggleTenantId"/>
+        <input type="hidden" name="page"     value="${currentPage}"/>
+        <input type="hidden" name="keyword"  value="${keyword}"/>
+    </form>
 
     <!-- ===== RESET PASSWORD MODAL ===== -->
     <div class="rp-modal-overlay" id="resetPasswordModal">
@@ -677,6 +843,70 @@
             document.body.appendChild(form);
             form.submit();
         });
+        // ===== TOGGLE STATUS =====
+        (function () {
+            let pendingTenantId = null;
+
+            document.querySelectorAll('.js-toggle-status').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tenantId   = btn.dataset.tenantId;
+                    const tenantName = btn.dataset.tenantName || ('Tenant #' + tenantId);
+                    const current    = btn.dataset.currentStatus; // 'ACTIVE' | 'LOCKED'
+                    const toLock     = current === 'ACTIVE';
+
+                    pendingTenantId = tenantId;
+
+                    // Cập nhật dialog
+                    const icon  = document.getElementById('toggleConfirmIcon');
+                    const title = document.getElementById('toggleConfirmTitle');
+                    const sub   = document.getElementById('toggleConfirmSub');
+                    const okBtn = document.getElementById('btnConfirmToggle');
+
+                    if (toLock) {
+                        icon.innerHTML  = '<i class="bi bi-lock-fill"></i>';
+                        icon.className  = 'toggle-confirm-icon to-lock';
+                        title.textContent = 'Lock Tenant?';
+                        sub.textContent   = 'Tenant "' + tenantName + '" will be locked and cannot log in.';
+                        okBtn.className   = 'toggle-confirm-ok btn-lock';
+                        okBtn.innerHTML   = '<i class="bi bi-lock-fill"></i> Lock';
+                    } else {
+                        icon.innerHTML  = '<i class="bi bi-unlock-fill"></i>';
+                        icon.className  = 'toggle-confirm-icon to-unlock';
+                        title.textContent = 'Activate Tenant?';
+                        sub.textContent   = 'Tenant "' + tenantName + '" will be activated.';
+                        okBtn.className   = 'toggle-confirm-ok btn-unlock';
+                        okBtn.innerHTML   = '<i class="bi bi-unlock-fill"></i> Activate';
+                    }
+
+                    const dialog = document.getElementById('toggleStatusDialog');
+                    dialog.classList.add('is-open');
+                    dialog.setAttribute('aria-hidden', 'false');
+                });
+            });
+
+            // Cancel
+            document.getElementById('btnCancelToggle').addEventListener('click', () => {
+                document.getElementById('toggleStatusDialog').classList.remove('is-open');
+                pendingTenantId = null;
+            });
+
+            // Confirm → submit hidden form
+            document.getElementById('btnConfirmToggle').addEventListener('click', () => {
+                if (!pendingTenantId) return;
+                document.getElementById('toggleTenantId').value = pendingTenantId;
+                document.getElementById('toggleStatusForm').submit();
+            });
+        })();
+
+document.querySelectorAll('[data-close="1"]').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const modal = document.getElementById('editModal');
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+    });
+});
     </script>
 
 </layout:layout>

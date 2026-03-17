@@ -1,6 +1,7 @@
 package Controllers.manager;
 
 import Models.entity.Tenant;
+import Models.common.ServiceResult;
 import Services.tenant.TenantService;
 import Utils.security.HashUtil;
 import java.io.IOException;
@@ -53,6 +54,12 @@ public class ManagerEditAndDeleteTenantController extends HttpServlet {
             return;
         }
 
+        // ── Nhánh Toggle Status ────────────────────────────────────────────────
+        if ("toggleStatus".equals(action)) {
+            handleToggleStatus(request, response, page, keyword);
+            return;
+        }
+
         // ── Nhánh Edit Tenant (mặc định) ──────────────────────────────────────
         int id = Integer.parseInt(request.getParameter("tenantId"));
         TenantService service = new TenantService();
@@ -102,6 +109,54 @@ public class ManagerEditAndDeleteTenantController extends HttpServlet {
 
         // Redirect về đúng trang sau khi edit thành công
         StringBuilder redirectUrl = new StringBuilder(request.getContextPath() + "/manager/tenants");
+        appendPageKeyword(redirectUrl, page, keyword);
+        response.sendRedirect(redirectUrl.toString());
+    }
+
+    /**
+     * Xử lý toggle status cho tenant.
+     * - LOCKED → ACTIVE: luôn cho phép, không cần điều kiện.
+     * - ACTIVE → LOCKED: chỉ cho phép khi không có hợp đồng active.
+     * - PENDING: không cho toggle.
+     */
+    private void handleToggleStatus(HttpServletRequest request, HttpServletResponse response,
+                                    String page, String keyword) throws IOException {
+
+        int tenantId = Integer.parseInt(request.getParameter("tenantId"));
+        TenantService service = new TenantService();
+
+        ServiceResult result = service.toggleStatus(tenantId);
+        String resultMsg = result.getMessage(); // "ACTIVE" | "LOCKED" = success; error codes = fail
+
+        String errorMsg = null;
+        switch (resultMsg) {
+            case "HAS_ACTIVE_CONTRACT":
+                errorMsg = "Không thể khóa tenant đang có hợp đồng active.";
+                break;
+            case "CANNOT_TOGGLE_PENDING":
+                errorMsg = "Không thể thay đổi trạng thái tenant PENDING.";
+                break;
+            case "NOT_FOUND":
+                errorMsg = "Không tìm thấy tenant.";
+                break;
+            case "UPDATE_FAILED":
+                errorMsg = "Thay đổi trạng thái thất bại. Vui lòng thử lại.";
+                break;
+            default:
+                // "ACTIVE" hoặc "LOCKED" → thành công
+                break;
+        }
+
+        if (errorMsg != null) {
+            StringBuilder redirectUrl = new StringBuilder(
+                    request.getContextPath() + "/manager/tenants?error="
+                    + java.net.URLEncoder.encode(errorMsg, "UTF-8"));
+            appendPageKeyword(redirectUrl, page, keyword);
+            response.sendRedirect(redirectUrl.toString());
+            return;
+        }
+
+        StringBuilder redirectUrl = new StringBuilder(request.getContextPath() + "/manager/tenants?success=1");
         appendPageKeyword(redirectUrl, page, keyword);
         response.sendRedirect(redirectUrl.toString());
     }

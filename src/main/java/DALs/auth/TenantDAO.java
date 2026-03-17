@@ -470,7 +470,8 @@ public class TenantDAO extends DBContext {
      */
     @SuppressWarnings("CallToPrintStackTrace")
     public void syncAllTenantStatuses() {
-        // Cập nhật ACTIVE cho tenant có ít nhất 1 contract đang active
+        // Chỉ cập nhật ACTIVE cho tenant có ít nhất 1 contract đang active.
+        // KHÔNG tự động lock lại — để manager có thể manually activate tenant LOCKED.
         String sqlActive = """
             UPDATE TENANT
             SET account_status = 'ACTIVE', updated_at = SYSDATETIME()
@@ -482,22 +483,8 @@ public class TenantDAO extends DBContext {
               )
         """;
 
-        // Cập nhật LOCKED cho tenant không có contract active nào
-        String sqlLocked = """
-            UPDATE TENANT
-            SET account_status = 'LOCKED', updated_at = SYSDATETIME()
-            WHERE account_status <> 'PENDING'
-              AND NOT EXISTS (
-                  SELECT 1 FROM CONTRACT
-                  WHERE CONTRACT.tenant_id = TENANT.tenant_id
-                    AND CONTRACT.status NOT IN ('ENDED', 'CANCELLED')
-              )
-        """;
-
-        try (PreparedStatement psActive = connection.prepareStatement(sqlActive);
-             PreparedStatement psLocked = connection.prepareStatement(sqlLocked)) {
+        try (PreparedStatement psActive = connection.prepareStatement(sqlActive)) {
             psActive.executeUpdate();
-            psLocked.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
