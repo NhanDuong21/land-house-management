@@ -476,7 +476,7 @@
 
                 <div class="modal-actions">
                     <button type="button" class="modal-btn-cancel" data-close="1">
-                        <i class="bi bi-x-circle"></i> Cancel
+                        <i class="bi bi-x-circle"></i> Cannncel
                     </button>
                     <!-- Chỉ hiện khi có active contract -->
                     <button type="button" class="modal-btn-reset" id="btnOpenResetPassword" style="display:none;">
@@ -677,6 +677,16 @@
             document.body.appendChild(form);
             form.submit();
         });
+        // ===== ĐÓNG MODAL (Cancel + X) =====
+document.querySelectorAll('[data-close="1"]').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const modal = document.getElementById('editModal');
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+    });
+});
     </script>
 
 </layout:layout>
