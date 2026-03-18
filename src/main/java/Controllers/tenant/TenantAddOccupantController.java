@@ -1,10 +1,15 @@
 package Controllers.tenant;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
+import java.util.Set;
 
 import DALs.contract.ContractDAO;
 import DALs.contract.OccupantDAO;
@@ -21,6 +26,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 
+/**
+ *
+ * @author Duong Thien Nhan - CE190741
+ */
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024, // 1MB
         maxFileSize = 10 * 1024 * 1024, // 10MB
@@ -32,6 +41,8 @@ public class TenantAddOccupantController extends HttpServlet {
     private final OccupantDAO occupantDAO = new OccupantDAO();
     private final OccupantDocumentDAO occupantDocumentDAO = new OccupantDocumentDAO();
 
+    private static final Set<String> ALLOWED_EXTENSIONS = Set.of(".jpg", ".jpeg", ".png", ".webp");
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -40,12 +51,9 @@ public class TenantAddOccupantController extends HttpServlet {
     }
 
     @Override
+    @SuppressWarnings("CallToPrintStackTrace")
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        System.err.println("=== TenantAddOccupantController.doPost ENTERED ===");
-        System.err.println("requestURI = " + request.getRequestURI());
-        System.err.println("contentType = " + request.getContentType());
 
         HttpSession session = request.getSession(false);
         AuthResult auth = (session == null) ? null : (AuthResult) session.getAttribute("auth");
@@ -55,9 +63,7 @@ public class TenantAddOccupantController extends HttpServlet {
             return;
         }
 
-        // Ưu tiên lấy từ query string, fallback sang form field
         String contractIdRaw = trimToNull(request.getParameter("contractId"));
-        System.err.println("contractIdRaw = [" + contractIdRaw + "]");
 
         if (contractIdRaw == null) {
             response.sendRedirect(request.getContextPath() + "/tenant/contract?err=missingContractId");
@@ -74,17 +80,12 @@ public class TenantAddOccupantController extends HttpServlet {
 
         int primaryTenantId = auth.getTenant().getTenantId();
 
-        System.err.println("primaryTenantId = " + primaryTenantId);
-        System.err.println("contractId = " + contractId);
-
         Contract contract = null;
         try {
             contract = contractDAO.findDetailForTenant(contractId, primaryTenantId);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.err.println("contract found = " + (contract != null));
 
         if (contract == null) {
             response.sendRedirect(request.getContextPath()
@@ -98,14 +99,16 @@ public class TenantAddOccupantController extends HttpServlet {
             return;
         }
 
+        Path runtimeDir = null;
+        Path sourceDir = null;
+        String frontFile = null;
+        String backFile = null;
+
         try (Connection conn = new DBContext().getConnection()) {
             conn.setAutoCommit(false);
 
             int currentOccupants = occupantDAO.countPendingOrActiveByContractId(conn, contractId);
             Integer maxTenantsObj = contract.getMaxTenants();
-
-            System.err.println("currentOccupants = " + currentOccupants);
-            System.err.println("maxTenants = " + maxTenantsObj);
 
             if (maxTenantsObj == null || maxTenantsObj <= 0) {
                 conn.rollback();
@@ -114,10 +117,7 @@ public class TenantAddOccupantController extends HttpServlet {
                 return;
             }
 
-            /*
-             * Nếu maxTenants là tổng số người tối đa trong phòng, bao gồm tenant chính:
-             * totalAfterAdd = 1 tenant chính + currentOccupants + 1 occupant mới
-             */
+            // total room occupants = primary tenant + current occupants + new occupant
             int totalAfterAdd = 1 + currentOccupants + 1;
             if (totalAfterAdd > maxTenantsObj) {
                 conn.rollback();
@@ -138,7 +138,6 @@ public class TenantAddOccupantController extends HttpServlet {
             o.setStatus("PENDING");
 
             int occupantId = occupantDAO.insertOccupant(conn, o);
-            System.err.println("occupantId = " + occupantId);
 
             if (occupantId <= 0) {
                 conn.rollback();
@@ -147,23 +146,8 @@ public class TenantAddOccupantController extends HttpServlet {
                 return;
             }
 
-            String uploadPath = resolveOccupantUploadPath();
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists() && !uploadDir.mkdirs()) {
-                conn.rollback();
-                response.sendRedirect(request.getContextPath()
-                        + "/tenant/contract/detail?id=" + contractId + "&err=document");
-                return;
-            }
-
             Part front = request.getPart("cccdFront");
             Part back = request.getPart("cccdBack");
-
-            System.err.println("front part null = " + (front == null));
-            System.err.println("back part null = " + (back == null));
-            System.err.println("front size = " + (front == null ? -1 : front.getSize()));
-            System.err.println("back size = " + (back == null ? -1 : back.getSize()));
-            System.err.println("uploadPath = " + uploadPath);
 
             if (front == null || front.getSize() <= 0 || back == null || back.getSize() <= 0) {
                 conn.rollback();
@@ -175,12 +159,30 @@ public class TenantAddOccupantController extends HttpServlet {
             String frontExt = getFileExtension(front);
             String backExt = getFileExtension(back);
 
-            long now = System.currentTimeMillis();
-            String frontFile = now + "_occupant_" + occupantId + "_front" + frontExt;
-            String backFile = now + "_occupant_" + occupantId + "_back" + backExt;
+            validateImageExtension(frontExt, "CCCD mặt trước");
+            validateImageExtension(backExt, "CCCD mặt sau");
 
-            front.write(new File(uploadDir, frontFile).getAbsolutePath());
-            back.write(new File(uploadDir, backFile).getAbsolutePath());
+            String runtimeUploadPath = getServletContext().getRealPath("/assets/images/occupant-docs/");
+            if (runtimeUploadPath == null || runtimeUploadPath.isBlank()) {
+                throw new IllegalStateException("Không lấy được runtime upload path từ getRealPath().");
+            }
+            runtimeDir = Paths.get(runtimeUploadPath);
+
+            String sourceUploadPath = getServletContext().getInitParameter("occupantDocsUploadDir");
+            if (sourceUploadPath == null || sourceUploadPath.isBlank()) {
+                throw new IllegalStateException("Thiếu context-param occupantDocsUploadDir trong web.xml.");
+            }
+            sourceDir = Paths.get(sourceUploadPath);
+
+            Files.createDirectories(runtimeDir);
+            Files.createDirectories(sourceDir);
+
+            long now = System.currentTimeMillis();
+            frontFile = now + "_occupant_" + occupantId + "_front" + frontExt;
+            backFile = now + "_occupant_" + occupantId + "_back" + backExt;
+
+            savePartToBothLocations(front, frontFile, runtimeDir, sourceDir);
+            savePartToBothLocations(back, backFile, runtimeDir, sourceDir);
 
             String frontUrl = "/assets/images/occupant-docs/" + frontFile;
             String backUrl = "/assets/images/occupant-docs/" + backFile;
@@ -188,11 +190,10 @@ public class TenantAddOccupantController extends HttpServlet {
             int frontDocId = occupantDocumentDAO.insertDocument(conn, occupantId, "CCCD_FRONT", frontUrl);
             int backDocId = occupantDocumentDAO.insertDocument(conn, occupantId, "CCCD_BACK", backUrl);
 
-            System.err.println("frontDocId = " + frontDocId);
-            System.err.println("backDocId = " + backDocId);
-
             if (frontDocId <= 0 || backDocId <= 0) {
                 conn.rollback();
+                rollbackUploadedFiles(runtimeDir, sourceDir, frontFile, backFile);
+
                 response.sendRedirect(request.getContextPath()
                         + "/tenant/contract/detail?id=" + contractId + "&err=document");
                 return;
@@ -205,6 +206,8 @@ public class TenantAddOccupantController extends HttpServlet {
 
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
+            rollbackUploadedFiles(runtimeDir, sourceDir, frontFile, backFile);
+
             String msg = URLEncoder.encode(
                     e.getMessage() == null ? "Invalid input" : e.getMessage(),
                     StandardCharsets.UTF_8
@@ -214,12 +217,44 @@ public class TenantAddOccupantController extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
+            rollbackUploadedFiles(runtimeDir, sourceDir, frontFile, backFile);
+
             String msg = URLEncoder.encode(
                     e.getMessage() == null ? "unknown" : e.getMessage(),
                     StandardCharsets.UTF_8
             );
             response.sendRedirect(request.getContextPath()
                     + "/tenant/contract/detail?id=" + contractId + "&err=1&msg=" + msg);
+        }
+    }
+
+    private void savePartToBothLocations(Part part, String fileName, Path runtimeDir, Path sourceDir) throws IOException {
+        Path runtimeFile = runtimeDir.resolve(fileName);
+        Path sourceFile = sourceDir.resolve(fileName);
+
+        try (InputStream in = part.getInputStream()) {
+            Files.copy(in, runtimeFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        try (InputStream in = part.getInputStream()) {
+            Files.copy(in, sourceFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    private void rollbackUploadedFiles(Path runtimeDir, Path sourceDir, String frontFile, String backFile) {
+        deleteIfExists(runtimeDir, frontFile);
+        deleteIfExists(runtimeDir, backFile);
+        deleteIfExists(sourceDir, frontFile);
+        deleteIfExists(sourceDir, backFile);
+    }
+
+    private void deleteIfExists(Path dir, String fileName) {
+        if (dir == null || fileName == null || fileName.isBlank()) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(dir.resolve(fileName));
+        } catch (IOException ignored) {
         }
     }
 
@@ -249,39 +284,23 @@ public class TenantAddOccupantController extends HttpServlet {
         throw new IllegalArgumentException("Invalid gender");
     }
 
+    private void validateImageExtension(String ext, String fieldName) {
+        if (!ALLOWED_EXTENSIONS.contains(ext)) {
+            throw new IllegalArgumentException(fieldName + " chỉ chấp nhận file ảnh: .jpg, .jpeg, .png, .webp");
+        }
+    }
+
     private String getFileExtension(Part part) {
         String submitted = part.getSubmittedFileName();
         if (submitted == null || submitted.isBlank()) {
             return ".jpg";
         }
+
         int dot = submitted.lastIndexOf('.');
         if (dot < 0) {
             return ".jpg";
         }
-        String ext = submitted.substring(dot).toLowerCase();
-        switch (ext) {
-            case ".jpg":
-            case ".jpeg":
-            case ".png":
-            case ".webp":
-                return ext;
-            default:
-                return ".jpg";
-        }
-    }
 
-    private String resolveOccupantUploadPath() {
-        String realPath = getServletContext().getRealPath("/assets/images/occupant-docs/");
-        if (realPath != null && !realPath.isBlank()) {
-            return realPath;
-        }
-
-        return System.getProperty("user.dir")
-                + File.separator + "src"
-                + File.separator + "main"
-                + File.separator + "webapp"
-                + File.separator + "assets"
-                + File.separator + "images"
-                + File.separator + "occupant-docs";
+        return submitted.substring(dot).toLowerCase();
     }
 }
