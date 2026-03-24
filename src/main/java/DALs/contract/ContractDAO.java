@@ -899,6 +899,7 @@ FROM     CONTRACT INNER JOIN
         return true;
     }
 
+    @SuppressWarnings("CallToPrintStackTrace")
     public int ActiveContracts() {
 
         String sql = """

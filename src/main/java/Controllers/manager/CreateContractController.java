@@ -90,8 +90,8 @@ public class CreateContractController extends HttpServlet {
                 throw new IllegalArgumentException("Deposit must be >= 0.");
             }
 
-            if (endDate.isBefore(startDate)) {
-                throw new IllegalArgumentException("End date must be after or equal to start date.");
+            if (!endDate.equals(startDate.plusYears(1))) {
+                throw new IllegalArgumentException("Hợp đồng phải có thời hạn đúng 1 năm kể từ ngày bắt đầu.");
             }
 
             Part cccdFront = request.getPart("cccdFront");

@@ -11,7 +11,6 @@
 
     <div class="mcc-wrap">
 
-        <!-- Page header -->
         <div class="mcc-pagehead">
             <div class="mcc-pagehead-left">
                 <div class="mcc-title">
@@ -19,7 +18,7 @@
                     Create Contract (Existing Tenant)
                 </div>
                 <div class="mcc-subtitle">
-                    Select a tenant account &amp; contract terms to create a PENDING contract.
+                    Select a tenant account, upload CCCD, and create a PENDING contract.
                 </div>
 
                 <div class="mcc-breadcrumb">
@@ -45,7 +44,6 @@
             </div>
         </div>
 
-        <!-- Card -->
         <div class="mcc-card">
 
             <c:if test="${not empty param.error}">
@@ -58,9 +56,11 @@
                 </div>
             </c:if>
 
-            <form method="post"
+            <form id="createExistingContractForm"
+                  method="post"
                   action="${pageContext.request.contextPath}/manager/contracts/create-existing"
-                  class="mcc-form">
+                  class="mcc-form"
+                  enctype="multipart/form-data">
 
                 <!-- ROOM -->
                 <div class="mcc-section">
@@ -79,9 +79,9 @@
                         </label>
 
                         <div class="mcc-control">
-                            <select name="roomId" class="form-control mcc-control-input" required>
+                            <select id="roomId" name="roomId" class="form-control mcc-control-input" required>
                                 <c:forEach var="r" items="${rooms}">
-                                    <option value="${r.roomId}">
+                                    <option value="${r.roomId}" data-price="${r.price}">
                                         ${r.roomNumber} - ${r.price}
                                     </option>
                                 </c:forEach>
@@ -112,7 +112,7 @@
                         </label>
 
                         <div class="mcc-control">
-                            <select name="tenantId" class="form-control mcc-control-input" required>
+                            <select id="tenantId" name="tenantId" class="form-control mcc-control-input" required>
                                 <c:forEach var="t" items="${tenants}">
                                     <option value="${t.tenantId}">
                                         ${t.fullName} - ${t.email} - ${t.phoneNumber}
@@ -124,6 +124,49 @@
                         <div class="mcc-help">
                             <i class="bi bi-lightning-charge"></i>
                             A new PENDING contract will be created for this tenant (no OTP flow).
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CCCD -->
+                <div class="mcc-section">
+                    <div class="mcc-section-head">
+                        <div class="mcc-section-title">
+                            <i class="bi bi-image"></i>
+                            Tenant Documents
+                        </div>
+                        <div class="mcc-section-desc">Upload CCCD front and back for this existing tenant.</div>
+                    </div>
+
+                    <div class="mcc-grid-2">
+                        <div class="mcc-field">
+                            <label class="mcc-label">
+                                <i class="bi bi-image"></i>
+                                CCCD Front
+                            </label>
+                            <div class="mcc-control">
+                                <input type="file"
+                                       id="cccdFront"
+                                       name="cccdFront"
+                                       accept=".jpg,.jpeg,.png,.webp,image/*"
+                                       class="form-control mcc-control-input"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="mcc-field">
+                            <label class="mcc-label">
+                                <i class="bi bi-image"></i>
+                                CCCD Back
+                            </label>
+                            <div class="mcc-control">
+                                <input type="file"
+                                       id="cccdBack"
+                                       name="cccdBack"
+                                       accept=".jpg,.jpeg,.png,.webp,image/*"
+                                       class="form-control mcc-control-input"
+                                       required>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -145,8 +188,12 @@
                                 Monthly Rent
                             </label>
                             <div class="mcc-control">
-                                <input type="number" name="rent" class="form-control mcc-control-input"
-                                       required min="0"
+                                <input type="number"
+                                       id="rent"
+                                       name="rent"
+                                       class="form-control mcc-control-input"
+                                       required
+                                       min="0"
                                        placeholder="e.g. 3500000">
                             </div>
                         </div>
@@ -157,7 +204,10 @@
                                 Deposit
                             </label>
                             <div class="mcc-control">
-                                <input type="number" name="deposit" class="form-control mcc-control-input"
+                                <input type="number"
+                                       id="deposit"
+                                       name="deposit"
+                                       class="form-control mcc-control-input"
                                        required min="0"
                                        placeholder="e.g. 7000000">
                             </div>
@@ -171,7 +221,11 @@
                                 Start Date
                             </label>
                             <div class="mcc-control">
-                                <input type="date" name="startDate" class="form-control mcc-control-input" required>
+                                <input type="date"
+                                       id="startDate"
+                                       name="startDate"
+                                       class="form-control mcc-control-input"
+                                       required>
                             </div>
                         </div>
 
@@ -181,14 +235,19 @@
                                 End Date
                             </label>
                             <div class="mcc-control">
-                                <input type="date" name="endDate" class="form-control mcc-control-input" required>
+                                <input type="date"
+                                       id="endDate"
+                                       name="endDate"
+                                       class="form-control mcc-control-input"
+                                       required
+                                       readonly>
                             </div>
                         </div>
                     </div>
 
                     <div class="mcc-help mcc-help-compact">
                         <i class="bi bi-info-circle"></i>
-                        This flow creates a PENDING contract directly (no OTP confirmation required).
+                        Contract period is fixed to 1 year from the selected start date. Rent is filled from room price. Deposit defaults to 2 months rent.
                     </div>
                 </div>
 
@@ -209,5 +268,7 @@
             </form>
         </div>
     </div>
+
+    <script src="${pageContext.request.contextPath}/assets/js/pages/createExistingContract.js"></script>
 
 </layout:layout>

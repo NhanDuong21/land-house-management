@@ -1,0 +1,306 @@
+.recruit-page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  color: #0f172a;
+}
+
+.recruit-hero {
+  border-radius: 28px;
+  padding: 42px 36px;
+  color: #fff;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(37, 99, 235, 0.82)),
+    url("../../images/banners/banner1.jpg") center/cover no-repeat;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+}
+
+.recruit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.recruit-hero h1 {
+  margin: 0 0 12px;
+  font-size: 42px;
+  font-weight: 800;
+}
+
+.recruit-hero p {
+  margin: 0;
+  max-width: 760px;
+  font-size: 16px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.recruit-section {
+  background: #fff;
+  border-radius: 24px;
+  padding: 32px 28px;
+  border: 1px solid #eef2f7;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+}
+
+.recruit-section--soft {
+  background: linear-gradient(180deg, #f8fbff 0%, #f4f7fb 100%);
+}
+
+.recruit-section__heading {
+  margin-bottom: 24px;
+}
+
+.recruit-tag {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.recruit-section__heading h2 {
+  margin: 0 0 10px;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.recruit-section__heading p {
+  margin: 0;
+  max-width: 850px;
+  color: #475569;
+  line-height: 1.75;
+  font-size: 15px;
+}
+
+.recruit-benefit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.recruit-benefit-card {
+  padding: 24px 22px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid #e8eef5;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+}
+
+.recruit-benefit-card i {
+  font-size: 28px;
+  color: #2563eb;
+  display: inline-block;
+  margin-bottom: 14px;
+}
+
+.recruit-benefit-card h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.recruit-benefit-card p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.7;
+  font-size: 14px;
+}
+
+.job-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.job-card {
+  padding: 24px 22px;
+  border-radius: 22px;
+  background: #fff;
+  border: 1px solid #e8eef5;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+}
+
+.job-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.job-card h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.job-card p {
+  margin: 0 0 14px;
+  color: #475569;
+  line-height: 1.75;
+  font-size: 14px;
+}
+
+.job-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #334155;
+}
+
+.job-card li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.job-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.requirement-list {
+  display: grid;
+  gap: 14px;
+}
+
+.requirement-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 1px solid #e8eef5;
+}
+
+.requirement-item i {
+  color: #16a34a;
+  font-size: 18px;
+}
+
+.requirement-item span {
+  color: #334155;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.recruit-section--cta {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.recruit-cta-box {
+  padding: 34px 30px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #1d4ed8 0%, #0f172a 100%);
+  color: #fff;
+}
+
+.recruit-cta-box h2 {
+  margin: 0 0 12px;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.recruit-cta-box p {
+  margin: 0;
+  max-width: 900px;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+.recruit-cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.recruit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: 0.25s ease;
+}
+
+.recruit-btn--light {
+  background: #fff;
+  color: #0f172a;
+}
+
+.recruit-btn--dark {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.recruit-btn:hover {
+  transform: translateY(-2px);
+}
+
+.recruit-btn--light:hover {
+  color: #0f172a;
+}
+
+.recruit-btn--dark:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 1200px) {
+  .recruit-benefit-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .job-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .recruit-benefit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recruit-hero,
+  .recruit-section,
+  .recruit-cta-box {
+    padding: 24px 20px;
+  }
+
+  .recruit-hero h1 {
+    font-size: 32px;
+  }
+
+  .recruit-section__heading h2,
+  .recruit-cta-box h2 {
+    font-size: 24px;
+  }
+}

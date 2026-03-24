@@ -3,7 +3,6 @@ package Controllers.manager;
 import java.io.IOException;
 import java.util.List;
 
-import DALs.contract.ContractDAO;
 import Models.dto.ManagerContractRowDTO;
 import Services.contract.ContractService;
 import jakarta.servlet.ServletException;

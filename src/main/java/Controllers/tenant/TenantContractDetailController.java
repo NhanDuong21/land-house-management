@@ -3,6 +3,7 @@ package Controllers.tenant;
 import java.io.IOException;
 import java.util.List;
 
+import DALs.auth.TenantDocumentDAO;
 import DALs.contract.ContractDAO;
 import DALs.contract.OccupantDAO;
 import DALs.payment.PaymentDAO;
@@ -21,6 +22,7 @@ public class TenantContractDetailController extends HttpServlet {
     private final ContractDAO contractDAO = new ContractDAO();
     private final OccupantDAO occupantDAO = new OccupantDAO();
     private final PaymentDAO paymentDAO = new PaymentDAO();
+    private final TenantDocumentDAO tenantDocumentDAO = new TenantDocumentDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -59,9 +61,14 @@ public class TenantContractDetailController extends HttpServlet {
         Payment latestPay = paymentDAO.findLatestBankPaymentForContract(contractId);
         List<Occupant> occupants = occupantDAO.findByContractId(contractId);
 
+        String tenantCccdFront = tenantDocumentDAO.findActiveFileUrlByType(c.getTenantId(), "CCCD_FRONT");
+        String tenantCccdBack = tenantDocumentDAO.findActiveFileUrlByType(c.getTenantId(), "CCCD_BACK");
+
         request.setAttribute("contract", c);
         request.setAttribute("latestPayment", latestPay);
         request.setAttribute("occupants", occupants);
+        request.setAttribute("tenantCccdFront", tenantCccdFront);
+        request.setAttribute("tenantCccdBack", tenantCccdBack);
 
         request.getRequestDispatcher("/views/tenant/contractDetail.jsp").forward(request, response);
     }

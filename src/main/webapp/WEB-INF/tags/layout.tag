@@ -235,13 +235,13 @@
                                href="<%=ctx%>/home">HOME</a>
 
                             <a class="rh-topnav-link <%= "about".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/home">ABOUT US</a>
+                               href="<%=ctx%>/about">ABOUT US</a>
 
                             <a class="rh-topnav-link <%= "news".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/home">NEWS</a>
+                               href="<%=ctx%>/news">NEWS</a>
 
                             <a class="rh-topnav-link <%= "recruit".equals(_active) ? "active" : ""%>"
-                               href="<%=ctx%>/home">RECRUITMENT</a>
+                               href="<%=ctx%>/recruitment">RECRUITMENT</a>
 
                             <a class="rh-topnav-link <%= "contact".equals(_active) ? "active" : ""%>"
                                href="<%=ctx%>/contact">CONTACT</a>
@@ -277,7 +277,7 @@
                     <span>2026 © SWP391 - Group 4</span>
                     <span class="rh-dot">•</span>
                     <a href="https://github.com/NhanDuong21/land-house-management"
-                       target="_blank">LandHouseManagement</a>
+                       target="_blank">RentHouse Management</a>
                 </footer>
 
             </main>
