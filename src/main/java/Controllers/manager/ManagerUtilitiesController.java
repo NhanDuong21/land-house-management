@@ -117,7 +117,7 @@ public class ManagerUtilitiesController extends HttpServlet {
                 request.setAttribute("utilities", listSub);
                 request.setAttribute("subscribers", subscribers);
                 request.setAttribute("utilityName", nameSub);
-                request.getRequestDispatcher("/views/manager/utilities.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/manager/utilitySubscribers.jsp").forward(request, response);
                 break;
 
         }
