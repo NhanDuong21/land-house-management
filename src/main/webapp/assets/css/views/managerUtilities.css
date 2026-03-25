@@ -1,3 +1,6 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 .mb-container {
     padding: 40px 60px;
     font-family: 'Segoe UI', sans-serif;
@@ -10,7 +13,12 @@
     align-items: center;
     margin-bottom: 24px;
 }
-
+.mb-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 12px;
+}
 .mb-header h2 {
     margin: 0;
     font-size: 30px;
@@ -84,7 +92,7 @@
     text-align: left;
     padding: 14px 4px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 18px;
     border-bottom: 1px solid #e5e7eb;
 }
 .mb-table td {

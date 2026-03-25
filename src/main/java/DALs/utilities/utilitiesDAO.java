@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class utilitiesDAO extends DBContext {
 
-    public List<Utility> getManagerUntilities() {
+    public List<Utility> getManagerUtilities() {
         List<Utility> listUntilities = new ArrayList<>();
         String sql = "SELECT utility_id, utility_name, unit, standard_price, is_active, status, created_at, updated_at\n"
                 + "FROM     UTILITY\n"
@@ -95,13 +95,15 @@ public class utilitiesDAO extends DBContext {
         String sql = "SELECT DISTINCT \n"
                 + "    r.room_id,\n"
                 + "    r.room_number,\n"
-                + "    t.full_name\n"
+                + "    t.full_name,\n"
+                + "	ut.usage_date\n"
                 + "FROM BILL_DETAIL bd\n"
                 + "JOIN BILL b ON bd.bill_id = b.bill_id\n"
                 + "JOIN CONTRACT c ON b.contract_id = c.contract_id\n"
                 + "JOIN ROOM r ON c.room_id = r.room_id\n"
                 + "JOIN TENANT t ON c.tenant_id = t.tenant_id\n"
-                + "WHERE bd.utility_id = ?";
+                + "JOIN UTILITY_USAGE ut ON c.contract_id = ut.contract_id\n"
+                + "WHERE bd.utility_id = ?;";
         try {
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setInt(1, id);
@@ -111,6 +113,7 @@ public class utilitiesDAO extends DBContext {
                 u.setUtilityId(rs.getInt("room_id"));
                 u.setUtilityName(rs.getString("room_number"));
                 u.setUnit(rs.getString("full_name"));
+                u.setStatus(rs.getString("usage_date"));
                 list.add(u);
             }
         } catch (Exception e) {
@@ -152,6 +155,7 @@ public class utilitiesDAO extends DBContext {
         return false;
     }
 
+    //delete
     public boolean isUtilityUsedInBill(int id) {
         String sql = "SELECT COUNT(*) FROM BILL_DETAIL WHERE utility_id = ?";
         try {
@@ -194,5 +198,21 @@ public class utilitiesDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+
+// tránh bị trùng tên utility name
+    public boolean isUtilityNameExists(String name) {
+        String sql = "SELECT COUNT(*) FROM UTILITY WHERE LOWER(utility_name) = LOWER(?)";
+        try {
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

@@ -9,7 +9,8 @@
 
 <layout:layout title="Contract Detail"
                active="m_contracts"
-               cssFile="${pageContext.request.contextPath}/assets/css/views/contractDetail.css?v=3">
+               cssFile="${pageContext.request.contextPath}/assets/css/views/contractDetail.css?v=4"
+               jsFile="${pageContext.request.contextPath}/assets/js/pages/viewCCCD.js">
 
     <div class="tcd-container">
 
@@ -336,9 +337,12 @@
                         <span class="tcd-value">
                             <c:choose>
                                 <c:when test="${not empty tenantCccdFront}">
-                                    <a href="${pageContext.request.contextPath}${tenantCccdFront}" target="_blank">
+                                    <button type="button"
+                                            class="tcd-link-btn js-image-popup"
+                                            data-image-url="${pageContext.request.contextPath}${tenantCccdFront}"
+                                            data-image-title="Primary CCCD Front">
                                         View image
-                                    </a>
+                                    </button>
                                 </c:when>
                                 <c:otherwise>-</c:otherwise>
                             </c:choose>
@@ -353,9 +357,12 @@
                         <span class="tcd-value">
                             <c:choose>
                                 <c:when test="${not empty tenantCccdBack}">
-                                    <a href="${pageContext.request.contextPath}${tenantCccdBack}" target="_blank">
+                                    <button type="button"
+                                            class="tcd-link-btn js-image-popup"
+                                            data-image-url="${pageContext.request.contextPath}${tenantCccdBack}"
+                                            data-image-title="Primary CCCD Back">
                                         View image
-                                    </a>
+                                    </button>
                                 </c:when>
                                 <c:otherwise>-</c:otherwise>
                             </c:choose>
@@ -452,9 +459,12 @@
                                     <span class="tcd-value">
                                         <c:choose>
                                             <c:when test="${not empty o.cccdFrontUrl}">
-                                                <a href="${pageContext.request.contextPath}${o.cccdFrontUrl}" target="_blank">
+                                                <button type="button"
+                                                        class="tcd-link-btn js-image-popup"
+                                                        data-image-url="${pageContext.request.contextPath}${o.cccdFrontUrl}"
+                                                        data-image-title="Occupant ${loop.index + 1} - CCCD Front">
                                                     View image
-                                                </a>
+                                                </button>
                                             </c:when>
                                             <c:otherwise>-</c:otherwise>
                                         </c:choose>
@@ -469,9 +479,12 @@
                                     <span class="tcd-value">
                                         <c:choose>
                                             <c:when test="${not empty o.cccdBackUrl}">
-                                                <a href="${pageContext.request.contextPath}${o.cccdBackUrl}" target="_blank">
+                                                <button type="button"
+                                                        class="tcd-link-btn js-image-popup"
+                                                        data-image-url="${pageContext.request.contextPath}${o.cccdBackUrl}"
+                                                        data-image-title="Occupant ${loop.index + 1} - CCCD Back">
                                                     View image
-                                                </a>
+                                                </button>
                                             </c:when>
                                             <c:otherwise>-</c:otherwise>
                                         </c:choose>
@@ -684,6 +697,47 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- IMAGE PREVIEW MODAL -->
+    <div class="modal fade" id="tcdImageModal" tabindex="-1" aria-labelledby="tcdImageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content tcd-image-modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tcdImageModalLabel">Image Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body tcd-image-modal-body">
+                    <div class="tcd-image-loading d-none" id="tcdImageLoading">
+                        <div class="spinner-border" role="status" aria-hidden="true"></div>
+                        <span>Loading image...</span>
+                    </div>
+
+                    <img id="tcdPreviewImage"
+                         class="tcd-preview-img d-none"
+                         src=""
+                         alt="Preview image">
+
+                    <div id="tcdPreviewFallback" class="tcd-preview-fallback d-none">
+                        <i class="bi bi-image"></i>
+                        <div>Không thể tải ảnh.</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <a id="tcdOpenImageNewTab"
+                       href="#"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="btn btn-outline-primary">
+                        <i class="bi bi-box-arrow-up-right me-1"></i>
+                        Open in new tab
+                    </a>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 
 </layout:layout>

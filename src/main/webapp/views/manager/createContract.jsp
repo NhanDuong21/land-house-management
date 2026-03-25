@@ -11,7 +11,6 @@
 
     <div class="mcc-wrap">
 
-        <!-- Page header -->
         <div class="mcc-pagehead">
             <div class="mcc-pagehead-left">
                 <div class="mcc-title">
@@ -45,7 +44,6 @@
             </div>
         </div>
 
-        <!-- Card -->
         <div class="mcc-card">
 
             <c:if test="${not empty param.error}">
@@ -58,7 +56,8 @@
                 </div>
             </c:if>
 
-            <form method="post"
+            <form id="createContractForm"
+                  method="post"
                   action="${pageContext.request.contextPath}/manager/contracts/create"
                   class="mcc-form"
                   enctype="multipart/form-data">
@@ -80,9 +79,9 @@
                         </label>
 
                         <div class="mcc-control">
-                            <select name="roomId" class="form-control mcc-control-input" required>
+                            <select id="roomId" name="roomId" class="form-control mcc-control-input" required>
                                 <c:forEach var="r" items="${rooms}">
-                                    <option value="${r.roomId}">
+                                    <option value="${r.roomId}" data-price="${r.price}">
                                         ${r.roomNumber} - ${r.price}
                                     </option>
                                 </c:forEach>
@@ -113,7 +112,7 @@
                                 Tenant Name
                             </label>
                             <div class="mcc-control">
-                                <input type="text" name="tenantName" class="form-control mcc-control-input" required
+                                <input type="text" id="tenantName" name="tenantName" class="form-control mcc-control-input" required
                                        placeholder="e.g. Nguyen Van A">
                             </div>
                         </div>
@@ -124,7 +123,7 @@
                                 Citizen ID
                             </label>
                             <div class="mcc-control">
-                                <input type="text" name="identityCode" class="form-control mcc-control-input" required
+                                <input type="text" id="identityCode" name="identityCode" class="form-control mcc-control-input" required
                                        placeholder="e.g. 012345678901">
                             </div>
                         </div>
@@ -137,7 +136,7 @@
                                 Email
                             </label>
                             <div class="mcc-control">
-                                <input type="email" name="email" class="form-control mcc-control-input" required
+                                <input type="email" id="email" name="email" class="form-control mcc-control-input" required
                                        placeholder="e.g. tenant@email.com">
                             </div>
                         </div>
@@ -148,7 +147,7 @@
                                 Phone
                             </label>
                             <div class="mcc-control">
-                                <input type="text" name="phone" class="form-control mcc-control-input" required
+                                <input type="text" id="phone" name="phone" class="form-control mcc-control-input" required
                                        placeholder="e.g. 09xxxxxxxx">
                             </div>
                         </div>
@@ -160,7 +159,7 @@
                             Address
                         </label>
                         <div class="mcc-control">
-                            <input type="text" name="address" class="form-control mcc-control-input" required
+                            <input type="text" id="address" name="address" class="form-control mcc-control-input" required
                                    placeholder="Street, ward, district...">
                         </div>
                     </div>
@@ -172,7 +171,7 @@
                                 Date of Birth
                             </label>
                             <div class="mcc-control">
-                                <input type="date" name="dob" class="form-control mcc-control-input" required>
+                                <input type="date" id="dob" name="dob" class="form-control mcc-control-input" required>
                             </div>
                         </div>
 
@@ -182,32 +181,43 @@
                                 Gender
                             </label>
                             <div class="mcc-control">
-                                <select name="gender" class="form-control mcc-control-input" required>
+                                <select id="gender" name="gender" class="form-control mcc-control-input" required>
                                     <option value="">-- Select --</option>
                                     <option value="0">Female</option>
                                     <option value="1">Male</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="mcc-grid-2">
-                            <div class="mcc-field">
-                                <label class="mcc-label">
-                                    <i class="bi bi-image"></i>
-                                    CCCD Front
-                                </label>
-                                <div class="mcc-control">
-                                    <input type="file" name="cccdFront" accept="image/*" class="form-control mcc-control-input" required>
-                                </div>
-                            </div>
+                    </div>
 
-                            <div class="mcc-field">
-                                <label class="mcc-label">
-                                    <i class="bi bi-image"></i>
-                                    CCCD Back
-                                </label>
-                                <div class="mcc-control">
-                                    <input type="file" name="cccdBack" accept="image/*" class="form-control mcc-control-input" required>
-                                </div>
+                    <div class="mcc-grid-2">
+                        <div class="mcc-field">
+                            <label class="mcc-label">
+                                <i class="bi bi-image"></i>
+                                CCCD Front
+                            </label>
+                            <div class="mcc-control">
+                                <input type="file"
+                                       id="cccdFront"
+                                       name="cccdFront"
+                                       accept=".jpg,.jpeg,.png,.webp,image/*"
+                                       class="form-control mcc-control-input"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="mcc-field">
+                            <label class="mcc-label">
+                                <i class="bi bi-image"></i>
+                                CCCD Back
+                            </label>
+                            <div class="mcc-control">
+                                <input type="file"
+                                       id="cccdBack"
+                                       name="cccdBack"
+                                       accept=".jpg,.jpeg,.png,.webp,image/*"
+                                       class="form-control mcc-control-input"
+                                       required>
                             </div>
                         </div>
                     </div>
@@ -230,7 +240,12 @@
                                 Monthly Rent
                             </label>
                             <div class="mcc-control">
-                                <input type="number" name="rent" class="form-control mcc-control-input" required min="0"
+                                <input type="number"
+                                       id="rent"
+                                       name="rent"
+                                       class="form-control mcc-control-input"
+                                       required
+                                       min="0"
                                        placeholder="e.g. 3500000">
                             </div>
                         </div>
@@ -241,7 +256,12 @@
                                 Deposit
                             </label>
                             <div class="mcc-control">
-                                <input type="number" name="deposit" class="form-control mcc-control-input" required min="0"
+                                <input type="number"
+                                       id="deposit"
+                                       name="deposit"
+                                       class="form-control mcc-control-input"
+                                       required
+                                       min="0"
                                        placeholder="e.g. 7000000">
                             </div>
                         </div>
@@ -254,7 +274,11 @@
                                 Start Date
                             </label>
                             <div class="mcc-control">
-                                <input type="date" name="startDate" class="form-control mcc-control-input" required>
+                                <input type="date"
+                                       id="startDate"
+                                       name="startDate"
+                                       class="form-control mcc-control-input"
+                                       required>
                             </div>
                         </div>
 
@@ -264,14 +288,19 @@
                                 End Date
                             </label>
                             <div class="mcc-control">
-                                <input type="date" name="endDate" class="form-control mcc-control-input" required>
+                                <input type="date"
+                                       id="endDate"
+                                       name="endDate"
+                                       class="form-control mcc-control-input"
+                                       required
+                                       readonly>
                             </div>
                         </div>
                     </div>
 
                     <div class="mcc-help mcc-help-compact">
                         <i class="bi bi-shield-lock"></i>
-                        After submit, the system will generate contract and send OTP to tenant for confirmation.
+                        Contract period is fixed to 1 year from the selected start date. Rent is filled from room price. Deposit defaults to 2 months rent.
                     </div>
                 </div>
 
@@ -284,5 +313,7 @@
             </form>
         </div>
     </div>
+
+    <script src="${pageContext.request.contextPath}/assets/js/pages/createContract.js"></script>
 
 </layout:layout>

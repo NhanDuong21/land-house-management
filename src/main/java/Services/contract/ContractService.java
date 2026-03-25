@@ -1,6 +1,7 @@
 package Services.contract;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
@@ -9,7 +10,6 @@ import DALs.auth.OtpCodeDAO;
 import DALs.auth.TenantDAO;
 import DALs.auth.TenantDocumentDAO;
 import DALs.contract.ContractDAO;
-import DALs.contract.ContractOccupantDAO;
 import Models.common.ServiceResult;
 import Models.dto.ManagerContractRowDTO;
 import Models.entity.Contract;
@@ -29,7 +29,6 @@ public class ContractService {
     private final ContractDAO contractDAO = new ContractDAO();
     private final OtpCodeDAO otpDAO = new OtpCodeDAO();
     private final TenantDocumentDAO tenantDocumentDAO = new TenantDocumentDAO();
-    private final ContractOccupantDAO contractOccupantDAO = new ContractOccupantDAO();
 
     //FLOW 1: CREATE CONTRACT + CREATE TENANT (NO ACCOUNT) + OTP
     @SuppressWarnings({"UseSpecificCatch", "CallToPrintStackTrace"})
@@ -152,32 +151,33 @@ public class ContractService {
 
     //FLOW 2: CREATE CONTRACT FOR EXISTING TENANT (HAS ACCOUNT)
     //block: tenant chỉ được có 1 ACTIVE hoặc 1 PENDING (cùng lúc)
-    @SuppressWarnings("UseSpecificCatch")
-    public ServiceResult createContractForExistingTenant(Contract c, int tenantId) {
+    @SuppressWarnings({"UseSpecificCatch", "CallToPrintStackTrace"})
+    public ServiceResult createContractForExistingTenant(Contract c, int tenantId, String cccdFrontUrl, String cccdBackUrl) {
 
         if (tenantId <= 0) {
             return ServiceResult.fail("Tenant không hợp lệ.");
         }
 
-        // Validate contract fields common
+        if (safe(cccdFrontUrl).isBlank() || safe(cccdBackUrl).isBlank()) {
+            return ServiceResult.fail("Thiếu ảnh CCCD tenant.");
+        }
+
         ServiceResult vc = validateContractCommon(c);
         if (!vc.isOk()) {
             return vc;
         }
 
-        // set tenantId vào contract
-        c.setTenantId(tenantId);
-
         try (Connection conn = new DBContext().getConnection()) {
 
             conn.setAutoCommit(false);
 
-            // 1) Check tenant có tồn tại + ACTIVE (đúng list dropdown)
+            // 1) Check tenant có tồn tại + ACTIVE
             Tenant t = tenantDAO.findById(tenantId);
             if (t == null) {
                 conn.rollback();
                 return ServiceResult.fail("Tenant không tồn tại.");
             }
+
             if (t.getAccountStatus() == null || !"ACTIVE".equalsIgnoreCase(t.getAccountStatus())) {
                 conn.rollback();
                 return ServiceResult.fail("Tenant chưa ACTIVE. Không thể tạo hợp đồng theo luồng has-account.");
@@ -189,26 +189,33 @@ public class ContractService {
                 return ServiceResult.fail("Tenant này đang có hợp đồng ACTIVE/PENDING. Không thể tạo thêm.");
             }
 
-            // 3) Insert contract PENDING
-            int newId = contractDAO.insertPendingContract(conn, c);
-            if (newId <= 0) {
+            // 3) Set tenant chính trực tiếp vào CONTRACT giống hệt flow 1
+            c.setTenantId(tenantId);
+
+            // 4) Insert contract PENDING
+            int contractId = contractDAO.insertPendingContract(conn, c);
+            if (contractId <= 0) {
                 conn.rollback();
                 return ServiceResult.fail("Không tạo được contract (PENDING).");
             }
 
-            // 3.1) Insert PRIMARY occupant
-            int primaryOccupantId = contractOccupantDAO.insertPrimary(conn, newId, tenantId, c.getStartDate(), "PENDING");
-            if (primaryOccupantId <= 0) {
+            // 5) Lưu CCCD tenant chính vào TENANT_DOCUMENT giống flow 1
+            int frontDocId = tenantDocumentDAO.insertDocument(conn, tenantId, "CCCD_FRONT", cccdFrontUrl);
+            int backDocId = tenantDocumentDAO.insertDocument(conn, tenantId, "CCCD_BACK", cccdBackUrl);
+
+            if (frontDocId <= 0 || backDocId <= 0) {
                 conn.rollback();
-                return ServiceResult.fail("Không tạo được người ở chính cho hợp đồng.");
+                return ServiceResult.fail("Không lưu được CCCD tenant.");
             }
 
             conn.commit();
-            return ServiceResult.ok("Tạo contract (PENDING) cho tenant có account thành công.");
+            return ServiceResult.ok("Tạo contract (PENDING) cho tenant có account + lưu CCCD thành công.");
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return ServiceResult.fail(mapSqlErrorToUi(e));
         } catch (Exception e) {
+            e.printStackTrace();
             return ServiceResult.fail("Lỗi hệ thống: " + (e.getMessage() == null ? "UNKNOWN" : e.getMessage()));
         }
     }
@@ -244,8 +251,10 @@ public class ContractService {
         if (c.getEndDate() == null) {
             return ServiceResult.fail("End date không được để trống.");
         }
-        if (!c.getEndDate().after(c.getStartDate())) {
-            return ServiceResult.fail("End date phải lớn hơn start date.");
+
+        Date expectedEndDate = Date.valueOf(c.getStartDate().toLocalDate().plusYears(1));
+        if (!c.getEndDate().equals(expectedEndDate)) {
+            return ServiceResult.fail("Hợp đồng phải có thời hạn đúng 1 năm kể từ ngày bắt đầu.");
         }
 
         String qr = safe(c.getPaymentQrData());
@@ -300,9 +309,9 @@ public class ContractService {
             return "Phòng này đã có hợp đồng PENDING rồi.";
         }
 
-        // check end_date > start_date
-        if (m.contains("ck_contract_end_after_start")) {
-            return "Ngày kết thúc phải lớn hơn ngày bắt đầu.";
+        // check end_date = start_date + 1 year
+        if (m.contains("ck_contract_duration_one_year")) {
+            return "Hợp đồng phải có thời hạn đúng 1 năm kể từ ngày bắt đầu.";
         }
 
         // money nonnegative
@@ -325,8 +334,8 @@ public class ContractService {
 
         return "Lỗi SQL: " + e.getMessage();
     }
-    //VIEW CONTRACT LIST
 
+    //VIEW CONTRACT LIST
     public int countContracts(String keyword, String status) {
         return contractDAO.countManagerContracts(keyword, status);
     }

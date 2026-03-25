@@ -44,7 +44,6 @@
             <form method="post" action="${pageContext.request.contextPath}/manager/contracts/extend"
                   class="me-form">
 
-                <!-- hidden refs -->
                 <input type="hidden" name="oldContractId" value="${cur.contractId}"/>
                 <input type="hidden" name="roomId" value="${cur.roomId}"/>
                 <input type="hidden" name="tenantId" value="${cur.tenantId}"/>
@@ -104,5 +103,7 @@
         </div>
 
     </div>
+
+    <script src="${pageContext.request.contextPath}/assets/js/pages/extendContract.js"></script>
 
 </layout:layout>

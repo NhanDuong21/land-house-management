@@ -7,6 +7,7 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <t:layout title="Contact - RentHouse" active="contact"
-          cssFile="${pageContext.request.contextPath}/assets/css/views/contact.css">
+          cssFile="${pageContext.request.contextPath}/assets/css/views/contact.css"
+          jsFile="${pageContext.request.contextPath}/assets/js/pages/contact.js">
     <%@ include file="/views/common/contact_content.jsp" %>
 </t:layout>
