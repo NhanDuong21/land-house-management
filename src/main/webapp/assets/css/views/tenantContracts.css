@@ -239,3 +239,48 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+/* ===== reveal ===== */
+.tc-hidden {
+  opacity: 0;
+  transform: translateY(18px) scale(0.98);
+  transition: all 0.5s ease;
+}
+.tc-show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ripple */
+.tc-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.15);
+  transform: scale(0);
+  animation: tcRipple 0.7s ease-out;
+  pointer-events: none;
+}
+
+@keyframes tcRipple {
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* card mượt hơn */
+.tc-card {
+  position: relative;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.tc-card:hover {
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* row animation */
+.tc-row {
+  transition: transform 0.2s ease;
+}

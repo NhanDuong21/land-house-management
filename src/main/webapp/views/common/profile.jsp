@@ -14,20 +14,20 @@
 
         <div class="container-fluid py-4 rhp-wrap">
 
-            <div class="rhp-header">
+            <div class="rhp-header rhp-reveal">
                 <h1 class="rhp-title">Profile</h1>
                 <div class="rhp-subtitle">View and manage your account information</div>
             </div>
 
             <!-- PERSONAL INFO -->
-            <div class="card rhp-card">
+            <div class="card rhp-card rhp-reveal rhp-tilt-card">
                 <div class="card-body p-4 p-md-5">
 
                     <div class="rhp-card-title mb-4">Personal Information</div>
 
                     <!-- Success -->
                     <c:if test="${param.p == '1'}">
-                        <div class="alert alert-success">
+                        <div class="alert alert-success rhp-alert">
                             <i class="bi bi-check-circle me-2"></i>
                             Updated successfully.
                         </div>
@@ -35,7 +35,7 @@
 
                     <!-- Error -->
                     <c:if test="${param.perr == '1'}">
-                        <div class="alert alert-danger">
+                        <div class="alert alert-danger rhp-alert">
                             <i class="bi bi-exclamation-triangle me-2"></i>
                             <strong>Update failed:</strong>
                             <c:choose>
@@ -60,14 +60,14 @@
 
                     <!-- MANAGER FORM -->
                     <c:if test="${profileType == 'MANAGER'}">
-                        <form id="managerContactForm" method="post" action="${pageContext.request.contextPath}/profile">
+                        <form id="managerContactForm" method="post" action="${pageContext.request.contextPath}/profile" class="rhp-enhanced-submit">
                             <input type="hidden" name="action" value="updateStaffContact"/>
                         </form>
                     </c:if>
 
                     <!-- ADMIN FORM -->
                     <c:if test="${profileType == 'ADMIN'}">
-                        <form id="adminProfileForm" method="post" action="${pageContext.request.contextPath}/profile">
+                        <form id="adminProfileForm" method="post" action="${pageContext.request.contextPath}/profile" class="rhp-enhanced-submit">
                             <input type="hidden" name="action" value="updateStaffProfile"/>
                         </form>
                     </c:if>
@@ -75,7 +75,7 @@
                     <div class="row g-4">
 
                         <!-- FULL NAME -->
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 rhp-reveal">
                             <label class="rhp-label"><i class="bi bi-person me-2"></i> Full Name</label>
                             <c:choose>
                                 <c:when test="${profileType == 'ADMIN'}">
@@ -91,17 +91,19 @@
                         </div>
 
                         <!-- PHONE -->
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 rhp-reveal">
                             <label class="rhp-label"><i class="bi bi-telephone me-2"></i> Phone Number</label>
 
                             <c:choose>
                                 <c:when test="${profileType == 'TENANT'}">
-                                    <form method="post" action="${pageContext.request.contextPath}/profile" class="d-flex gap-2">
+                                    <form method="post" action="${pageContext.request.contextPath}/profile" class="d-flex gap-2 rhp-enhanced-submit">
                                         <input type="hidden" name="action" value="updatePhone"/>
                                         <input name="phone" class="form-control rhp-input"
                                                value="<c:out value='${empty phone ? "" : phone}'/>"
                                                placeholder="Enter phone number">
-                                        <button class="btn btn-primary rhp-btn" type="submit">Save</button>
+                                        <button class="btn btn-primary rhp-btn rhp-ripple-btn" type="submit">
+                                            <span class="rhp-btn-text">Save</span>
+                                        </button>
                                     </form>
                                 </c:when>
 
@@ -128,7 +130,7 @@
                         </div>
 
                         <!-- EMAIL -->
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 rhp-reveal">
                             <label class="rhp-label"><i class="bi bi-envelope me-2"></i> Email</label>
 
                             <c:choose>
@@ -153,7 +155,7 @@
                         </div>
 
                         <!-- GENDER -->
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 rhp-reveal">
                             <label class="rhp-label"><i class="bi bi-gender-ambiguous me-2"></i> Gender</label>
 
                             <c:choose>
@@ -162,7 +164,7 @@
                                         <option value="" <c:if test="${empty gender}">selected</c:if>>-</option>
                                         <option value="1" <c:if test="${gender == 'Male'}">selected</c:if>>Male</option>
                                         <option value="0" <c:if test="${gender == 'Female'}">selected</c:if>>Female</option>
-                                        </select>
+                                    </select>
                                 </c:when>
                                 <c:otherwise>
                                     <input class="form-control rhp-input"
@@ -173,7 +175,7 @@
                         </div>
 
                         <!-- DOB -->
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 rhp-reveal">
                             <label class="rhp-label"><i class="bi bi-calendar-event me-2"></i> Date of Birth</label>
 
                             <c:choose>
@@ -192,7 +194,7 @@
                         </div>
 
                         <!-- IDENTITY -->
-                        <div class="col-12">
+                        <div class="col-12 rhp-reveal">
                             <label class="rhp-label"><i class="bi bi-credit-card-2-front me-2"></i> Citizen ID</label>
 
                             <c:choose>
@@ -212,7 +214,7 @@
 
                         <!-- ADDRESS -->
                         <c:if test="${showAddress}">
-                            <div class="col-12">
+                            <div class="col-12 rhp-reveal">
                                 <label class="rhp-label"><i class="bi bi-geo-alt me-2"></i> Address</label>
                                 <input class="form-control rhp-input"
                                        value="<c:out value='${empty address ? "-" : address}'/>"
@@ -222,17 +224,17 @@
 
                         <!-- SAVE BUTTONS -->
                         <c:if test="${profileType == 'MANAGER'}">
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary rhp-btn" form="managerContactForm">
-                                    Save
+                            <div class="col-12 rhp-reveal">
+                                <button type="submit" class="btn btn-primary rhp-btn rhp-ripple-btn" form="managerContactForm">
+                                    <span class="rhp-btn-text">Save</span>
                                 </button>
                             </div>
                         </c:if>
 
                         <c:if test="${profileType == 'ADMIN'}">
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary rhp-btn" form="adminProfileForm">
-                                    Save
+                            <div class="col-12 rhp-reveal">
+                                <button type="submit" class="btn btn-primary rhp-btn rhp-ripple-btn" form="adminProfileForm">
+                                    <span class="rhp-btn-text">Save</span>
                                 </button>
                             </div>
                         </c:if>
@@ -241,7 +243,7 @@
 
                     <!-- NOTE -->
                     <c:if test="${profileType == 'TENANT' || profileType == 'MANAGER'}">
-                        <div class="alert alert-primary rhp-note mt-4 mb-0">
+                        <div class="alert alert-primary rhp-note mt-4 mb-0 rhp-alert">
                             <strong>Note:</strong>
                             Personal information cannot be changed directly. Please contact the manager if you need to update your information.
                         </div>
@@ -251,21 +253,21 @@
             </div>
 
             <!-- CHANGE PASSWORD -->
-            <div class="card rhp-card mt-4">
+            <div class="card rhp-card mt-4 rhp-reveal rhp-tilt-card">
                 <div class="card-body p-4 p-md-5">
                     <div class="rhp-card-title mb-4">
                         <i class="bi bi-lock me-2"></i> Change Password
                     </div>
 
                     <c:if test="${param.pwd == '1'}">
-                        <div class="alert alert-success">
+                        <div class="alert alert-success rhp-alert">
                             <i class="bi bi-check-circle me-2"></i>
                             Password changed successfully.
                         </div>
                     </c:if>
 
                     <c:if test="${param.err == '1'}">
-                        <div class="alert alert-danger">
+                        <div class="alert alert-danger rhp-alert">
                             <i class="bi bi-exclamation-triangle me-2"></i>
                             <strong>Change password failed:</strong>
                             <c:choose>
@@ -280,47 +282,57 @@
                         </div>
                     </c:if>
 
-                    <form method="post" action="${pageContext.request.contextPath}/change-password" class="rhp-form">
+                    <form method="post" action="${pageContext.request.contextPath}/change-password" class="rhp-form rhp-enhanced-submit" novalidate>
 
-                        <div class="mb-3">
+                        <div class="mb-3 rhp-reveal">
                             <label class="form-label rhp-form-label">Current Password</label>
-                            <div class="input-group">
+                            <div class="input-group rhp-input-group">
                                 <input type="password" name="old_password"
                                        class="form-control rhp-input pwd-field"
                                        placeholder="Enter current password">
-                                <button class="btn btn-outline-secondary toggle-password" type="button">
+                                <button class="btn btn-outline-secondary toggle-password" type="button" aria-label="Toggle password">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3 rhp-reveal">
                             <label class="form-label rhp-form-label">New Password</label>
-                            <div class="input-group">
+                            <div class="input-group rhp-input-group">
                                 <input type="password" name="new_password"
                                        class="form-control rhp-input pwd-field"
                                        placeholder="Enter new password" required>
-                                <button class="btn btn-outline-secondary toggle-password" type="button">
+                                <button class="btn btn-outline-secondary toggle-password" type="button" aria-label="Toggle password">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
+
+                            <div class="rhp-strength mt-2" aria-hidden="true">
+                                <div class="rhp-strength-bar">
+                                    <span id="passwordStrengthFill"></span>
+                                </div>
+                                <small id="passwordStrengthText" class="rhp-strength-text">Strength: -</small>
+                            </div>
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-4 rhp-reveal">
                             <label class="form-label rhp-form-label">Confirm New Password</label>
-                            <div class="input-group">
+                            <div class="input-group rhp-input-group">
                                 <input type="password" name="confirm_password"
                                        class="form-control rhp-input pwd-field"
                                        placeholder="Confirm new password" required>
-                                <button class="btn btn-outline-secondary toggle-password" type="button">
+                                <button class="btn btn-outline-secondary toggle-password" type="button" aria-label="Toggle password">
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
+                            <small id="passwordMatchText" class="rhp-helper-text"></small>
                         </div>
 
-                        <button type="submit" class="btn btn-primary rhp-btn">
-                            <i class="bi bi-check2 me-2"></i>
-                            Change Password
+                        <button type="submit" class="btn btn-primary rhp-btn rhp-ripple-btn">
+                            <span class="rhp-btn-text">
+                                <i class="bi bi-check2 me-2"></i>
+                                Change Password
+                            </span>
                         </button>
                     </form>
 

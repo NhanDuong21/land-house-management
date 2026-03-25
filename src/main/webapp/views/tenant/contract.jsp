@@ -156,5 +156,5 @@
 
         </div>
     </div>
-
+<script src="${pageContext.request.contextPath}/assets/js/pages/tenantContracts.js"></script>
 </layout:layout>

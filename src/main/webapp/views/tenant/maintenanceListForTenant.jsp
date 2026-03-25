@@ -16,21 +16,21 @@
 
     <div class="mlt-container">
 
-        <div class="mlt-header">
+        <div class="mlt-header mlt-reveal">
             <div>
                 <h2>My Maintenance Requests</h2>
                 <p>View all maintenance requests you submitted</p>
             </div>
 
-            <a href="${ctx}/tenant/maintenance?action=create" class="mlt-primary-btn">
+            <a href="${ctx}/tenant/maintenance?action=create" class="mlt-primary-btn mlt-ripple">
                 <span class="mlt-btn-ico">
                     <i class="bi bi-plus-circle"></i>
                 </span>
-                Create Request
+                <span class="mlt-btn-text">Create Request</span>
             </a>
         </div>
 
-        <div class="mlt-card">
+        <div class="mlt-card mlt-reveal">
             <div class="mlt-card-head">
                 <div class="mlt-card-title">My Requests (${totalRequest})</div>
             </div>
@@ -50,11 +50,11 @@
 
                     <tbody>
                         <c:forEach items="${requests}" var="r">
-                            <tr>
+                            <tr class="mlt-row">
                                 <td class="mlt-mono">${r.requestId}</td>
                                 <td class="mlt-room">${r.roomNumber}</td>
                                 <td>${r.issueCategory}</td>
-                                <td class="mlt-desc">${r.description}</td>
+                                <td class="mlt-desc" title="${r.description}">${r.description}</td>
                                 <td>
                                     <span class="mlt-badge status-${r.status}">
                                         ${r.status}
@@ -62,9 +62,9 @@
                                 </td>
                                 <td>
                                     <a href="${ctx}/tenant/maintenance?action=view&id=${r.requestId}"
-                                       class="mlt-action-btn">
+                                       class="mlt-action-btn mlt-ripple">
                                         <i class="bi bi-eye"></i>
-                                        View
+                                        <span class="mlt-btn-text">View</span>
                                     </a>
                                 </td>
                             </tr>
@@ -85,19 +85,19 @@
                 <div class="mlt-pager">
                     <ul class="mlt-pagination">
                         <li class="${pageIndex == 1 ? 'disabled' : ''}">
-                            <a href="?page=${pageIndex - 1}">
+                            <a href="?page=${pageIndex - 1}" class="mlt-ripple" aria-label="Previous">
                                 <i class="bi bi-chevron-left"></i>
                             </a>
                         </li>
 
                         <c:forEach begin="1" end="${totalPage}" var="i">
                             <li class="${i == pageIndex ? 'active' : ''}">
-                                <a href="?page=${i}">${i}</a>
+                                <a href="?page=${i}" class="mlt-ripple">${i}</a>
                             </li>
                         </c:forEach>
 
                         <li class="${pageIndex == totalPage ? 'disabled' : ''}">
-                            <a href="?page=${pageIndex + 1}">
+                            <a href="?page=${pageIndex + 1}" class="mlt-ripple" aria-label="Next">
                                 <i class="bi bi-chevron-right"></i>
                             </a>
                         </li>

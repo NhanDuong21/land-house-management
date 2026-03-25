@@ -12,19 +12,19 @@
 
         <c:choose>
             <c:when test="${empty myRoom}">
-                <div class="mr-empty">
+                <div class="mr-empty mr-reveal">
                     <div class="mr-empty-ico"><i class="bi bi-door-closed"></i></div>
                     <h3>Bạn chưa có phòng đang thuê</h3>
                     <p>Vui lòng xem hợp đồng để kiểm tra thông tin thuê phòng.</p>
 
                     <div class="mr-empty-actions">
-                        <a class="mr-btn primary" href="${ctx}/tenant/contract">
+                        <a class="mr-btn primary mr-ripple" href="${ctx}/tenant/contract">
                             <i class="bi bi-file-earmark-text"></i>
-                            Xem hợp đồng
+                            <span>Xem hợp đồng</span>
                         </a>
-                        <a class="mr-btn outline" href="${ctx}/home">
+                        <a class="mr-btn outline mr-ripple" href="${ctx}/home">
                             <i class="bi bi-house-door"></i>
-                            Về trang chủ
+                            <span>Về trang chủ</span>
                         </a>
                     </div>
                 </div>
@@ -33,13 +33,12 @@
             <c:otherwise>
 
                 <!-- Header -->
-                <div class="mr-header">
+                <div class="mr-header mr-reveal">
                     <div>
                         <div class="mr-title">
                             <h2>My Room</h2>
                             <span class="mr-room-no">#${myRoom.roomNumber}</span>
 
-                            <!-- STATUS BADGE -->
                             <c:if test="${not empty myRoom.roomStatus}">
                                 <span class="mr-status mr-status-${myRoom.roomStatus}">
                                     <i class="bi bi-dot"></i> ${myRoom.roomStatus}
@@ -55,21 +54,21 @@
                     </div>
 
                     <div class="mr-actions">
-                        <a class="mr-btn outline" href="${ctx}/tenant/contract">
+                        <a class="mr-btn outline mr-ripple" href="${ctx}/tenant/contract">
                             <i class="bi bi-file-earmark-text"></i>
-                            My Contract
+                            <span>My Contract</span>
                         </a>
-                        <a class="mr-btn primary" href="${ctx}/maintenance">
+                        <a class="mr-btn primary mr-ripple" href="${ctx}/maintenance">
                             <i class="bi bi-tools"></i>
-                            Maintenance
+                            <span>Maintenance</span>
                         </a>
                     </div>
                 </div>
 
                 <div class="mr-grid">
 
-                    <!-- Cover (clickable) -->
-                    <div class="mr-card mr-cover">
+                    <!-- Cover -->
+                    <div class="mr-card mr-cover mr-reveal mr-tilt-card">
                         <button class="mr-cover-btn"
                                 type="button"
                                 data-cover="1"
@@ -83,6 +82,7 @@
                                         <img class="mr-cover-img"
                                              src="${ctx}/assets/images/rooms/${myRoom.coverImage}"
                                              alt="Room cover" />
+                                        <div class="mr-cover-shine"></div>
                                         <div class="mr-cover-hint">
                                             <i class="bi bi-arrows-fullscreen"></i> Xem ảnh
                                         </div>
@@ -99,7 +99,7 @@
                     </div>
 
                     <!-- Info -->
-                    <div class="mr-card mr-info">
+                    <div class="mr-card mr-info mr-reveal mr-tilt-card">
                         <div class="mr-info-head">
                             <div class="mr-info-title">Thông tin phòng</div>
                             <div class="mr-badges">
@@ -151,7 +151,7 @@
                 </div>
 
                 <!-- Gallery -->
-                <div class="mr-card mr-gallery">
+                <div class="mr-card mr-gallery mr-reveal">
                     <div class="mr-gallery-head">
                         <div class="mr-gallery-title">
                             <i class="bi bi-images"></i> Ảnh phòng
@@ -171,7 +171,6 @@
                         <c:otherwise>
                             <div class="mr-gallery-grid">
 
-                                <!-- Put cover as first thumb (optional) -->
                                 <c:if test="${not empty myRoom.coverImage}">
                                     <button class="mr-thumb mr-thumb-cover"
                                             type="button"
@@ -194,11 +193,11 @@
                     </c:choose>
                 </div>
 
-                <!-- Lightbox modal -->
+                <!-- Lightbox -->
                 <div class="mr-lightbox" id="mrLightbox" aria-hidden="true">
                     <div class="mr-lightbox-backdrop" data-close="1"></div>
 
-                    <div class="mr-lightbox-box" role="dialog" aria-modal="true">
+                    <div class="mr-lightbox-box" role="dialog" aria-modal="true" aria-label="Room image preview">
                         <button class="mr-lb-close" type="button" title="Close" data-close="1">
                             <i class="bi bi-x-lg"></i>
                         </button>
