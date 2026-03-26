@@ -30,7 +30,6 @@ public class ManageRoomsController extends HttpServlet {
         int pageSize = 10;
 
         String page = request.getParameter("page");
-
         if (page != null) {
             try {
                 pageIndex = Integer.parseInt(page);
@@ -43,6 +42,10 @@ public class ManageRoomsController extends HttpServlet {
         if (search == null) {
             search = "";
         }
+        search = search
+                .replace("\\", "\\\\")
+                .replace("%", "\\%")
+                .replace("_", "\\_");
 
         String status = request.getParameter("status");
         if (status == null) {
@@ -70,6 +73,8 @@ public class ManageRoomsController extends HttpServlet {
         request.setAttribute("totalRoom", totalRoom);
         request.setAttribute("pageIndex", pageIndex);
         request.setAttribute("totalPage", totalPage);
+        request.setAttribute("search", request.getParameter("search") == null ? "" : request.getParameter("search"));
+        request.setAttribute("status", status);
 
         request.getRequestDispatcher("/views/manager/viewListRoom.jsp")
                 .forward(request, response);
@@ -94,7 +99,6 @@ public class ManageRoomsController extends HttpServlet {
 
             if ("OCCUPIED".equalsIgnoreCase(room.getStatus())
                     || "INACTIVE".equalsIgnoreCase(room.getStatus())) {
-
                 response.sendError(403);
                 return;
             }

@@ -18,6 +18,7 @@
     cssFile="${ctx}/assets/css/views/editMaintenance.css">
 
     <c:set var="m" value="${maintenance}" />
+    <c:set var="isLocked" value="${m.status == 'DONE' || m.status == 'CANCELLED'}" />
 
     <div class="em-container">
 
@@ -34,8 +35,25 @@
             </a>
         </div>
 
+        <!-- SESSION MESSAGE -->
+        <c:if test="${not empty sessionScope.success}">
+            <div class="em-alert em-alert-success em-reveal">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>${sessionScope.success}</span>
+            </div>
+            <c:remove var="success" scope="session" />
+        </c:if>
+
+        <c:if test="${not empty sessionScope.error}">
+            <div class="em-alert em-alert-error em-reveal">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>${sessionScope.error}</span>
+            </div>
+            <c:remove var="error" scope="session" />
+        </c:if>
+
         <!-- REQUEST INFORMATION -->
-        <div class="em-card">
+        <div class="em-card em-reveal">
             <div class="em-card-title">Request Information</div>
 
             <div class="em-grid">
@@ -81,7 +99,7 @@
         </div>
 
         <!-- REQUEST IMAGE -->
-        <div class="em-card">
+        <div class="em-card em-reveal">
             <div class="em-card-title">Request Image</div>
 
             <c:choose>
@@ -89,7 +107,7 @@
                     <div class="em-images">
                         <c:forEach var="img" items="${fn:split(m.imageUrl, ',')}">
                             <img class="em-image preview-image"
-                                 src="${ctx}/assets/images/maintenance/${img}"
+                                 src="${ctx}/assets/images/maintenance/${fn:trim(img)}"
                                  alt="Maintenance Image">
                         </c:forEach>
                     </div>
@@ -108,17 +126,34 @@
             <span class="image-modal-close" id="closeImageModal">&times;</span>
             <img class="image-modal-content" id="modalImage" alt="Preview">
         </div>
+
         <!-- UPDATE STATUS -->
-        <div class="em-card">
+        <div class="em-card em-reveal">
             <div class="em-card-title">Update Status</div>
+
+            <c:if test="${isLocked}">
+                <div class="em-alert em-alert-warning">
+                    <i class="bi bi-lock-fill"></i>
+                    <span>
+                        This request is in a state <strong>${m.status}</strong> Therefore, it is not possible to update to a different state.
+                    </span>
+                </div>
+            </c:if>
 
             <form method="post" action="${ctx}/manager/maintenance" id="emForm">
                 <input type="hidden" name="requestId" value="${m.requestId}" />
 
+                <c:if test="${isLocked}">
+                    <input type="hidden" name="status" value="${m.status}" />
+                </c:if>
+
                 <div class="em-grid">
                     <div>
                         <label>Status</label>
-                        <select name="status" class="form-select" id="emStatus">
+                        <select name="status"
+                                class="form-select"
+                                id="emStatus"
+                                ${isLocked ? 'disabled="disabled"' : ''}>
                             <option value="PENDING"
                                     ${m.status == 'PENDING' ? 'selected' : ''}>
                                 PENDING
@@ -131,7 +166,6 @@
                                     ${m.status == 'IN_PROGRESS' ? 'selected' : ''}>
                                 IN PROGRESS
                             </option>
-
                             <option value="DONE"
                                     ${m.status == 'DONE' ? 'selected' : ''}>
                                 DONE
@@ -150,9 +184,12 @@
                 </div>
 
                 <div class="em-actions">
-                    <button class="em-btn primary" type="submit" id="emSubmitBtn">
+                    <button class="em-btn primary"
+                            type="submit"
+                            id="emSubmitBtn"
+                            ${isLocked ? 'disabled="disabled"' : ''}>
                         <i class="bi bi-check-circle"></i>
-                        Update Status
+                        ${isLocked ? 'Status Locked' : 'Update Status'}
                     </button>
                 </div>
             </form>

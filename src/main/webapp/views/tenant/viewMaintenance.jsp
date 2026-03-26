@@ -1,6 +1,6 @@
 <%-- 
     Document   : viewMaintenance
-    Created on : Mar 8, 2026, 3:57:21 PM
+    Created on : Mar 8, 2026, 3:57:21 PM
     Author     : truon
 --%>
 
@@ -15,12 +15,12 @@
 <t:layout
     title="Maintenance Request Detail"
     active="maintenance"
-    cssFile="${ctx}/assets/css/views/editMaintenance.css">
+    cssFile="${ctx}/assets/css/views/viewMaintenance.css">
 
     <c:set var="m" value="${maintenance}" />
 
     <div class="em-container">
-        <div class="em-header">
+        <div class="em-header em-reveal">
             <div>
                 <h2>Maintenance Request #${m.requestId}</h2>
                 <p>View maintenance request details.</p>
@@ -30,7 +30,7 @@
             </a>
         </div>
 
-        <div class="em-card">
+        <div class="em-card em-reveal">
             <div class="em-card-title">Request Information</div>
             <div class="em-grid">
                 <div>
@@ -47,17 +47,26 @@
                 </div>
                 <div>
                     <label>Status</label>
-                    <input type="text" class="form-control" value="${m.status}" readonly>
+                    <input type="text"
+                           class="form-control
+                           ${m.status == 'PENDING' ? 'status-pending' : ''}
+                           ${m.status == 'IN_PROGRESS' ? 'status-progress' : ''}
+                           ${m.status == 'DONE' ? 'status-done' : ''}
+                           ${m.status == 'CANCELLED' ? 'status-cancelled' : ''}"
+                           value="${m.status}"
+                           readonly>
                 </div>
                 <div>
                     <label>Created At</label>
-                    <input type="text" class="form-control"
+                    <input type="text"
+                           class="form-control"
                            value="<fmt:formatDate value='${m.createdAt}' pattern='yyyy-MM-dd HH:mm'/>"
                            readonly>
                 </div>
                 <div>
                     <label>Completed At</label>
-                    <input type="text" class="form-control"
+                    <input type="text"
+                           class="form-control"
                            value="<fmt:formatDate value='${m.completedAt}' pattern='yyyy-MM-dd HH:mm'/>"
                            readonly>
                 </div>
@@ -69,7 +78,7 @@
             </div>
         </div>
 
-        <div class="em-card">
+        <div class="em-card em-reveal">
             <div class="em-card-title">Request Image</div>
             <c:choose>
                 <c:when test="${not empty m.imageUrl}">
@@ -93,5 +102,5 @@
         </div>
     </div>
 
-    <script src="${ctx}/assets/js/pages/editMaintenance.js"></script>
+    <script src="${ctx}/assets/js/pages/viewMaintenance.js"></script>
 </t:layout>

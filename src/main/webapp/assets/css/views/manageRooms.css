@@ -1,11 +1,3 @@
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
-*/
-/* 
-    Created on : Mar 5, 2026, 3:29:21 PM
-    Author     : truon
-*/
 .manage-room {
     padding: 25px 35px;
 }
@@ -31,13 +23,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
 /* CARD */
 .room-card {
     background: #fff;
-    border-radius: 14px;
-    padding: 20px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(203, 213, 225, 0.5);
 }
 
 .room-card h5 {
-    font-weight: 700;
+    font-weight: 800;
     margin-bottom: 14px;
 }
 
@@ -47,87 +40,121 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
 }
 
-.room-card-head h5 {
-    margin-bottom: 0;
-}
-
-/* SEARCH + FILTER */
+/* ================= SEARCH (LIKE FORMANAGER) ================= */
 .room-search-form {
     display: flex;
     align-items: center;
-    gap: 12px;
-    background: #f3f4f6;
-    border-radius: 14px;
-    padding: 8px 12px;
-    margin-left: auto;
+    gap: 10px;
     flex-wrap: wrap;
+    padding: 10px;
+    border-radius: 18px;
+    background: rgba(248, 250, 252, 0.92);
+    border: 1px solid rgba(203, 213, 225, 0.7);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    margin-left: auto;
+}
+
+.room-search-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 250px;
+    flex: 1 1 260px;
+    padding: 0 2px;
 }
 
 .room-search-ico {
-    color: #6b7280;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    line-height: 1;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.searchRoom,
+.room-search-form .form-select {
+    border: 1px solid rgba(203, 213, 225, 0.9);
+    outline: none;
+    background: rgba(255, 255, 255, 0.96);
+    min-height: 44px;
+    font-weight: 600;
+    color: #0f172a;
+    border-radius: 14px;
+    padding: 10px 12px;
+    box-shadow: none;
+    transition:
+        border-color 0.24s ease,
+        box-shadow 0.24s ease,
+        background 0.22s ease,
+        transform 0.18s ease;
 }
 
 .searchRoom {
-    border: none;
-    outline: none;
-    background: transparent;
     min-width: 220px;
+    flex: 1;
     font-size: 15px;
-    font-weight: 500;
-    color: #111827;
 }
 
 .searchRoom::placeholder {
     color: #6b7280;
 }
 
-.room-search-form .form-select {
-    min-width: 140px;
-    height: 36px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background-color: #fff;
-    color: #111827;
-    font-weight: 500;
-    font-size: 14px;
-    box-shadow: none;
-    outline: none;
-    padding: 0 34px 0 12px;
+.searchRoom:hover,
+.room-search-form .form-select:hover {
+    border-color: #bfdbfe;
+    background: #ffffff;
 }
 
+.searchRoom:focus,
 .room-search-form .form-select:focus {
-    border-color: #d1d5db;
-    box-shadow: none;
-    outline: none;
+    border-color: rgba(37, 99, 235, 0.55);
+    box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.12),
+        0 8px 18px rgba(37, 99, 235, 0.08);
+    background: #ffffff;
+    transform: translateY(-1px);
 }
 
+.room-search-form .form-select {
+    min-width: 170px;
+    font-size: 14px;
+}
+
+/* ACTION BUTTON */
 .room-action-btn {
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 800;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    color: #0f172a;
+    background: rgba(255, 255, 255, 0.82);
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 7px 12px;
-    border-radius: 10px;
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
+    justify-content: center;
+    gap: 8px;
     text-decoration: none;
-    font-weight: 600;
-    color: #111827;
-    font-size: 14px;
+    min-height: 42px;
     cursor: pointer;
-    transition: 0.15s;
+    transition:
+        background 0.22s ease,
+        transform 0.18s ease,
+        box-shadow 0.24s ease,
+        border-color 0.24s ease,
+        color 0.22s ease;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.04);
 }
 
 .room-action-btn:hover {
-    background: #e5e7eb;
+    background: rgba(255, 255, 255, 0.96);
+    transform: translateY(-2px);
+    border-color: rgba(59, 130, 246, 0.28);
+    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.10);
+}
+
+.room-action-btn:active {
+    transform: translateY(0) scale(0.98);
 }
 
 /* TABLE */
@@ -315,17 +342,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     color: #15803d;
 }
 
-.room-status-options .AVAILABLE:hover {
-    background: #bbf7d0;
-}
-
 .room-status-options .MAINTENANCE {
     background: #fef9c3;
     color: #a16207;
-}
-
-.room-status-options .MAINTENANCE:hover {
-    background: #fef08a;
 }
 
 .room-modal-actions {
@@ -343,20 +362,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
 
 #cancelBtn {
     background: #f3f4f6;
-    color: #111827;
-}
-
-#cancelBtn:hover {
-    background: #e5e7eb;
 }
 
 #saveBtn {
     background: #2563eb;
     color: white;
-}
-
-#saveBtn:hover {
-    background: #1d4ed8;
 }
 
 @keyframes modalFadeIn {
@@ -368,11 +378,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
         opacity: 1;
         transform: translateY(0) scale(1);
     }
-}
-
-.room-status-options button:focus {
-    border: 2px solid #111827;
-    transform: scale(1.03);
 }
 
 /* RESPONSIVE */
@@ -391,11 +396,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
         margin-left: 0;
     }
 
-    .searchRoom {
-        min-width: 150px;
-        flex: 1;
-    }
-
+    .room-search-box,
+    .searchRoom,
     .room-search-form .form-select,
     .room-action-btn {
         width: 100%;
@@ -403,7 +405,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
 
     .room-modal-box {
         width: calc(100% - 24px);
-        padding: 24px 20px;
     }
 
     .room-status-options,

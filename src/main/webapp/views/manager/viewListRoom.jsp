@@ -31,20 +31,20 @@
                       method="get"
                       action="${ctx}/manager/rooms">
 
-                    <!-- SEARCH -->
-                    <span class="room-search-ico">
-                        <i class="bi bi-search"></i>
-                    </span>
+                    <div class="room-search-box">
+                        <span class="room-search-ico">
+                            <i class="bi bi-search"></i>
+                        </span>
 
-                    <input class="searchRoom"
-                           type="text"
-                           name="search"
-                           id="roomSearch"
-                           placeholder="Search by room number"
-                           value="${param.search}"
-                           autocomplete="off">
+                        <input class="searchRoom"
+                               type="text"
+                               name="search"
+                               id="roomSearch"
+                               placeholder="Search by room number..."
+                               value="${param.search}"
+                               autocomplete="off">
+                    </div>
 
-                    <!-- STATUS FILTER -->
                     <select name="status" id="roomStatus" class="form-select">
                         <option value="">All Status</option>
 
@@ -59,12 +59,10 @@
                         </option>
                     </select>
 
-                    <!-- FILTER BUTTON -->
                     <button type="submit" class="room-action-btn">
                         <i class="bi bi-funnel"></i>
                         Filter
                     </button>
-
                 </form>
             </div>
 

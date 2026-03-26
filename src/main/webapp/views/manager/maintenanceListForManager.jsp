@@ -1,6 +1,7 @@
 <%-- 
     Document   : maintenanceListForManager
     Created on : Mar 8, 2026
+    Author     : truon
 --%>
 
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
@@ -11,12 +12,12 @@
 
 <t:layout title="Maintenance Requests"
           active="maintenance"
-          cssFile="${ctx}/assets/css/views/maintenanceList.css">
+          cssFile="${ctx}/assets/css/views/maintenanceListForManager.css">
 
     <div class="ml-container">
 
         <!-- HEADER -->
-        <div class="ml-header">
+        <div class="ml-header ml-reveal">
             <div>
                 <h2>Maintenance Requests</h2>
                 <p>View all maintenance requests submitted by tenants</p>
@@ -24,7 +25,7 @@
         </div>
 
         <!-- CARD -->
-        <div class="ml-card">
+        <div class="ml-card ml-reveal">
 
             <div class="ml-card-head">
                 <div class="ml-card-title">
@@ -35,21 +36,20 @@
                       method="get"
                       action="${ctx}/manager/maintenance">
 
-                    <!-- SEARCH -->
-                    <span class="ml-search-ico">
-                        <i class="bi bi-search"></i>
-                    </span>
+                    <div class="ml-search-box">
+                        <span class="ml-search-ico">
+                            <i class="bi bi-search"></i>
+                        </span>
 
-                    <input type="text"
-                           name="search"
-                           id="mlSearch"
-                           placeholder="Search by room number..."
-                           value="${param.search}"
-                           autocomplete="off">
+                        <input type="text"
+                               name="search"
+                               id="mlSearch"
+                               placeholder="Search by room number..."
+                               value="${param.search}"
+                               autocomplete="off">
+                    </div>
 
-                    <!-- NEW: STATUS FILTER -->
                     <select name="status" id="mlStatus" class="form-select">
-
                         <option value="">All Status</option>
 
                         <option value="PENDING"
@@ -71,10 +71,8 @@
                                 ${param.status == 'CANCELLED' ? 'selected' : ''}>
                             CANCELLED
                         </option>
-
                     </select>
 
-                    <!-- NEW: FILTER BUTTON -->
                     <button type="submit" class="ml-action-btn">
                         <i class="bi bi-funnel"></i>
                         Filter
@@ -129,10 +127,8 @@
                                 <td>
                                     <a href="${ctx}/manager/maintenance?action=edit&id=${r.requestId}"
                                        class="ml-action-btn">
-
                                         <i class="bi bi-eye"></i>
                                         Edit
-
                                     </a>
                                 </td>
 
@@ -153,11 +149,10 @@
 
             <!-- PAGINATION -->
             <div class="ml-pager">
-
                 <ul class="ml-pagination">
 
                     <li class="${pageIndex == 1 ? 'disabled' : ''}">
-                        <a href="${ctx}/manager/maintenance?page=${pageIndex - 1}&search=${param.search}">
+                        <a href="${ctx}/manager/maintenance?page=${pageIndex - 1}&search=${param.search}&status=${param.status}">
                             <i class="bi bi-chevron-left"></i>
                         </a>
                     </li>
@@ -177,7 +172,6 @@
                     </li>
 
                 </ul>
-
             </div>
 
         </div>

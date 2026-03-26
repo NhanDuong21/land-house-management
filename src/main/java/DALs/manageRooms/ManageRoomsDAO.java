@@ -23,7 +23,7 @@ public class ManageRoomsDAO extends DBContext {
             FROM Room r
             JOIN Block b ON r.block_id = b.block_id
             WHERE r.status IN ('AVAILABLE','MAINTENANCE')
-              AND r.room_number LIKE ?
+              AND r.room_number LIKE ? ESCAPE '\\'
         """);
 
         if (status != null && !status.trim().isEmpty()) {
@@ -31,13 +31,14 @@ public class ManageRoomsDAO extends DBContext {
         }
 
         sql.append("""
-            ORDER BY r.room_id
+            ORDER BY r.room_id DESC
             OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
         """);
 
         int offset = (pageIndex - 1) * pageSize;
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
             int index = 1;
 
             ps.setString(index++, "%" + search + "%");
@@ -68,6 +69,7 @@ public class ManageRoomsDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return list;
     }
 
@@ -76,7 +78,7 @@ public class ManageRoomsDAO extends DBContext {
             SELECT COUNT(*)
             FROM Room r
             WHERE r.status IN ('AVAILABLE','MAINTENANCE')
-              AND r.room_number LIKE ?
+              AND r.room_number LIKE ? ESCAPE '\\'
         """);
 
         if (status != null && !status.trim().isEmpty()) {
@@ -99,11 +101,12 @@ public class ManageRoomsDAO extends DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return 0;
     }
 
     public Room getRoomById(int id) {
-        String sql = "SELECT room_id, status FROM Room WHERE room_id=?";
+        String sql = "SELECT room_id, status FROM Room WHERE room_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -120,7 +123,7 @@ public class ManageRoomsDAO extends DBContext {
     }
 
     public boolean updateRoomStatus(int roomId, String status) {
-        String sql = "UPDATE Room SET status=? WHERE room_id=?";
+        String sql = "UPDATE Room SET status = ? WHERE room_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, status);
             ps.setInt(2, roomId);

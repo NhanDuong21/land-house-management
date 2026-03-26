@@ -1,28 +1,44 @@
 (function () {
-
   const input = document.getElementById("mlSearch");
-  const status = document.getElementById("mlStatus"); // NEW
+  const status = document.getElementById("mlStatus");
 
   let timer = null;
 
-  // SEARCH realtime
-  if (input) {
-    input.addEventListener("input", function () {
+  function initSearchAutoSubmit() {
+    if (!input) return;
 
+    input.addEventListener("input", function () {
       if (timer) clearTimeout(timer);
 
       timer = setTimeout(() => {
-        input.closest("form").submit();
+        const form = input.closest("form");
+        if (form) form.submit();
       }, 400);
-
     });
   }
 
-  // NEW: FILTER when change status
-  if (status) {
+  function initStatusFilter() {
+    if (!status) return;
+
     status.addEventListener("change", function () {
-      status.closest("form").submit();
+      const form = status.closest("form");
+      if (form) form.submit();
     });
   }
 
+  function initReveal() {
+    const revealItems = document.querySelectorAll(".ml-reveal");
+
+    revealItems.forEach((item, index) => {
+      setTimeout(() => {
+        item.classList.add("is-visible");
+      }, 90 * index);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    initSearchAutoSubmit();
+    initStatusFilter();
+    initReveal();
+  });
 })();

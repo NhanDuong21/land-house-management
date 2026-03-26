@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @author truon
  */
 public class MaintenanceRequestForManagerController extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -81,9 +82,10 @@ public class MaintenanceRequestForManagerController extends HttpServlet {
             throws ServletException, IOException {
 
         MaintenanceRequestDAO dao = new MaintenanceRequestDAO();
+        int id = 0;
 
         try {
-            int id = Integer.parseInt(request.getParameter("requestId"));
+            id = Integer.parseInt(request.getParameter("requestId"));
             String status = request.getParameter("status");
 
             Integer handledByStaffId = null;
@@ -96,25 +98,44 @@ public class MaintenanceRequestForManagerController extends HttpServlet {
             boolean updated = dao.updateStatus(id, status, handledByStaffId);
 
             if (!updated) {
-                request.getSession().setAttribute("error", "Yêu cầu này đã bị khóa hoặc trạng thái không hợp lệ.");
+                request.getSession().setAttribute("error",
+                        "This request is locked. If the current status is DONE or CANCELLED, no further updates are possible.");
             } else {
-                request.getSession().setAttribute("success", "Cập nhật trạng thái thành công.");
+                request.getSession().setAttribute("success", "Status updated successfully.");
             }
 
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            request.getSession().setAttribute("error", "The requested ID is invalid.");
         } catch (Exception e) {
             e.printStackTrace();
-            request.getSession().setAttribute("error", "Có lỗi xảy ra khi cập nhật trạng thái.");
+            request.getSession().setAttribute("error", "An error occurred while updating the status.");
         }
 
-        response.sendRedirect(request.getContextPath() + "/manager/maintenance");
+        response.sendRedirect(request.getContextPath() + "/manager/maintenance?action=edit&id=" + id);
     }
 
-    private void showMaintenanceDetail(HttpServletRequest request, HttpServletResponse response, MaintenanceRequestDAO dao)
-            throws ServletException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        MaintenanceRequestDTO maintenance = dao.getRequestById(id);
-        request.setAttribute("maintenance", maintenance);
-        request.getRequestDispatcher("/views/manager/editMaintenance.jsp")
-                .forward(request, response);
+    private void showMaintenanceDetail(HttpServletRequest request, HttpServletResponse response,
+            MaintenanceRequestDAO dao) throws ServletException, IOException {
+
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            MaintenanceRequestDTO maintenance = dao.getRequestById(id);
+
+            if (maintenance == null) {
+                request.getSession().setAttribute("error", "No maintenance requests were found.");
+                response.sendRedirect(request.getContextPath() + "/manager/maintenance");
+                return;
+            }
+
+            request.setAttribute("maintenance", maintenance);
+            request.getRequestDispatcher("/views/manager/editMaintenance.jsp")
+                    .forward(request, response);
+
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            request.getSession().setAttribute("error", "The requested ID is invalid.");
+            response.sendRedirect(request.getContextPath() + "/manager/maintenance");
+        }
     }
 }

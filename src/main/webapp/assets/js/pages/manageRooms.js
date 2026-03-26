@@ -33,31 +33,34 @@ document.getElementById("saveBtn").onclick = () => {
 
 // SEARCH + FILTER
 (function () {
-
     const input = document.getElementById("roomSearch");
     const status = document.getElementById("roomStatus");
 
     let timer = null;
 
-    // SEARCH realtime
     if (input) {
         input.addEventListener("input", function () {
-
-            if (timer)
+            if (timer) {
                 clearTimeout(timer);
+            }
 
             timer = setTimeout(() => {
-                input.closest("form").submit();
-            }, 400);
+                const form = input.closest("form");
+                if (!form) {
+                    return;
+                }
 
+                form.submit();
+            }, 400);
         });
     }
 
-    // FILTER when change status
     if (status) {
         status.addEventListener("change", function () {
-            status.closest("form").submit();
+            const form = status.closest("form");
+            if (form) {
+                form.submit();
+            }
         });
     }
-
 })();
