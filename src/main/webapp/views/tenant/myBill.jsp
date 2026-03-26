@@ -1,6 +1,6 @@
 <%-- 
     Document   : myBill
-    Created on : Mar 2, 2026, 10:56:20 PM
+    Created on : Mar 2, 2026, 10:56:20 PM
     Author     : To Thi Thao Trang - CE191027
 --%>
 
@@ -9,15 +9,18 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-
 <layout:layout title="My Bills"
                active="t_billing"
                cssFile="${pageContext.request.contextPath}/assets/css/views/tenantMyBill.css">
 
+    <div class="tb-bg-orb tb-bg-orb-1"></div>
+    <div class="tb-bg-orb tb-bg-orb-2"></div>
+    <div class="tb-bg-grid"></div>
+
     <div class="tb-container">
 
         <!-- PAGE HEADER -->
-        <div class="tb-header">
+        <div class="tb-header tb-reveal tb-reveal-up">
             <div>
                 <h1>My Bills</h1>
                 <span class="tb-sub">View and manage your monthly bills</span>
@@ -35,11 +38,10 @@
             </div>
         </div>
 
-
         <!-- MAIN GRID -->
         <div class="tb-grid">
             <!-- LEFT SIDE - BILL DETAIL -->
-            <div class="tb-card">
+            <div class="tb-card tb-reveal tb-reveal-left">
 
                 <div class="tb-card-header">
                     <div>
@@ -48,7 +50,6 @@
                     </div>
 
                     <c:choose>
-
                         <c:when test="${Bill.status eq 'PAID'}">
                             <span class="tb-badge paid">PAID</span>
                         </c:when>
@@ -64,23 +65,22 @@
                         <c:otherwise>
                             <span class="tb-badge unpaid">UNKNOWN</span>
                         </c:otherwise>
-
                     </c:choose>
                 </div>
 
                 <div class="tb-divider"></div>
 
                 <!-- BILL INFO -->
-                <div class="tb-grid-2">
+                <div class="tb-grid-2 tb-stagger">
 
-                    <div class="tb-line">
+                    <div class="tb-line tb-reveal tb-reveal-up">
                         <span class="tb-label">Room Number</span>
                         <span class="tb-value">${RoomNumber}</span>
                     </div>
 
                     <fmt:setLocale value="en_US"/>
 
-                    <div class="tb-line">
+                    <div class="tb-line tb-reveal tb-reveal-up">
                         <span class="tb-label">Billing Period</span>
                         <span class="tb-value">
                             <c:choose>
@@ -94,7 +94,7 @@
                         </span>
                     </div>
 
-                    <div class="tb-line">
+                    <div class="tb-line tb-reveal tb-reveal-up">
                         <span class="tb-label">Issue Date</span>
                         <span class="tb-value">
                             <c:choose>
@@ -108,7 +108,7 @@
                         </span>
                     </div>
 
-                    <div class="tb-line">
+                    <div class="tb-line tb-reveal tb-reveal-up">
                         <span class="tb-label">Due Date</span>
                         <span class="tb-value">
                             <c:choose>
@@ -125,7 +125,7 @@
 
                 <div class="tb-divider soft"></div>
 
-                <div class="tb-total-box">
+                <div class="tb-total-box tb-reveal tb-reveal-zoom">
                     <span class="tb-total-label">Total Amount</span>
                     <h3 class="tb-total-value">
                         <fmt:formatNumber value="${totalAmount}" type="number"/> VND
@@ -133,9 +133,8 @@
                 </div>
 
                 <c:choose>
-
                     <c:when test="${Bill.status == 'PAID'}">
-                        <div class="tb-paid-box success">
+                        <div class="tb-paid-box success tb-reveal tb-reveal-up">
                             <div class="tb-paid-icon">✓</div>
                             <div class="tb-paid-title">This bill has been paid</div>
                             <div class="tb-paid-sub">Thank you for your payment</div>
@@ -143,7 +142,7 @@
                     </c:when>
 
                     <c:when test="${Bill.status == 'UNPAID'}">
-                        <div class="tb-paid-box danger">
+                        <div class="tb-paid-box danger tb-reveal tb-reveal-up">
                             <div class="tb-paid-icon">✕</div>
                             <div class="tb-paid-title">This bill is unpaid</div>
                             <div class="tb-paid-sub">Please complete your payment before due date</div>
@@ -151,24 +150,24 @@
                     </c:when>
 
                     <c:otherwise>
-                        <div class="tb-paid-box warning">
+                        <div class="tb-paid-box warning tb-reveal tb-reveal-up">
                             <div class="tb-paid-icon">✕</div>
                             <div class="tb-paid-title">You don't have a bill yet</div>
                             <div class="tb-paid-sub">Please wait for the next billing cycle</div>
                         </div>
                     </c:otherwise>
-
                 </c:choose>
 
-                <button class="tb-detail-btn" onclick="openModal()">
+                <button class="tb-detail-btn tb-btn-ripple tb-reveal tb-reveal-up" onclick="openModal()">
                     View Detail
                 </button>
             </div>
+
             <!-- RIGHT SIDE - SUMMARY -->
-            <div class="tb-summary">
+            <div class="tb-summary tb-stagger">
 
                 <!-- Room Number -->
-                <div class="tb-summary-card primary">
+                <div class="tb-summary-card primary tb-reveal tb-reveal-right">
                     <div class="tb-summary-icon">
                         <i class="bi bi-house-door"></i>
                     </div>
@@ -179,8 +178,7 @@
                 </div>
 
                 <!-- Last Payment -->
-                <div class="tb-summary-card ${empty lastPayment ? 'secondary' : 'success'}">
-
+                <div class="tb-summary-card ${empty lastPayment ? 'secondary' : 'success'} tb-reveal tb-reveal-right">
                     <div class="tb-summary-icon">
                         <i class="bi ${empty lastPayment ? 'bi-clock' : 'bi-check-circle'}"></i>
                     </div>
@@ -188,7 +186,6 @@
                     <div>
                         <span class="tb-summary-label">Last Payment</span>
                         <c:choose>
-
                             <c:when test="${not empty lastPayment}">
                                 <h5>
                                     <fmt:formatDate value="${lastPayment.paidAt}" pattern="dd MMM yyyy"/>
@@ -205,14 +202,12 @@
                                     Waiting for first payment
                                 </small>
                             </c:otherwise>
-
                         </c:choose>
-
                     </div>
                 </div>
 
                 <!-- Unpaid Amount -->
-                <div class="tb-summary-card danger">
+                <div class="tb-summary-card danger tb-reveal tb-reveal-right">
                     <div class="tb-summary-icon">
                         <i class="bi bi-exclamation-circle"></i>
                     </div>
@@ -227,12 +222,13 @@
         </div>
 
         <c:if test="${empty Bill}">
-            <div class="tb-empty">
+            <div class="tb-empty tb-reveal tb-reveal-up">
                 You currently have no active bill.
             </div>
         </c:if>
+
         <!-- BILL LIST SECTION -->
-        <div class="bill-section">
+        <div class="bill-section tb-reveal tb-reveal-up">
 
             <div class="bill-header">
                 <h3>My Bills (${totalBills})</h3>
@@ -253,8 +249,8 @@
                     </thead>
 
                     <tbody>
-                        <c:forEach var="b" items="${billTenant}">
-                            <tr>
+                        <c:forEach var="b" items="${billTenant}" varStatus="loop">
+                            <tr class="tb-row-reveal">
                                 <td>#${b.billId}</td>
                                 <td>
                                     <fmt:formatDate value="${b.month}" pattern="dd/MM/yyyy"/>
@@ -280,7 +276,6 @@
                                 </td>
                                 <td>
                                     <c:choose>
-
                                         <c:when test="${empty b.paymentStatus}">
                                             <span class="mb-badge nopayment">NO REQUEST</span>
                                         </c:when>
@@ -296,7 +291,6 @@
                                         <c:when test="${b.paymentStatus eq 'REJECTED'}">
                                             <span class="mb-badge cancelled">REJECTED</span>
                                         </c:when>
-
                                     </c:choose>
                                 </td>
                                 <td>
@@ -315,7 +309,6 @@
                                 </td>
                             </tr>
                         </c:if>
-
                     </tbody>
                 </table>
             </div>
@@ -324,7 +317,6 @@
     </div>
 
     <div id="billModal" class="custom-modal">
-
         <div class="custom-modal-content">
 
             <!-- Header -->
@@ -332,8 +324,8 @@
                 <h5>Bill #${Bill.billId}</h5>
                 <span class="close-btn" onclick="closeModal()">&times;</span>
             </div>
-            <div class="modal-info-grid">
 
+            <div class="modal-info-grid">
                 <div>
                     <div class="modal-info-label">Room Number</div>
                     <div class="modal-info-value">${RoomNumber}</div>
@@ -360,7 +352,6 @@
                         <fmt:formatDate value="${Bill.dueDate}" pattern="dd/MM/yyyy"/>
                     </div>
                 </div>
-
             </div>
 
             <!-- Body -->
@@ -399,7 +390,6 @@
                 <hr>
 
                 <c:choose>
-
                     <c:when test="${Bill.status eq 'PAID'}">
                         <div class="alert alert-success">
                             This bill has been paid.
@@ -433,14 +423,14 @@
                                     <option value="CASH">Cash</option>
                                 </select>
 
-                                <div id="qrContainer" style="display:none;text-align:center;">
+                                <div id="qrContainer" class="tb-qr-container" style="display:none;text-align:center;">
                                     <img id="qrImage"
                                          src="${pageContext.request.contextPath}${qr}"
                                          alt="QR Code"
-                                         style="width:200px;height:200px;">
+                                         class="tb-qr-image">
                                 </div>
 
-                                <button type="submit" class="submit-btn">
+                                <button type="submit" class="submit-btn tb-btn-ripple">
                                     Submit Payment
                                 </button>
                             </form>
@@ -453,7 +443,7 @@
             </div>
 
         </div>
-
     </div>
+
     <script src="${pageContext.request.contextPath}/assets/js/pages/tenantBillDetail.js"></script>
 </layout:layout>

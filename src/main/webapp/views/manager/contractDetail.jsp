@@ -739,5 +739,5 @@
             </div>
         </div>
     </div>
-
+    <script src="${pageContext.request.contextPath}/assets/js/pages/contractDetailEffects.js"></script>
 </layout:layout>

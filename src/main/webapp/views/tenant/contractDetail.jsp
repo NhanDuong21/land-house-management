@@ -12,83 +12,87 @@
                cssFile="${pageContext.request.contextPath}/assets/css/views/tenantContractDetail.css"
                jsFile="${pageContext.request.contextPath}/assets/js/pages/tenantContractDetail.js">
 
+    <div class="tcd-bg-orb tcd-bg-orb-1"></div>
+    <div class="tcd-bg-orb tcd-bg-orb-2"></div>
+    <div class="tcd-bg-grid"></div>
+
     <div class="tcd-wrap">
 
-        <a href="${pageContext.request.contextPath}/tenant/contract" class="tcd-back">
+        <a href="${pageContext.request.contextPath}/tenant/contract" class="tcd-back tcd-reveal tcd-reveal-up">
             <i class="bi bi-arrow-left me-2"></i> Back
         </a>
 
         <c:set var="c" value="${contract}"/>
 
         <c:if test="${param.added == '1'}">
-            <div class="tcd-alert tcd-alert-success">
+            <div class="tcd-alert tcd-alert-success tcd-reveal tcd-reveal-up">
                 <i class="bi bi-check-circle me-2"></i>
                 Thêm người ở cùng thành công.
             </div>
         </c:if>
 
         <c:if test="${param.err == 'max'}">
-            <div class="tcd-alert tcd-alert-warning">
+            <div class="tcd-alert tcd-alert-warning tcd-reveal tcd-reveal-up">
                 <i class="bi bi-exclamation-triangle me-2"></i>
                 Phòng đã đạt số lượng người tối đa.
             </div>
         </c:if>
 
         <c:if test="${param.err == 'document'}">
-            <div class="tcd-alert tcd-alert-danger">
+            <div class="tcd-alert tcd-alert-danger tcd-reveal tcd-reveal-up">
                 <i class="bi bi-x-circle me-2"></i>
                 Lỗi lưu CCCD của người ở cùng.
             </div>
         </c:if>
 
         <c:if test="${param.err == 'occupant'}">
-            <div class="tcd-alert tcd-alert-danger">
+            <div class="tcd-alert tcd-alert-danger tcd-reveal tcd-reveal-up">
                 <i class="bi bi-x-circle me-2"></i>
                 Không tạo được người ở cùng.
             </div>
         </c:if>
 
         <c:if test="${param.err == 'notpending'}">
-            <div class="tcd-alert tcd-alert-warning">
+            <div class="tcd-alert tcd-alert-warning tcd-reveal tcd-reveal-up">
                 <i class="bi bi-exclamation-triangle me-2"></i>
                 Chỉ được thêm người ở cùng khi hợp đồng đang PENDING.
             </div>
         </c:if>
 
         <c:if test="${param.err == 'contractNotFound'}">
-            <div class="tcd-alert tcd-alert-danger">
+            <div class="tcd-alert tcd-alert-danger tcd-reveal tcd-reveal-up">
                 <i class="bi bi-x-circle me-2"></i>
                 Không tìm thấy hợp đồng.
             </div>
         </c:if>
 
         <c:if test="${param.err == 'missingContractId'}">
-            <div class="tcd-alert tcd-alert-danger">
+            <div class="tcd-alert tcd-alert-danger tcd-reveal tcd-reveal-up">
                 <i class="bi bi-x-circle me-2"></i>
                 Thiếu mã hợp đồng.
             </div>
         </c:if>
 
         <c:if test="${param.err == 'badContractId'}">
-            <div class="tcd-alert tcd-alert-danger">
+            <div class="tcd-alert tcd-alert-danger tcd-reveal tcd-reveal-up">
                 <i class="bi bi-x-circle me-2"></i>
                 Mã hợp đồng không hợp lệ.
             </div>
         </c:if>
 
         <c:if test="${param.err == '1' and not empty param.msg}">
-            <div class="tcd-alert tcd-alert-danger">
+            <div class="tcd-alert tcd-alert-danger tcd-reveal tcd-reveal-up">
                 <i class="bi bi-x-circle me-2"></i>
                 Có lỗi xảy ra:
                 <c:out value="${param.msg}"/>
             </div>
         </c:if>
 
-        <div class="tcd-card">
+        <div class="tcd-card tcd-reveal tcd-reveal-zoom">
             <div class="tcd-card-body">
 
                 <div class="tcd-top">
-                    <div>
+                    <div class="tcd-reveal tcd-reveal-left">
                         <div class="tcd-contract-id">
                             <i class="bi bi-file-earmark-text me-2"></i>
                             Contract #<fmt:formatNumber value="${c.contractId}" pattern="000000"/>
@@ -101,12 +105,12 @@
 
                     <c:choose>
                         <c:when test="${c.status eq 'ACTIVE'}">
-                            <span class="tcd-badge tcd-badge-active">
+                            <span class="tcd-badge tcd-badge-active tcd-reveal tcd-reveal-right">
                                 <i class="bi bi-check-circle me-1"></i> ACTIVE
                             </span>
                         </c:when>
                         <c:otherwise>
-                            <span class="tcd-badge tcd-badge-pending">
+                            <span class="tcd-badge tcd-badge-pending tcd-reveal tcd-reveal-right">
                                 <i class="bi bi-clock-history me-1"></i> <c:out value="${c.status}"/>
                             </span>
                         </c:otherwise>
@@ -115,17 +119,17 @@
 
                 <div class="tcd-divider"></div>
 
-                <div class="tcd-doc-title">
+                <div class="tcd-doc-title tcd-reveal tcd-reveal-up">
                     <i class="bi bi-journal-text me-2"></i>
                     ROOM RENTAL AGREEMENT
                 </div>
 
-                <div class="tcd-doc-meta">
+                <div class="tcd-doc-meta tcd-reveal tcd-reveal-up">
                     <i class="bi bi-hash me-1"></i>
                     Contract No: <fmt:formatNumber value="${c.contractId}" pattern="000000"/>
                 </div>
 
-                <div class="tcd-doc-meta tcd-doc-meta-2">
+                <div class="tcd-doc-meta tcd-doc-meta-2 tcd-reveal tcd-reveal-up">
                     <i class="bi bi-calendar-event me-1"></i>
                     Dated:
                     <c:choose>
@@ -138,8 +142,8 @@
 
                 <div class="tcd-divider tcd-divider-soft"></div>
 
-                <div class="tcd-grid-2">
-                    <div>
+                <div class="tcd-grid-2 tcd-stagger">
+                    <div class="tcd-reveal tcd-reveal-up">
                         <div class="tcd-section-title">
                             <i class="bi bi-person-badge me-2"></i>
                             PARTY A (LANDLORD)
@@ -176,7 +180,7 @@
                         </div>
                     </div>
 
-                    <div>
+                    <div class="tcd-reveal tcd-reveal-up">
                         <div class="tcd-section-title">
                             <i class="bi bi-person-circle me-2"></i>
                             PARTY B (TENANT)
@@ -221,13 +225,12 @@
 
                 <div class="tcd-divider tcd-divider-soft"></div>
 
-                <div class="tcd-article">
+                <div class="tcd-article tcd-reveal tcd-reveal-up">
                     <div class="tcd-article-title">
                         <i class="bi bi-people me-2"></i>
                         ARTICLE 0: OCCUPANTS INFORMATION
                     </div>
 
-                    <!-- PRIMARY TENANT -->
                     <div class="tcd-line">
                         <span class="tcd-label">
                             <i class="bi bi-person-circle me-1"></i>
@@ -328,7 +331,6 @@
 
                     <div class="tcd-divider tcd-divider-soft"></div>
 
-                    <!-- ROOMMATES -->
                     <c:choose>
                         <c:when test="${empty occupants}">
                             <div class="tcd-note">
@@ -338,87 +340,90 @@
                         </c:when>
 
                         <c:otherwise>
-                            <c:forEach var="o" items="${occupants}" varStatus="loop">
+                            <div class="tcd-stagger">
+                                <c:forEach var="o" items="${occupants}" varStatus="loop">
+                                    <div class="tcd-occupant-card tcd-reveal tcd-reveal-up">
+                                        <div class="tcd-line">
+                                            <span class="tcd-label"><i class="bi bi-person me-1"></i> Occupant ${loop.index + 1}:</span>
+                                            <span class="tcd-value">
+                                                <strong><c:out value="${o.fullName}"/></strong> - ROOMMATE - <c:out value="${o.status}"/>
+                                            </span>
+                                        </div>
 
-                                <div class="tcd-line">
-                                    <span class="tcd-label"><i class="bi bi-person me-1"></i> Occupant ${loop.index + 1}:</span>
-                                    <span class="tcd-value">
-                                        <strong><c:out value="${o.fullName}"/></strong> - ROOMMATE - <c:out value="${o.status}"/>
-                                    </span>
-                                </div>
+                                        <div class="tcd-line">
+                                            <span class="tcd-label"><i class="bi bi-credit-card me-1"></i> Citizen ID:</span>
+                                            <span class="tcd-value"><c:out value="${empty o.identityCode ? '-' : o.identityCode}"/></span>
+                                        </div>
 
-                                <div class="tcd-line">
-                                    <span class="tcd-label"><i class="bi bi-credit-card me-1"></i> Citizen ID:</span>
-                                    <span class="tcd-value"><c:out value="${empty o.identityCode ? '-' : o.identityCode}"/></span>
-                                </div>
+                                        <div class="tcd-line">
+                                            <span class="tcd-label"><i class="bi bi-telephone me-1"></i> Phone:</span>
+                                            <span class="tcd-value"><c:out value="${empty o.phoneNumber ? '-' : o.phoneNumber}"/></span>
+                                        </div>
 
-                                <div class="tcd-line">
-                                    <span class="tcd-label"><i class="bi bi-telephone me-1"></i> Phone:</span>
-                                    <span class="tcd-value"><c:out value="${empty o.phoneNumber ? '-' : o.phoneNumber}"/></span>
-                                </div>
+                                        <div class="tcd-line">
+                                            <span class="tcd-label"><i class="bi bi-envelope me-1"></i> Email:</span>
+                                            <span class="tcd-value"><c:out value="${empty o.email ? '-' : o.email}"/></span>
+                                        </div>
 
-                                <div class="tcd-line">
-                                    <span class="tcd-label"><i class="bi bi-envelope me-1"></i> Email:</span>
-                                    <span class="tcd-value"><c:out value="${empty o.email ? '-' : o.email}"/></span>
-                                </div>
+                                        <div class="tcd-line">
+                                            <span class="tcd-label"><i class="bi bi-calendar me-1"></i> Date of Birth:</span>
+                                            <span class="tcd-value">
+                                                <c:choose>
+                                                    <c:when test="${empty o.dateOfBirth}">-</c:when>
+                                                    <c:otherwise><fmt:formatDate value="${o.dateOfBirth}" pattern="dd/MM/yyyy"/></c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                        </div>
 
-                                <div class="tcd-line">
-                                    <span class="tcd-label"><i class="bi bi-calendar me-1"></i> Date of Birth:</span>
-                                    <span class="tcd-value">
-                                        <c:choose>
-                                            <c:when test="${empty o.dateOfBirth}">-</c:when>
-                                            <c:otherwise><fmt:formatDate value="${o.dateOfBirth}" pattern="dd/MM/yyyy"/></c:otherwise>
-                                        </c:choose>
-                                    </span>
-                                </div>
+                                        <div class="tcd-line">
+                                            <span class="tcd-label"><i class="bi bi-geo-alt me-1"></i> Address:</span>
+                                            <span class="tcd-value"><c:out value="${empty o.address ? '-' : o.address}"/></span>
+                                        </div>
 
-                                <div class="tcd-line">
-                                    <span class="tcd-label"><i class="bi bi-geo-alt me-1"></i> Address:</span>
-                                    <span class="tcd-value"><c:out value="${empty o.address ? '-' : o.address}"/></span>
-                                </div>
+                                        <div class="tcd-line">
+                                            <span class="tcd-label"><i class="bi bi-image me-1"></i> CCCD Front:</span>
+                                            <span class="tcd-value">
+                                                <c:choose>
+                                                    <c:when test="${not empty o.cccdFrontUrl}">
+                                                        <button type="button"
+                                                                class="tcd-link-btn"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#imagePreviewModal"
+                                                                data-img-src="${pageContext.request.contextPath}${o.cccdFrontUrl}"
+                                                                data-img-title="CCCD Front - ${o.fullName}">
+                                                            View image
+                                                        </button>
+                                                    </c:when>
+                                                    <c:otherwise>-</c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                        </div>
 
-                                <div class="tcd-line">
-                                    <span class="tcd-label"><i class="bi bi-image me-1"></i> CCCD Front:</span>
-                                    <span class="tcd-value">
-                                        <c:choose>
-                                            <c:when test="${not empty o.cccdFrontUrl}">
-                                                <button type="button"
-                                                        class="tcd-link-btn"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#imagePreviewModal"
-                                                        data-img-src="${pageContext.request.contextPath}${o.cccdFrontUrl}"
-                                                        data-img-title="CCCD Front - ${o.fullName}">
-                                                    View image
-                                                </button>
-                                            </c:when>
-                                            <c:otherwise>-</c:otherwise>
-                                        </c:choose>
-                                    </span>
-                                </div>
+                                        <div class="tcd-line">
+                                            <span class="tcd-label"><i class="bi bi-image me-1"></i> CCCD Back:</span>
+                                            <span class="tcd-value">
+                                                <c:choose>
+                                                    <c:when test="${not empty o.cccdBackUrl}">
+                                                        <button type="button"
+                                                                class="tcd-link-btn"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#imagePreviewModal"
+                                                                data-img-src="${pageContext.request.contextPath}${o.cccdBackUrl}"
+                                                                data-img-title="CCCD Back - ${o.fullName}">
+                                                            View image
+                                                        </button>
+                                                    </c:when>
+                                                    <c:otherwise>-</c:otherwise>
+                                                </c:choose>
+                                            </span>
+                                        </div>
+                                    </div>
 
-                                <div class="tcd-line">
-                                    <span class="tcd-label"><i class="bi bi-image me-1"></i> CCCD Back:</span>
-                                    <span class="tcd-value">
-                                        <c:choose>
-                                            <c:when test="${not empty o.cccdBackUrl}">
-                                                <button type="button"
-                                                        class="tcd-link-btn"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#imagePreviewModal"
-                                                        data-img-src="${pageContext.request.contextPath}${o.cccdBackUrl}"
-                                                        data-img-title="CCCD Back - ${o.fullName}">
-                                                    View image
-                                                </button>
-                                            </c:when>
-                                            <c:otherwise>-</c:otherwise>
-                                        </c:choose>
-                                    </span>
-                                </div>
-
-                                <c:if test="${!loop.last}">
-                                    <div class="tcd-divider tcd-divider-soft"></div>
-                                </c:if>
-                            </c:forEach>
+                                    <c:if test="${!loop.last}">
+                                        <div class="tcd-divider tcd-divider-soft"></div>
+                                    </c:if>
+                                </c:forEach>
+                            </div>
                         </c:otherwise>
                     </c:choose>
                 </div>
@@ -426,7 +431,7 @@
                 <c:if test="${c.status eq 'PENDING'}">
                     <div class="tcd-divider"></div>
 
-                    <div class="tcd-article">
+                    <div class="tcd-article tcd-reveal tcd-reveal-up">
                         <div class="tcd-article-title">
                             <i class="bi bi-person-plus me-2"></i>
                             Add Roommate
@@ -444,38 +449,38 @@
 
                             <input type="hidden" name="contractId" value="${c.contractId}"/>
 
-                            <div class="tcd-form-grid">
-                                <div class="tcd-field">
+                            <div class="tcd-form-grid tcd-stagger">
+                                <div class="tcd-field tcd-reveal tcd-reveal-up">
                                     <label class="tcd-field-label" for="fullName">Full Name</label>
                                     <input id="fullName" type="text" name="fullName" required/>
                                 </div>
 
-                                <div class="tcd-field">
+                                <div class="tcd-field tcd-reveal tcd-reveal-up">
                                     <label class="tcd-field-label" for="identityCode">Citizen ID</label>
                                     <input id="identityCode" type="text" name="identityCode" required/>
                                 </div>
 
-                                <div class="tcd-field">
+                                <div class="tcd-field tcd-reveal tcd-reveal-up">
                                     <label class="tcd-field-label" for="phone">Phone</label>
                                     <input id="phone" type="text" name="phone" required/>
                                 </div>
 
-                                <div class="tcd-field">
+                                <div class="tcd-field tcd-reveal tcd-reveal-up">
                                     <label class="tcd-field-label" for="email">Email</label>
                                     <input id="email" type="email" name="email" required/>
                                 </div>
 
-                                <div class="tcd-field tcd-field-span-2">
+                                <div class="tcd-field tcd-field-span-2 tcd-reveal tcd-reveal-up">
                                     <label class="tcd-field-label" for="address">Address</label>
                                     <input id="address" type="text" name="address" required/>
                                 </div>
 
-                                <div class="tcd-field">
+                                <div class="tcd-field tcd-reveal tcd-reveal-up">
                                     <label class="tcd-field-label" for="dob">Date of Birth</label>
                                     <input id="dob" type="date" name="dob" required/>
                                 </div>
 
-                                <div class="tcd-field">
+                                <div class="tcd-field tcd-reveal tcd-reveal-up">
                                     <label class="tcd-field-label" for="gender">Gender</label>
                                     <select id="gender" name="gender" required>
                                         <option value="">-- Select --</option>
@@ -484,19 +489,19 @@
                                     </select>
                                 </div>
 
-                                <div class="tcd-field">
+                                <div class="tcd-field tcd-reveal tcd-reveal-up">
                                     <label class="tcd-field-label" for="cccdFront">CCCD Front</label>
                                     <input id="cccdFront" type="file" name="cccdFront" accept=".jpg,.jpeg,.png,.webp,image/*" required/>
                                 </div>
 
-                                <div class="tcd-field">
+                                <div class="tcd-field tcd-reveal tcd-reveal-up">
                                     <label class="tcd-field-label" for="cccdBack">CCCD Back</label>
                                     <input id="cccdBack" type="file" name="cccdBack" accept=".jpg,.jpeg,.png,.webp,image/*" required/>
                                 </div>
                             </div>
 
-                            <div class="tcd-form-actions">
-                                <button class="tcd-btn" type="submit">
+                            <div class="tcd-form-actions tcd-reveal tcd-reveal-up">
+                                <button class="tcd-btn tcd-btn-ripple" type="submit">
                                     <i class="bi bi-plus-circle me-2"></i>
                                     Add Occupant
                                 </button>
@@ -507,7 +512,7 @@
 
                 <div class="tcd-divider tcd-divider-soft"></div>
 
-                <div class="tcd-article">
+                <div class="tcd-article tcd-reveal tcd-reveal-up">
                     <div class="tcd-article-title">
                         <i class="bi bi-house-door me-2"></i>
                         ARTICLE 1: RENTAL PROPERTY
@@ -557,7 +562,7 @@
 
                     <div class="tcd-divider tcd-divider-soft"></div>
 
-                    <div class="tcd-article">
+                    <div class="tcd-article tcd-reveal tcd-reveal-up">
                         <div class="tcd-article-title">
                             <i class="bi bi-calendar-range me-2"></i>
                             ARTICLE 2: RENTAL PERIOD
@@ -586,7 +591,7 @@
 
                 <div class="tcd-divider tcd-divider-soft"></div>
 
-                <div class="tcd-article">
+                <div class="tcd-article tcd-reveal tcd-reveal-up">
                     <div class="tcd-article-title">
                         <i class="bi bi-cash-coin me-2"></i>
                         ARTICLE 3: RENTAL FEE AND PAYMENT
@@ -618,21 +623,21 @@
                 </div>
 
                 <c:if test="${param.sent == '1'}">
-                    <div class="tcd-alert tcd-alert-success">
+                    <div class="tcd-alert tcd-alert-success tcd-reveal tcd-reveal-up">
                         <i class="bi bi-check-circle me-2"></i>
                         Đã gửi xác nhận chuyển khoản. Vui lòng chờ manager duyệt.
                     </div>
                 </c:if>
 
                 <c:if test="${param.already == '1'}">
-                    <div class="tcd-alert tcd-alert-warning">
+                    <div class="tcd-alert tcd-alert-warning tcd-reveal tcd-reveal-up">
                         <i class="bi bi-exclamation-triangle me-2"></i>
                         Bạn đã xác nhận chuyển khoản trước đó rồi.
                     </div>
                 </c:if>
 
                 <c:if test="${param.err == '1' and empty param.msg}">
-                    <div class="tcd-alert tcd-alert-danger">
+                    <div class="tcd-alert tcd-alert-danger tcd-reveal tcd-reveal-up">
                         <i class="bi bi-x-circle me-2"></i>
                         Lỗi khi xác nhận chuyển khoản. Thử lại sau.
                     </div>
@@ -641,8 +646,8 @@
                 <c:if test="${c.status eq 'PENDING'}">
                     <div class="tcd-divider"></div>
 
-                    <div class="tcd-pay-wrap">
-                        <div>
+                    <div class="tcd-pay-wrap tcd-stagger">
+                        <div class="tcd-reveal tcd-reveal-left">
                             <div class="tcd-pay-title">
                                 <i class="bi bi-qr-code me-2"></i>
                                 Payment QR
@@ -677,7 +682,7 @@
                             </c:if>
                         </div>
 
-                        <div>
+                        <div class="tcd-reveal tcd-reveal-right">
                             <div class="tcd-pay-title">
                                 <i class="bi bi-shield-check me-2"></i>
                                 Confirm transfer
@@ -693,7 +698,7 @@
 
                                 <input type="hidden" name="contractId" value="${c.contractId}"/>
 
-                                <button class="tcd-btn"
+                                <button class="tcd-btn tcd-btn-ripple"
                                         type="submit"
                                         onclick="return confirm('Bạn chắc chắn đã chuyển khoản tiền cọc chưa?');">
                                     <i class="bi bi-check2-circle me-2"></i>
@@ -713,7 +718,6 @@
         </div>
     </div>
 
-    <!-- Image Preview Modal -->
     <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content tcd-modal-content">
