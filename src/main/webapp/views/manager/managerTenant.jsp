@@ -9,6 +9,7 @@
 
     <!-- Page CSS -->
     <link rel="stylesheet" href="${ctx}/assets/css/views/managerTenant.css">
+
     <style>
         /* ===== STATUS BADGE (tự động, chỉ đọc) ===== */
         .mt-status-badge {
@@ -190,7 +191,6 @@
             color: #b91c1c;
             border: 1px solid #fca5a5;
         }
-        /* ACTIVE + có hợp đồng đang active: nút disabled, không cho lock */
         .mt-btn-toggle-active-contract {
             display: inline-flex;
             align-items: center;
@@ -295,13 +295,13 @@
     <div class="mt-container">
 
         <!-- HEADER -->
-        <div class="mt-header">
+        <div class="mt-header mt-fade-up">
             <h2>Manage Tenants</h2>
             <p>View and manage all tenant information</p>
         </div>
 
         <!-- SEARCH -->
-        <div class="mt-search-box">
+        <div class="mt-search-box mt-fade-up mt-delay-1">
             <form method="get"
                   action="${ctx}/manager/tenants"
                   class="mt-search-form">
@@ -317,7 +317,7 @@
         </div>
 
         <!-- CARD -->
-        <div class="mt-card">
+        <div class="mt-card mt-fade-up mt-delay-2">
             <div class="mt-card-title">
                 All Tenants (<c:out value="${totalRecords}"/>)
             </div>
@@ -340,9 +340,9 @@
 
                     <tbody>
                         <c:forEach var="t" items="${tenants}">
-                            <c:set var="room"    value="${activeRoomMap[t.tenantId]}"/>
+                            <c:set var="room" value="${activeRoomMap[t.tenantId]}"/>
                             <c:set var="hasRoom" value="${not empty room}"/>
-                            <tr>
+                            <tr class="mt-row-fx">
                                 <td class="mt-mono">${t.tenantId}</td>
                                 <td class="mt-name">${t.fullName}</td>
                                 <td>${t.phoneNumber}</td>
@@ -354,7 +354,7 @@
                                     <fmt:formatDate value="${t.dateOfBirth}" pattern="yyyy-MM-dd"/>
                                 </td>
 
-                                <!-- ROOM (active contract) -->
+                                <!-- ROOM -->
                                 <td>
                                     <c:choose>
                                         <c:when test="${hasRoom}">
@@ -368,20 +368,15 @@
                                     </c:choose>
                                 </td>
 
-                                <!-- STATUS:
-                                     - PENDING         → badge tĩnh (không toggle)
-                                     - ACTIVE + có contract → badge tĩnh (không được lock)
-                                     - ACTIVE + không có contract → nút toggle (có thể lock)
-                                     - LOCKED          → luôn là nút toggle (có thể activate) -->
+                                <!-- STATUS -->
                                 <td>
                                     <c:choose>
-                                        <%-- PENDING: luôn badge tĩnh --%>
                                         <c:when test="${t.accountStatus == 'PENDING'}">
                                             <span class="mt-status-badge mt-badge-pending">
                                                 <i class="bi bi-hourglass-split"></i> PENDING
                                             </span>
                                         </c:when>
-                                        <%-- LOCKED: luôn cho toggle sang ACTIVE --%>
+
                                         <c:when test="${t.accountStatus == 'LOCKED'}">
                                             <button type="button"
                                                     class="mt-btn-toggle mt-btn-toggle-locked js-toggle-status"
@@ -392,7 +387,7 @@
                                                 <i class="bi bi-lock-fill"></i> LOCKED
                                             </button>
                                         </c:when>
-                                        <%-- ACTIVE + có contract: nút disabled, không cho lock --%>
+
                                         <c:when test="${t.accountStatus == 'ACTIVE' and hasRoom}">
                                             <button type="button"
                                                     class="mt-btn-toggle-active-contract"
@@ -401,7 +396,7 @@
                                                 <i class="bi bi-unlock-fill"></i> ACTIVE
                                             </button>
                                         </c:when>
-                                        <%-- ACTIVE + không có contract: nút toggle --%>
+
                                         <c:otherwise>
                                             <button type="button"
                                                     class="mt-btn-toggle mt-btn-toggle-active js-toggle-status"
@@ -415,7 +410,7 @@
                                     </c:choose>
                                 </td>
 
-                                <!-- ACTION: Edit (active contract) hoặc View (không có) -->
+                                <!-- ACTION -->
                                 <td>
                                     <button type="button"
                                             class="mt-btn mt-btn-edit js-open-edit"
@@ -463,7 +458,6 @@
                         </c:otherwise>
                     </c:choose>
 
-                    <!-- Prev -->
                     <c:choose>
                         <c:when test="${currentPage <= 1}">
                             <span class="mt-page-btn mt-page-disabled"><i class="bi bi-chevron-left"></i></span>
@@ -475,7 +469,6 @@
                         </c:otherwise>
                     </c:choose>
 
-                    <!-- Page numbers -->
                     <c:forEach var="i" begin="1" end="${totalPages}">
                         <c:choose>
                             <c:when test="${i == currentPage}">
@@ -496,7 +489,6 @@
                         </c:choose>
                     </c:forEach>
 
-                    <!-- Next -->
                     <c:choose>
                         <c:when test="${currentPage >= totalPages}">
                             <span class="mt-page-btn mt-page-disabled"><i class="bi bi-chevron-right"></i></span>
@@ -613,9 +605,8 @@
 
                 <div class="modal-actions">
                     <button type="button" class="modal-btn-cancel" data-close="1">
-                        <i class="bi bi-x-circle"></i> Cannncel
+                        <i class="bi bi-x-circle"></i> Cancel
                     </button>
-                    <!-- Chỉ hiện khi có active contract -->
                     <button type="button" class="modal-btn-reset" id="btnOpenResetPassword" style="display:none;">
                         <i class="bi bi-key-fill"></i> Reset Password
                     </button>
@@ -667,14 +658,14 @@
 
     <!-- hidden form để submit toggle -->
     <form id="toggleStatusForm" method="post" action="${ctx}/manager/tenant/edit" style="display:none;">
-        <input type="hidden" name="action"   value="toggleStatus"/>
+        <input type="hidden" name="action" value="toggleStatus"/>
         <input type="hidden" name="tenantId" id="toggleTenantId"/>
-        <input type="hidden" name="page"     value="${currentPage}"/>
-        <input type="hidden" name="keyword"  value="${keyword}"/>
+        <input type="hidden" name="page" value="${currentPage}"/>
+        <input type="hidden" name="keyword" value="${keyword}"/>
     </form>
 
     <!-- ===== RESET PASSWORD MODAL ===== -->
-    <div class="rp-modal-overlay" id="resetPasswordModal">
+    <div class="rp-modal-overlay" id="resetPasswordModal" aria-hidden="true">
         <div class="rp-modal-box" role="dialog" aria-modal="true">
             <button class="modal-close-btn" type="button" id="btnCloseResetPassword" aria-label="Close">
                 <i class="bi bi-x-lg"></i>
@@ -720,193 +711,16 @@
         </button>
     </div>
 
-    <!-- Page JS -->
-    <script src="${ctx}/assets/js/pages/managerTenant.js"></script>
     <script>
-        // ===== MỞ MODAL EDIT / VIEW =====
-        document.querySelectorAll('.js-open-edit').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const hasRoom = btn.dataset.hasRoom === 'true';
-
-                // Điền dữ liệu
-                document.getElementById('modal_tenantId').value     = btn.dataset.tenantId  || '';
-                document.getElementById('modal_fullName').value     = btn.dataset.fullname  || '';
-                document.getElementById('modal_identityCode').value = btn.dataset.identity  || '';
-                document.getElementById('modal_phoneNumber').value  = btn.dataset.phone     || '';
-                document.getElementById('modal_email').value        = btn.dataset.email     || '';
-                document.getElementById('modal_dateOfBirth').value  = btn.dataset.dob       || '';
-                document.getElementById('modal_address').value      = btn.dataset.address   || '';
-
-                const g = btn.dataset.gender;
-                document.getElementById('modal_gender').value =
-                    (g !== undefined && g !== 'null' && g !== '') ? g : '';
-
-                // Tiêu đề & subtitle
-                const titleNode = document.getElementById('editModalTitle').childNodes[0];
-                titleNode.nodeValue = hasRoom ? 'Edit Tenant Information' : 'View Tenant Information';
-                document.getElementById('editModalSubtitle').textContent = hasRoom
-                    ? 'Update tenant details or remove incorrect information'
-                    : 'This tenant has no active contract. Information is read-only.';
-
-                // View-only badge
-                document.getElementById('viewOnlyBadge').style.display = hasRoom ? 'none' : '';
-
-                // Readonly / editable cho tất cả input text/date/email
-                document.querySelectorAll(
-                    '#editTenantForm input:not([type=hidden])'
-                ).forEach(f => {
-                    f.readOnly = !hasRoom;
-                    f.style.background = hasRoom ? '' : '#f8fafc';
-                });
-                document.getElementById('modal_gender').disabled = !hasRoom;
-
-                // Clear buttons
-                document.querySelectorAll('.js-clear-btn').forEach(b => {
-                    b.style.display = hasRoom ? '' : 'none';
-                });
-
-                // Nút Save + Reset Password
-                document.getElementById('openConfirmBtn').style.display       = hasRoom ? '' : 'none';
-                document.getElementById('btnOpenResetPassword').style.display = hasRoom ? '' : 'none';
-
-                // Lưu tenantId để dùng khi mở reset password modal
-                document.getElementById('btnOpenResetPassword').dataset.tenantId  = btn.dataset.tenantId;
-                document.getElementById('btnOpenResetPassword').dataset.tenantName = btn.dataset.fullname;
-
-                // Mở modal
-                const modal = document.getElementById('editModal');
-                modal.setAttribute('aria-hidden', 'false');
-                modal.style.display = 'flex';
-            });
-        });
-
-        // ===== MỞ RESET PASSWORD MODAL =====
-        document.getElementById('btnOpenResetPassword').addEventListener('click', () => {
-            const rpBtn = document.getElementById('btnOpenResetPassword');
-            document.getElementById('rp_tenantId').value         = rpBtn.dataset.tenantId;
-            document.getElementById('rpModalSub').textContent    = 'Đặt lại mật khẩu cho: ' + (rpBtn.dataset.tenantName || '');
-            document.getElementById('rp_newPassword').value      = '';
-            document.getElementById('rp_confirmPassword').value  = '';
-            document.getElementById('rpError').classList.remove('is-show');
-
-            document.getElementById('editModal').style.display = 'none';
-            document.getElementById('resetPasswordModal').classList.add('is-open');
-        });
-
-        // ===== ĐÓNG RESET PASSWORD MODAL → quay lại edit modal =====
-        ['btnCloseResetPassword', 'btnCancelResetPassword'].forEach(id => {
-            document.getElementById(id).addEventListener('click', () => {
-                document.getElementById('resetPasswordModal').classList.remove('is-open');
-                document.getElementById('editModal').style.display = 'flex';
-            });
-        });
-
-        // ===== SUBMIT RESET PASSWORD =====
-        document.getElementById('resetPasswordForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const tenantId   = document.getElementById('rp_tenantId').value;
-            const newPwd     = document.getElementById('rp_newPassword').value;
-            const confirmPwd = document.getElementById('rp_confirmPassword').value;
-            const rpError    = document.getElementById('rpError');
-
-            rpError.classList.remove('is-show');
-
-            if (!newPwd || newPwd.length < 6) {
-                rpError.textContent = 'Mật khẩu phải từ 6 ký tự trở lên.';
-                rpError.classList.add('is-show');
-                return;
-            }
-            if (newPwd !== confirmPwd) {
-                rpError.textContent = 'Xác nhận mật khẩu không khớp.';
-                rpError.classList.add('is-show');
-                return;
-            }
-
-            // Build hidden form và submit
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '${ctx}/manager/tenant/edit';
-
-            const hiddenFields = {
-                action      : 'resetPassword',
-                tenantId    : tenantId,
-                newPassword : newPwd,
-                page        : '${currentPage}',
-                keyword     : '${keyword}'
-            };
-            Object.entries(hiddenFields).forEach(([k, v]) => {
-                const inp = document.createElement('input');
-                inp.type = 'hidden'; inp.name = k; inp.value = v;
-                form.appendChild(inp);
-            });
-            document.body.appendChild(form);
-            form.submit();
-        });
-        // ===== TOGGLE STATUS =====
-        (function () {
-            let pendingTenantId = null;
-
-            document.querySelectorAll('.js-toggle-status').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tenantId   = btn.dataset.tenantId;
-                    const tenantName = btn.dataset.tenantName || ('Tenant #' + tenantId);
-                    const current    = btn.dataset.currentStatus; // 'ACTIVE' | 'LOCKED'
-                    const toLock     = current === 'ACTIVE';
-
-                    pendingTenantId = tenantId;
-
-                    // Cập nhật dialog
-                    const icon  = document.getElementById('toggleConfirmIcon');
-                    const title = document.getElementById('toggleConfirmTitle');
-                    const sub   = document.getElementById('toggleConfirmSub');
-                    const okBtn = document.getElementById('btnConfirmToggle');
-
-                    if (toLock) {
-                        icon.innerHTML  = '<i class="bi bi-lock-fill"></i>';
-                        icon.className  = 'toggle-confirm-icon to-lock';
-                        title.textContent = 'Lock Tenant?';
-                        sub.textContent   = 'Tenant "' + tenantName + '" will be locked and cannot log in.';
-                        okBtn.className   = 'toggle-confirm-ok btn-lock';
-                        okBtn.innerHTML   = '<i class="bi bi-lock-fill"></i> Lock';
-                    } else {
-                        icon.innerHTML  = '<i class="bi bi-unlock-fill"></i>';
-                        icon.className  = 'toggle-confirm-icon to-unlock';
-                        title.textContent = 'Activate Tenant?';
-                        sub.textContent   = 'Tenant "' + tenantName + '" will be activated.';
-                        okBtn.className   = 'toggle-confirm-ok btn-unlock';
-                        okBtn.innerHTML   = '<i class="bi bi-unlock-fill"></i> Activate';
-                    }
-
-                    const dialog = document.getElementById('toggleStatusDialog');
-                    dialog.classList.add('is-open');
-                    dialog.setAttribute('aria-hidden', 'false');
-                });
-            });
-
-            // Cancel
-            document.getElementById('btnCancelToggle').addEventListener('click', () => {
-                document.getElementById('toggleStatusDialog').classList.remove('is-open');
-                pendingTenantId = null;
-            });
-
-            // Confirm → submit hidden form
-            document.getElementById('btnConfirmToggle').addEventListener('click', () => {
-                if (!pendingTenantId) return;
-                document.getElementById('toggleTenantId').value = pendingTenantId;
-                document.getElementById('toggleStatusForm').submit();
-            });
-        })();
-
-document.querySelectorAll('[data-close="1"]').forEach(btn => {
-    btn.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        const modal = document.getElementById('editModal');
-        modal.style.display = 'none';
-        modal.setAttribute('aria-hidden', 'true');
-    });
-});
+        window.MANAGER_TENANT_CONFIG = {
+            ctx: '${ctx}',
+            currentPage: '${currentPage}',
+            keyword: '${keyword}'
+        };
     </script>
+
+    <!-- Page JS -->
+    <%-- <script src="${ctx}/assets/js/pages/managerTenant.js"></script> --%>
+    <script src="${ctx}/assets/js/pages/managerTenantFx.js"></script>
 
 </layout:layout>
