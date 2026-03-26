@@ -63,6 +63,13 @@
                     <input type="hidden" name="paymentStatus" value="${paymentStatus}">
                     <input type="hidden" name="billId" value="${bill.billId}"/>
 
+                    <!-- ERROR -->
+                    <c:if test="${not empty error}">
+                        <div class="tbg-error">
+                            ${error}
+                        </div>
+                    </c:if>
+
                     <!-- TOP -->
                     <div class="tbg-form-top">
                         <div class="tbg-left">
@@ -130,21 +137,15 @@
                     <div class="tbg-actions tbg-reveal" style="--delay: 0.58s;">
                         <button type="submit" class="tbg-btn-generate">
                             <i class="bi bi-pencil-square"></i>
-                            Update Bill
+                            <span class="tbg-btn-text">Update Bill</span>
                         </button>
                     </div>
-
-                    <!-- ERROR -->
-                    <c:if test="${not empty error}">
-                        <div class="tbg-error tbg-reveal" style="--delay: 0.62s;">
-                            ${error}
-                        </div>
-                    </c:if>
 
                 </form>
 
             </div>
         </div>
+
     </div>
 
     <script src="${pageContext.request.contextPath}/assets/js/pages/managerGenerateBill.js"></script>

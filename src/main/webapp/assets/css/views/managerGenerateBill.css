@@ -72,10 +72,6 @@
   z-index: 1;
 }
 
-/* =========================
-PAGE ENTRY ANIMATION
-========================= */
-
 .tbg-fade-page {
   animation: tbgPageEnter 0.8s ease both;
 }
@@ -236,8 +232,6 @@ FORM
   max-width: 920px;
 }
 
-/* TOP SECTION */
-
 .tbg-form-top {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -316,6 +310,37 @@ FORM
 }
 
 /* =========================
+ERROR
+========================= */
+
+.tbg-error {
+  margin: 0 0 18px 0;
+  padding: 14px 16px;
+  border-left: 5px solid #dc2626;
+  background: linear-gradient(180deg, #fff5f5, #fef2f2);
+  color: #b91c1c;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.1);
+  position: relative;
+  z-index: 20;
+  width: 100%;
+  line-height: 1.5;
+  animation: tbgShakeIn 0.45s ease;
+}
+
+.tbg-error::before {
+  content: "⚠️";
+  font-size: 16px;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+/* =========================
 METER
 ========================= */
 
@@ -349,7 +374,6 @@ METER
   box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
 }
 
-/* state class added by JS */
 .tbg-usage-pop {
   animation: tbgUsagePop 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -425,30 +449,6 @@ BUTTON
 
 .tbg-btn-generate.loading i {
   animation: tbgSpin 0.9s linear infinite;
-}
-
-/* =========================
-ERROR
-========================= */
-
-.tbg-error {
-  margin-top: 15px;
-  padding: 12px 14px;
-  border-left: 4px solid var(--tbg-danger);
-  background: linear-gradient(180deg, #fff5f5, #fef2f2);
-  color: #b91c1c;
-  font-size: 14px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 10px 24px rgba(220, 38, 38, 0.08);
-  animation: tbgShakeIn 0.45s ease;
-}
-
-.tbg-error::before {
-  content: "⚠️";
-  font-size: 16px;
 }
 
 /* =========================
