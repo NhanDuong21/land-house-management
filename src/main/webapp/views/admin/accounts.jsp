@@ -10,10 +10,10 @@
           active="a_accounts"
           cssFile="${ctx}/assets/css/views/admin/accounts.css">
 
-    <div class="ma-container">
+    <div class="ma-container ma-page-enter">
 
         <!-- HEADER -->
-        <div class="ma-header">
+        <div class="ma-header ma-reveal ma-reveal-up">
             <div>
                 <h2>Manage Accounts</h2>
                 <p>View and manage tenant &amp; manager accounts</p>
@@ -30,7 +30,7 @@
         <!-- ALERT (server-side, từ redirect) -->
         <c:set var="success" value="${param.success}" />
         <c:if test="${not empty success}">
-            <div id="successAlert" class="ma-alert ma-alert-success">
+            <div id="successAlert" class="ma-alert ma-alert-success ma-reveal ma-reveal-down">
                 <span class="ma-alert-ico">
                     <i class="bi bi-check-circle-fill"></i>
                 </span>
@@ -39,7 +39,7 @@
         </c:if>
 
         <c:if test="${not empty error}">
-            <div class="ma-alert ma-alert-danger">
+            <div class="ma-alert ma-alert-danger ma-reveal ma-reveal-down">
                 <span class="ma-alert-ico">
                     <i class="bi bi-x-circle-fill"></i>
                 </span>
@@ -51,7 +51,7 @@
         <div id="maToast" style="display:none;" aria-live="polite"></div>
 
         <!-- SEARCH + FILTER -->
-        <div class="ma-search-box">
+        <div class="ma-search-box ma-reveal ma-reveal-up">
             <form id="maSearchForm" class="ma-search-form"
                   method="get" action="${ctx}/admin/accounts">
 
@@ -75,7 +75,7 @@
         </div>
 
         <!-- TABLE -->
-        <div class="ma-card">
+        <div class="ma-card ma-reveal ma-reveal-up">
             <div class="ma-card-title">Accounts List</div>
 
             <div class="ma-table-wrap">
@@ -86,6 +86,7 @@
 
                     <c:remove var="successMsg" scope="session"/>
                 </c:if>
+
                 <table class="ma-table">
                     <thead>
                         <tr>
@@ -106,8 +107,8 @@
                             </tr>
                         </c:if>
 
-                        <c:forEach var="a" items="${accounts}">
-                            <tr>
+                        <c:forEach var="a" items="${accounts}" varStatus="loop">
+                            <tr class="ma-row-reveal" style="--row-delay:${loop.index * 50}ms;">
                                 <td class="ma-mono">${a.accountId}</td>
                                 <td class="ma-name">${a.fullName}</td>
                                 <td>${a.email}</td>
@@ -160,7 +161,6 @@
                                             </span>
                                         </button>
 
-
                                         <!-- SET PASSWORD (OPEN MODAL) -->
                                         <button type="button"
                                                 class="ma-action-btn warn ma-open-pass"
@@ -174,31 +174,29 @@
                                             </span>
                                             Reset Password
                                         </button>
-                                        <!--UpDate ManageAccount-->
 
+                                        <!-- UPDATE -->
                                         <c:if test="${a.accountType == 'STAFF'}">
                                             <button type="button"
                                                     class="ma-action-btn primary"
                                                     onclick="window.location.href = '${pageContext.request.contextPath}/admin/accounts/update?id=${a.accountId}'">
-
                                                 <span class="ma-action-ico">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </span>
                                                 Update
                                             </button>
                                         </c:if>
+
                                         <c:if test="${a.accountType == 'TENANT'}">
                                             <button type="button"
                                                     class="ma-action-btn primary"
                                                     onclick="window.location.href = '${pageContext.request.contextPath}/admin/accounts/update-tenant?id=${a.accountId}'">
-
                                                 <span class="ma-action-ico">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </span>
                                                 Update
                                             </button>
                                         </c:if>
-
 
                                     </div>
                                 </td>
@@ -211,14 +209,13 @@
 
         <!-- PAGINATION -->
         <c:if test="${totalPages > 1}">
-            <div class="ma-pager">
+            <div class="ma-pager ma-reveal ma-reveal-up">
 
                 <div>
                     Total: <strong>${totalRecords}</strong>
                 </div>
 
                 <div class="ma-pager-right">
-
                     <c:choose>
                         <c:when test="${page > 1}">
                             <a class="ma-page-btn"
@@ -253,7 +250,6 @@
                             </span>
                         </c:otherwise>
                     </c:choose>
-
                 </div>
             </div>
         </c:if>
@@ -262,8 +258,7 @@
 
     <!-- ===== CONFIRM TOGGLE STATUS MODAL ===== -->
     <div class="ma-modal" id="maToggleModal" aria-hidden="true"
-         style="display:none; position:fixed; inset:0; z-index:9999;
-         align-items:center; justify-content:center;">
+         style="display:none; position:fixed; inset:0; z-index:9999; align-items:center; justify-content:center;">
         <div class="ma-modal-backdrop" id="maToggleBackdrop"
              style="position:fixed; inset:0; background:rgba(0,0,0,.45);"></div>
 
@@ -302,7 +297,7 @@
         </div>
     </div>
 
-    <!-- ===== SET PASSWORD MODAL (ONE TIME) ===== -->
+    <!-- ===== SET PASSWORD MODAL ===== -->
     <div class="ma-modal" id="maPassModal" aria-hidden="true">
         <div class="ma-modal-backdrop" data-close="1"></div>
 
@@ -366,9 +361,7 @@
         </div>
     </div>
 
-    <!-- JS: realtime search + modals + toggle + reset password -->
     <script>
-        // expose ctx for external js
         window.MA_CTX = "${ctx}";
     </script>
     <script src="${ctx}/assets/js/pages/admin/accounts.js"></script>
