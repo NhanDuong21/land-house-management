@@ -15,14 +15,21 @@
 
     <div class="manage-room container-fluid">
 
+        <!-- FLOATING BG -->
+        <div class="room-bg room-bg-1"></div>
+        <div class="room-bg room-bg-2"></div>
+        <div class="room-bg room-bg-3"></div>
+
         <!-- HEADER -->
-        <div class="page-header">
-            <h2>Room List</h2>
-            <p>View all rooms in the system</p>
+        <div class="page-header page-reveal">
+            <div>
+                <h2>Room List</h2>
+                <p>View all rooms in the system</p>
+            </div>
         </div>
 
         <!-- CARD -->
-        <div class="room-card">
+        <div class="room-card page-reveal">
 
             <div class="room-card-head">
                 <h5>All Rooms (${totalRoom})</h5>
@@ -86,8 +93,9 @@
 
                     <tbody id="roomTable">
 
-                        <c:forEach items="${Rooms}" var="r">
-                            <tr>
+                        <c:forEach items="${Rooms}" var="r" varStatus="loop">
+                            <tr class="room-row"
+                                style="--row-delay: ${loop.index * 0.05}s;">
                                 <td class="room-mono">${r.roomId}</td>
 
                                 <td>${r.blockName}</td>
@@ -107,7 +115,7 @@
                                 <td>${r.maxTenants}</td>
 
                                 <td>
-                                    <span class="status ${r.mezzanine ? 'AVAILABLE' : 'MAINTENANCE'}">
+                                    <span class="status ${r.mezzanine ? 'AVAILABLE' : 'MAINTENANCE'} room-chip">
                                         <c:choose>
                                             <c:when test="${r.mezzanine}">
                                                 <i class="bi bi-check2-circle"></i> Yes
@@ -225,30 +233,41 @@
     <!-- STATUS EDIT MODAL -->
     <div id="statusModal" class="room-modal">
         <div class="room-modal-box">
+            <div class="modal-glow"></div>
+
             <h4>Change Room Status</h4>
+            <p class="room-modal-subtitle">Choose a new status for this room.</p>
 
             <div class="room-status-options">
-                <button class="status AVAILABLE"
+                <button type="button"
+                        class="status AVAILABLE"
                         data-status="AVAILABLE">
                     AVAILABLE
                 </button>
 
-                <button class="status MAINTENANCE"
+                <button type="button"
+                        class="status MAINTENANCE"
                         data-status="MAINTENANCE">
                     MAINTENANCE
                 </button>
             </div>
 
             <div class="room-modal-actions">
-                <button id="cancelBtn">
+                <button id="cancelBtn" type="button">
                     Cancel
                 </button>
 
-                <button id="saveBtn">
+                <button id="saveBtn" type="button">
                     Save
                 </button>
             </div>
         </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="roomToast" class="room-toast">
+        <i class="bi bi-check2-circle"></i>
+        <span id="roomToastText">Updating room status...</span>
     </div>
 
     <script src="${ctx}/assets/js/pages/manageRooms.js"></script>
