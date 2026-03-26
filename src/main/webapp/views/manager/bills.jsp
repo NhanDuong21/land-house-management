@@ -1,6 +1,6 @@
 <%-- 
     Document   : bills
-    Created on : Feb 15, 2026, 10:56:52 PM
+    Created on : Feb 15, 2026, 10:56:52 PM
     Author     : To Thi Thao Trang - CE191027
 --%>
 
@@ -15,8 +15,13 @@
 
     <div class="mb-container">
 
+        <!-- DECOR BACKGROUND -->
+        <div class="mb-blob mb-blob-1"></div>
+        <div class="mb-blob mb-blob-2"></div>
+        <div class="mb-blob mb-blob-3"></div>
+
         <!-- HEADER -->
-        <div class="mb-header">
+        <div class="mb-header mb-reveal">
             <div>
                 <h2>Manage Billing</h2>
                 <p>View and manage all tenant bills</p>
@@ -24,18 +29,27 @@
 
             <a href="${pageContext.request.contextPath}/manager/billing/generate"
                class="mb-generate-btn">
-                + Generate Bill
+                <span>+</span> Generate Bill
             </a>
         </div>
 
         <!-- SEARCH -->
-        <div class="mb-search-box">
+        <div class="mb-search-box mb-reveal">
             <div class="mb-search-form">
-                <input type="text" id="keyword" class="searchBill"
-                       placeholder="Search by Bill ID, room number...">
-                <button class="date-btn">
-                    <input type="month" class="bill-date">
+                <div class="mb-search-input-wrap">
+                    <span class="mb-search-icon">⌕</span>
+                    <input type="text"
+                           id="keyword"
+                           class="searchBill"
+                           placeholder="Search by Bill ID, room number...">
+                </div>
+
+                <button class="date-btn" type="button" id="monthTrigger" aria-label="Filter by month">
+                    <span class="date-btn-icon">🗓</span>
+                    <span class="date-btn-text">Month</span>
+                    <input type="month" id="billDate" class="bill-date">
                 </button>
+
                 <select id="status">
                     <option value="">All status</option>
                     <option value="PAID">PAID</option>
@@ -46,122 +60,131 @@
         </div>
 
         <!-- TABLE CARD -->
-        <div class="mb-card">
+        <div class="mb-card mb-reveal">
 
-            <div class="mb-card-title">
-                All Bills (${totalBills-1})
+            <div class="mb-card-top">
+                <div class="mb-card-title" id="billCountTitle">
+                    All Bills (${totalBills-1})
+                </div>
+                <div class="mb-card-subtitle">
+                    Billing overview
+                </div>
             </div>
 
-            <table class="mb-table">
-                <thead>
-                    <tr>
-                        <th>Bill ID</th>
-                        <th>Room</th>
-                        <th>Month</th>
-                        <th>Due Date</th>
-                        <th>Total Amount</th>
-                        <th>Status</th>
-                        <th>Payment Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-
-                <tbody  id="billTable">
-                    <c:forEach var="b" items="${bill}">
+            <div class="mb-table-wrap">
+                <table class="mb-table">
+                    <thead>
                         <tr>
-                            <td class="billId">${b.billId}</td>
-                            <td class="roomNumber">${b.roomNumber}</td>
-                            <td>
-                                <span  class="dateBill">
-                                    <fmt:formatDate value="${b.month}"  pattern="dd/MM/yyyy"/>
-                                </span>
-                            </td>
-                            <td>
-                                <fmt:formatDate value="${b.dueDate}" pattern="dd/MM/yyyy"/>
-                            </td>
-                            <td>
-                                <fmt:formatNumber value="${b.totalAmount}" 
-                                                  type="number" groupingUsed="true"/> đ
-                            </td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${b.status eq 'PAID'}">
-                                        <span class="mb-badge paid">PAID</span>
-                                    </c:when>
+                            <th>Bill ID</th>
+                            <th>Room</th>
+                            <th>Month</th>
+                            <th>Due Date</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Payment Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
 
-                                    <c:when test="${b.status eq 'CANCELLED'}">
-                                        <span  class="mb-badge cancelled">CANCELLED</span>
-                                    </c:when>
+                    <tbody id="billTable">
+                        <c:forEach var="b" items="${bill}" varStatus="loop">
+                            <tr class="bill-row"
+                                style="--row-delay: ${loop.index * 0.05}s;"
+                                data-bill-id="${b.billId}"
+                                data-room-number="${b.roomNumber}"
+                                data-status="${b.status}"
+                                data-payment-status="${empty b.paymentStatus ? 'NO REQUEST' : b.paymentStatus}">
+                                <td class="billId bill-mono">${b.billId}</td>
 
-                                    <c:otherwise>
-                                        <span class="mb-badge unpaid">UNPAID</span>
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>
-                                <c:choose>
+                                <td class="roomNumber room-strong">${b.roomNumber}</td>
 
+                                <td>
+                                    <span class="dateBill">
+                                        <fmt:formatDate value="${b.month}" pattern="dd/MM/yyyy"/>
+                                    </span>
+                                </td>
 
-                                    <c:when test="${empty b.paymentStatus}">
-                                        <span class="mb-badge nopayment">NO REQUEST</span>
-                                    </c:when>
+                                <td>
+                                    <fmt:formatDate value="${b.dueDate}" pattern="dd/MM/yyyy"/>
+                                </td>
 
+                                <td class="bill-amount">
+                                    <fmt:formatNumber value="${b.totalAmount}" 
+                                                      type="number" groupingUsed="true"/> đ
+                                </td>
 
-                                    <c:when test="${b.paymentStatus eq 'PENDING'}">
-                                        <span class="mb-badge pending">PENDING</span>
-                                    </c:when>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${b.status eq 'PAID'}">
+                                            <span class="mb-badge paid">PAID</span>
+                                        </c:when>
 
+                                        <c:when test="${b.status eq 'CANCELLED'}">
+                                            <span class="mb-badge cancelled">CANCELLED</span>
+                                        </c:when>
 
-                                    <c:when test="${b.paymentStatus eq 'CONFIRMED'}">
-                                        <span class="mb-badge paid">CONFIRMED</span>
-                                    </c:when>
+                                        <c:otherwise>
+                                            <span class="mb-badge unpaid">UNPAID</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
 
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${empty b.paymentStatus}">
+                                            <span class="mb-badge nopayment">NO REQUEST</span>
+                                        </c:when>
 
-                                    <c:when test="${b.paymentStatus eq 'REJECTED'}">
-                                        <span class="mb-badge cancelled">REJECTED</span>
-                                    </c:when>
+                                        <c:when test="${b.paymentStatus eq 'PENDING'}">
+                                            <span class="mb-badge pending">PENDING</span>
+                                        </c:when>
 
-                                </c:choose>
-                            </td>
-                            <td class="mb-actions">
+                                        <c:when test="${b.paymentStatus eq 'CONFIRMED'}">
+                                            <span class="mb-badge paid">CONFIRMED</span>
+                                        </c:when>
 
-                                <!-- VIEW -->
-                                <a href="${pageContext.request.contextPath}/manager/billing/detail?billId=${b.billId}"
-                                   class="mb-view-btn">
-                                    👁 View
-                                </a>
+                                        <c:when test="${b.paymentStatus eq 'REJECTED'}">
+                                            <span class="mb-badge cancelled">REJECTED</span>
+                                        </c:when>
+                                    </c:choose>
+                                </td>
 
-                                <!-- EDIT -->
-                                <c:choose>
-                                    <c:when test="${b.status eq 'UNPAID' and b.paymentStatus ne 'PENDING'}">
-                                        <a href="${pageContext.request.contextPath}/manager/billing/editBill?billId=${b.billId}"
-                                           class="mb-edit-btn">
-                                            ✏ Edit Bill
-                                        </a>
-                                    </c:when>
+                                <td class="mb-actions">
 
+                                    <!-- VIEW -->
+                                    <a href="${pageContext.request.contextPath}/manager/billing/detail?billId=${b.billId}"
+                                       class="mb-view-btn">
+                                        👁 View
+                                    </a>
 
-                                    <c:otherwise>
-                                        <button class="mb-edit-btn disabled" disabled>
-                                            ✏ Edit Bill
-                                        </button>
-                                    </c:otherwise>
+                                    <!-- EDIT -->
+                                    <c:choose>
+                                        <c:when test="${b.status eq 'UNPAID' and b.paymentStatus ne 'PENDING'}">
+                                            <a href="${pageContext.request.contextPath}/manager/billing/editBill?billId=${b.billId}"
+                                               class="mb-edit-btn">
+                                                ✏️ Edit Bill
+                                            </a>
+                                        </c:when>
 
-                                </c:choose>
+                                        <c:otherwise>
+                                            <button class="mb-edit-btn disabled" disabled>
+                                                ✏️ Edit Bill
+                                            </button>
+                                        </c:otherwise>
+                                    </c:choose>
 
+                                </td>
+                            </tr>
+                        </c:forEach>
+
+                        <tr id="notFoundBill" style="display: none;">
+                            <td colspan="8" class="mb-empty">
+                                No bills found.
                             </td>
                         </tr>
-                    </c:forEach>
-
-                    <tr id="notFoundBill" style="display: none;">
-                        <td colspan="7" class="mb-empty">
-                            No bills found.
-                        </td>
-                    </tr>
-
-
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
 
             <!-- PAGINATION -->
             <c:if test="${totalPages > 1}">
@@ -196,5 +219,6 @@
 
         </div>
     </div>
+
     <script src="${pageContext.request.contextPath}/assets/js/pages/managerBills.js"></script>
 </layout:layout>
