@@ -5,13 +5,13 @@
 
 <layout:layout title="Extend Contract"
                active="m_contracts"
-               cssFile="${pageContext.request.contextPath}/assets/css/views/managerExtendContract.css?v=1">
+               cssFile="${pageContext.request.contextPath}/assets/css/views/managerExtendContract.css?v=2">
 
     <c:set var="cur" value="${cur}"/>
 
     <div class="me-container">
 
-        <a href="${pageContext.request.contextPath}/manager/contracts/detail?id=${cur.contractId}" class="me-back">
+        <a href="${pageContext.request.contextPath}/manager/contract-detail?id=${cur.contractId}" class="me-back">
             ← Back to Contract Detail
         </a>
 
@@ -41,7 +41,8 @@
                 </div>
             </c:if>
 
-            <form method="post" action="${pageContext.request.contextPath}/manager/contracts/extend"
+            <form method="post"
+                  action="${pageContext.request.contextPath}/manager/contracts/extend"
                   class="me-form">
 
                 <input type="hidden" name="oldContractId" value="${cur.contractId}"/>
@@ -52,7 +53,9 @@
 
                     <div class="me-field">
                         <label class="me-label">Start Date (suggested)</label>
-                        <input class="me-input" type="date" name="startDate"
+                        <input class="me-input"
+                               type="date"
+                               name="startDate"
                                value="<fmt:formatDate value='${suggestedStart}' pattern='yyyy-MM-dd'/>"
                                required>
                         <div class="me-hint">Suggested = old end date + 1 day</div>
@@ -65,33 +68,46 @@
 
                     <div class="me-field">
                         <label class="me-label">Monthly Rent</label>
-                        <input class="me-input" type="number" name="monthlyRent" min="0"
-                               value="${cur.monthlyRent}" required>
+                        <input class="me-input"
+                               type="number"
+                               name="monthlyRent"
+                               min="0"
+                               value="${cur.monthlyRent}"
+                               required>
                     </div>
 
                     <div class="me-field">
                         <label class="me-label">Deposit</label>
-                        <input class="me-input" type="number" name="deposit" min="0"
-                               value="${cur.deposit}" required>
+                        <input class="me-input"
+                               type="number"
+                               name="deposit"
+                               min="0"
+                               value="${cur.deposit}"
+                               required>
                     </div>
 
                     <div class="me-field me-field-full">
                         <label class="me-label">Payment QR Data</label>
-                        <input class="me-input" type="text" name="paymentQrData"
-                               value="${cur.paymentQrData}" placeholder="/assets/images/qr/myqr.png" required>
+                        <input class="me-input"
+                               type="text"
+                               name="paymentQrData"
+                               value="${cur.paymentQrData}"
+                               placeholder="/assets/images/qr/myqr.png"
+                               required>
                         <div class="me-hint">Keep same QR if using same bank account.</div>
                     </div>
 
                 </div>
 
                 <div class="me-actions">
-                    <button type="submit" class="me-btn me-btn-primary"
+                    <button type="submit"
+                            class="me-btn me-btn-primary"
                             onclick="return confirm('Create NEW PENDING renewal contract? Tenant will confirm transfer, then you confirm to activate.');">
                         Create Renewal (PENDING)
                     </button>
 
                     <a class="me-btn me-btn-ghost"
-                       href="${pageContext.request.contextPath}/manager/contracts/detail?id=${cur.contractId}">
+                       href="${pageContext.request.contextPath}/manager/contract-detail?id=${cur.contractId}">
                         Cancel
                     </a>
                 </div>

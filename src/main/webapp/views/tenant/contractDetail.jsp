@@ -556,21 +556,21 @@
                                 <c:otherwise>-</c:otherwise>
                             </c:choose>
                             <c:if test="${c.isMezzanine}">, Mezzanine</c:if>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="tcd-divider tcd-divider-soft"></div>
-
-                <div class="tcd-article tcd-reveal tcd-reveal-up">
-                    <div class="tcd-article-title">
-                        <i class="bi bi-calendar-range me-2"></i>
-                        ARTICLE 2: RENTAL PERIOD
+                            </span>
+                        </div>
                     </div>
 
-                    <div class="tcd-line">
-                        <span class="tcd-label"><i class="bi bi-calendar-check me-1"></i> Start Date:</span>
-                        <span class="tcd-value">
+                    <div class="tcd-divider tcd-divider-soft"></div>
+
+                    <div class="tcd-article tcd-reveal tcd-reveal-up">
+                        <div class="tcd-article-title">
+                            <i class="bi bi-calendar-range me-2"></i>
+                            ARTICLE 2: RENTAL PERIOD
+                        </div>
+
+                        <div class="tcd-line">
+                            <span class="tcd-label"><i class="bi bi-calendar-check me-1"></i> Start Date:</span>
+                            <span class="tcd-value">
                             <c:choose>
                                 <c:when test="${empty c.startDate}">-</c:when>
                                 <c:otherwise><fmt:formatDate value="${c.startDate}" pattern="dd/MM/yyyy"/></c:otherwise>
