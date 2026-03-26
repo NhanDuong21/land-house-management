@@ -6,8 +6,11 @@
   const pageSizeEl = document.getElementById("mcPageSize");
   const wrapper = document.getElementById("contractTableWrapper");
 
+  if (!form || !qEl || !statusEl || !pageSizeEl || !wrapper) return;
+
   let timer = null;
   let lastQueryKey = "";
+  let requestId = 0;
 
   function buildUrl(page) {
     const params = new URLSearchParams();
@@ -19,32 +22,78 @@
     return `${ctx}/manager/contracts?${params.toString()}`;
   }
 
+  function setLoading(isLoading) {
+    wrapper.classList.toggle("mc-loading", !!isLoading);
+  }
+
+  function animateSwapOut() {
+    wrapper.classList.remove("mc-fade-swap-in");
+    wrapper.classList.add("mc-fade-swap-out");
+  }
+
+  function animateSwapIn() {
+    wrapper.classList.remove("mc-fade-swap-out");
+    wrapper.classList.add("mc-fade-swap-in");
+  }
+
+  function bindRowHoverDepth() {
+    const rows = wrapper.querySelectorAll(".mc-table tbody tr");
+    rows.forEach((row) => {
+      row.addEventListener("mousemove", function (e) {
+        const rect = row.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const percent = (x / rect.width - 0.5) * 2;
+        row.style.transform = `translateY(-2px) rotateX(0deg) rotateY(${percent * 1.2}deg)`;
+      });
+
+      row.addEventListener("mouseleave", function () {
+        row.style.transform = "";
+      });
+    });
+  }
+
   function attachPagerAjax() {
     wrapper.querySelectorAll('a[href*="ajax=1"]').forEach((a) => {
-      a.addEventListener("click", (e) => {
+      a.addEventListener("click", function (e) {
         const href = a.getAttribute("href") || "";
         if (!href.includes("manager/contracts")) return;
 
         e.preventDefault();
 
-        // Parse page từ href (dù href có bị double ctx vẫn parse được)
         const u = new URL(href, window.location.origin);
         const page = parseInt(u.searchParams.get("page") || "1", 10);
 
-        // Fetch bằng buildUrl => không bị /LandHouseManagement/LandHouseManagement nữa
         fetchAndReplace(buildUrl(page));
       });
     });
   }
 
-  function fetchAndReplace(url) {
-    fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
-      .then((r) => r.text())
-      .then((html) => {
-        wrapper.innerHTML = html;
-        attachPagerAjax();
-      })
-      .catch(() => {});
+  async function fetchAndReplace(url) {
+    const currentId = ++requestId;
+
+    try {
+      animateSwapOut();
+      setLoading(true);
+
+      const response = await fetch(url, {
+        headers: { "X-Requested-With": "XMLHttpRequest" },
+      });
+
+      const html = await response.text();
+
+      if (currentId !== requestId) return;
+
+      wrapper.innerHTML = html;
+      animateSwapIn();
+      attachPagerAjax();
+      bindRowHoverDepth();
+    } catch (err) {
+      console.error("Load contracts failed:", err);
+    } finally {
+      if (currentId === requestId) {
+        setLoading(false);
+      }
+    }
   }
 
   function load(page) {
@@ -54,7 +103,16 @@
     fetchAndReplace(buildUrl(page || 1));
   }
 
-  // chặn submit form (khỏi reload page)
+  function initInputEffects() {
+    qEl.addEventListener("focus", () => {
+      qEl.parentElement?.classList?.add("mc-focus");
+    });
+
+    qEl.addEventListener("blur", () => {
+      qEl.parentElement?.classList?.remove("mc-focus");
+    });
+  }
+
   if (form) {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -62,16 +120,15 @@
     });
   }
 
-  // gõ chữ => debounce
   qEl.addEventListener("input", () => {
     clearTimeout(timer);
     timer = setTimeout(() => load(1), 350);
   });
 
-  // đổi filter => reload
   statusEl.addEventListener("change", () => load(1));
   pageSizeEl.addEventListener("change", () => load(1));
 
-  // lần đầu attach
   attachPagerAjax();
+  bindRowHoverDepth();
+  initInputEffects();
 })();

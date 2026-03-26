@@ -1,23 +1,34 @@
-/* /assets/css/views/managerCreateContracts.css */
 @import url("../base/bootstrap.min.css");
 
 :root {
   --mcc-bg: #f6f8fb;
-  --mcc-card: #ffffff;
+  --mcc-card: rgba(255, 255, 255, 0.88);
+  --mcc-card-solid: #ffffff;
   --mcc-text: #0f172a;
   --mcc-muted: #64748b;
   --mcc-border: rgba(15, 23, 42, 0.1);
   --mcc-border-2: rgba(15, 23, 42, 0.08);
   --mcc-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-  --mcc-radius: 16px;
+  --mcc-shadow-md: 0 18px 40px rgba(15, 23, 42, 0.12);
+  --mcc-shadow-lg: 0 30px 70px rgba(15, 23, 42, 0.16);
+  --mcc-radius: 18px;
 
   --mcc-primary: #2563eb;
   --mcc-primary-2: #1d4ed8;
+  --mcc-primary-soft: rgba(37, 99, 235, 0.12);
 
+  --mcc-success: #16a34a;
+  --mcc-warning: #f59e0b;
   --mcc-danger: #dc2626;
   --mcc-danger-2: #b91c1c;
+
+  --mcc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --mcc-fast: 180ms;
+  --mcc-normal: 320ms;
+  --mcc-slow: 520ms;
 }
 
+/* PAGE */
 .mcc-wrap {
   max-width: 960px;
   margin: 18px auto 40px;
@@ -29,36 +40,83 @@
     Arial,
     sans-serif;
   color: var(--mcc-text);
+  position: relative;
+  animation: mccPageEnter 0.75s var(--mcc-ease);
 }
 
+.mcc-wrap::before,
+.mcc-wrap::after {
+  content: "";
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(70px);
+  pointer-events: none;
+}
+
+.mcc-wrap::before {
+  width: 260px;
+  height: 260px;
+  top: 100px;
+  right: 5%;
+  background: rgba(37, 99, 235, 0.1);
+}
+
+.mcc-wrap::after {
+  width: 220px;
+  height: 220px;
+  left: 3%;
+  top: 320px;
+  background: rgba(14, 165, 233, 0.08);
+}
+
+@keyframes mccPageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.985);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* PAGE HEAD */
 .mcc-pagehead {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 14px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
+  animation: mccSlideUp 0.7s var(--mcc-ease);
 }
 
 .mcc-title {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 900;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.3px;
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  line-height: 1.1;
 }
 
 .mcc-title i {
   color: rgba(37, 99, 235, 0.95);
-  font-size: 18px;
+  font-size: 20px;
+  transform-origin: center;
+  animation: mccPopIn 0.8s var(--mcc-ease);
 }
 
 .mcc-subtitle {
-  margin-top: 6px;
+  margin-top: 8px;
   color: var(--mcc-muted);
   font-weight: 500;
   font-size: 14px;
-  line-height: 1.35;
+  line-height: 1.45;
+  max-width: 680px;
 }
 
 .mcc-breadcrumb {
@@ -66,7 +124,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin-top: 10px;
+  margin-top: 12px;
   font-size: 13px;
   color: var(--mcc-muted);
 }
@@ -75,10 +133,20 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 8px;
+  padding: 5px 10px;
   border: 1px solid var(--mcc-border-2);
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.82);
   border-radius: 999px;
+  transition:
+    transform var(--mcc-fast) ease,
+    box-shadow var(--mcc-fast) ease,
+    border-color var(--mcc-fast) ease;
+}
+
+.mcc-bc-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(15, 23, 42, 0.06);
+  border-color: rgba(37, 99, 235, 0.14);
 }
 
 .mcc-bc-item i {
@@ -90,6 +158,7 @@
   color: var(--mcc-text);
   background: #fff;
   border-color: var(--mcc-border);
+  font-weight: 800;
 }
 
 .mcc-bc-sep {
@@ -100,7 +169,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 10px 13px;
   border-radius: 999px;
   font-size: 13px;
   font-weight: 800;
@@ -108,33 +177,75 @@
   color: var(--mcc-primary);
   border: 1px solid rgba(37, 99, 235, 0.18);
   white-space: nowrap;
+  box-shadow: 0 10px 18px rgba(37, 99, 235, 0.08);
+  animation: mccFloatIn 0.85s var(--mcc-ease);
 }
 
-/* Card */
+/* CARD */
 .mcc-card {
   background: var(--mcc-card);
+  backdrop-filter: blur(14px);
   border-radius: var(--mcc-radius);
   border: 1px solid var(--mcc-border);
-  box-shadow: var(--mcc-shadow);
+  box-shadow: var(--mcc-shadow-md);
   padding: 18px;
+  position: relative;
+  overflow: hidden;
+  animation: mccCardEnter 0.75s var(--mcc-ease);
 }
 
-/* Alert */
+.mcc-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(37, 99, 235, 0.22),
+    transparent
+  );
+}
+
+@keyframes mccCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ALERT */
 .mcc-alert {
   display: flex;
   gap: 12px;
   align-items: flex-start;
   padding: 14px 14px;
-  border-radius: 14px;
+  border-radius: 16px;
   border: 1px solid var(--mcc-border);
   background: #fff;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
   margin-bottom: 14px;
+  animation: mccAlertEnter 0.5s var(--mcc-ease);
+}
+
+@keyframes mccAlertEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .mcc-alert-ic {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 12px;
   display: inline-flex;
   align-items: center;
@@ -154,7 +265,12 @@
 
 .mcc-alert-sub {
   color: var(--mcc-muted);
-  line-height: 1.35;
+  line-height: 1.4;
+}
+
+.mcc-alert-danger {
+  border-color: rgba(220, 38, 38, 0.18);
+  background: linear-gradient(180deg, #ffffff, #fff7f7);
 }
 
 .mcc-alert-danger .mcc-alert-ic {
@@ -162,17 +278,67 @@
   color: var(--mcc-danger);
 }
 
-/* Form / sections */
+/* FORM */
 .mcc-form {
   margin: 0;
 }
 
+/* SECTIONS */
 .mcc-section {
   border: 1px solid var(--mcc-border-2);
-  border-radius: 16px;
-  background: rgba(246, 248, 251, 0.6);
+  border-radius: 18px;
+  background: linear-gradient(
+    180deg,
+    rgba(246, 248, 251, 0.72),
+    rgba(255, 255, 255, 0.72)
+  );
   padding: 14px;
   margin-bottom: 14px;
+  transition:
+    transform var(--mcc-normal) ease,
+    box-shadow var(--mcc-normal) ease,
+    border-color var(--mcc-fast) ease,
+    background var(--mcc-normal) ease;
+  animation: mccSectionEnter 0.65s var(--mcc-ease) both;
+  transform-origin: top center;
+}
+
+.mcc-section:nth-of-type(1) {
+  animation-delay: 0.04s;
+}
+.mcc-section:nth-of-type(2) {
+  animation-delay: 0.08s;
+}
+.mcc-section:nth-of-type(3) {
+  animation-delay: 0.12s;
+}
+.mcc-section:nth-of-type(4) {
+  animation-delay: 0.16s;
+}
+.mcc-section:nth-of-type(5) {
+  animation-delay: 0.2s;
+}
+
+.mcc-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.06);
+  border-color: rgba(37, 99, 235, 0.14);
+  background: linear-gradient(
+    180deg,
+    rgba(250, 252, 255, 0.9),
+    rgba(255, 255, 255, 0.88)
+  );
+}
+
+@keyframes mccSectionEnter {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.994);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .mcc-section-head {
@@ -181,10 +347,11 @@
 
 .mcc-section-title {
   font-weight: 950;
-  font-size: 14px;
+  font-size: 15px;
   display: flex;
   align-items: center;
   gap: 10px;
+  letter-spacing: -0.01em;
 }
 
 .mcc-section-title i {
@@ -196,7 +363,7 @@
   margin-top: 6px;
   color: var(--mcc-muted);
   font-size: 13px;
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
 .mcc-grid-2 {
@@ -224,17 +391,59 @@
   color: rgba(100, 116, 139, 0.95);
 }
 
+/* CONTROL */
+.mcc-control {
+  position: relative;
+}
+
 .mcc-control-input.form-control {
-  border-radius: 12px !important;
+  border-radius: 14px !important;
   border: 1px solid rgba(15, 23, 42, 0.12) !important;
-  padding: 10px 12px !important;
+  padding: 11px 13px !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  transition:
+    border-color var(--mcc-fast) ease,
+    box-shadow var(--mcc-fast) ease,
+    transform var(--mcc-fast) ease,
+    background var(--mcc-fast) ease;
+}
+
+.mcc-control-input.form-control:hover {
+  border-color: rgba(37, 99, 235, 0.16) !important;
   background: #fff !important;
-  transition: 0.2s;
 }
 
 .mcc-control-input.form-control:focus {
   border-color: rgba(37, 99, 235, 0.45) !important;
-  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
+  box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.1) !important;
+  transform: translateY(-1px);
+  background: #fff !important;
+}
+
+/* INVALID */
+.mcc-control-input.form-control.is-invalid {
+  border-color: rgba(220, 38, 38, 0.55) !important;
+  box-shadow: 0 0 0 5px rgba(220, 38, 38, 0.08) !important;
+  animation: mccShake 0.32s ease;
+}
+
+@keyframes mccShake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-4px);
+  }
+  40% {
+    transform: translateX(4px);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
 }
 
 .mcc-help {
@@ -245,7 +454,7 @@
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
 .mcc-help i {
@@ -255,17 +464,124 @@
 
 .mcc-help-compact {
   margin-top: 10px;
-  padding: 10px 12px;
+  padding: 11px 13px;
   border-radius: 14px;
   border: 1px solid var(--mcc-border-2);
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.76);
 }
 
-/* Buttons / actions */
+.mcc-help-compact strong {
+  color: var(--mcc-text);
+}
+
+/* FILE PREVIEW */
+.mcc-file-meta {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.05);
+  border: 1px solid rgba(37, 99, 235, 0.1);
+  color: #334155;
+  font-size: 12px;
+  font-weight: 700;
+  display: none;
+  animation: mccFadeIn 0.35s ease;
+}
+
+.mcc-file-meta.show {
+  display: block;
+}
+
+.mcc-file-meta.ok {
+  background: rgba(22, 163, 74, 0.06);
+  border-color: rgba(22, 163, 74, 0.16);
+  color: #166534;
+}
+
+.mcc-file-meta.bad {
+  background: rgba(220, 38, 38, 0.06);
+  border-color: rgba(220, 38, 38, 0.16);
+  color: #991b1b;
+}
+
+/* SUMMARY PANEL */
+.mcc-summary {
+  margin-top: 14px;
+  border: 1px solid rgba(37, 99, 235, 0.1);
+  background: linear-gradient(
+    180deg,
+    rgba(239, 246, 255, 0.76),
+    rgba(255, 255, 255, 0.84)
+  );
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.08);
+  animation: mccSectionEnter 0.7s var(--mcc-ease);
+}
+
+.mcc-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.mcc-summary-title {
+  font-weight: 900;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--mcc-primary);
+}
+
+.mcc-summary-title i {
+  font-size: 15px;
+}
+
+.mcc-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.mcc-summary-item {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  border-radius: 14px;
+  padding: 12px;
+  transition:
+    transform var(--mcc-fast) ease,
+    box-shadow var(--mcc-fast) ease,
+    border-color var(--mcc-fast) ease;
+}
+
+.mcc-summary-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 24px rgba(15, 23, 42, 0.08);
+  border-color: rgba(37, 99, 235, 0.14);
+}
+
+.mcc-summary-label {
+  font-size: 12px;
+  color: var(--mcc-muted);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.mcc-summary-value {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--mcc-text);
+  word-break: break-word;
+}
+
+/* ACTIONS */
 .mcc-actions {
   display: flex;
   justify-content: flex-end;
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .mcc-actions-split {
@@ -278,8 +594,8 @@
 .mcc-btn {
   appearance: none;
   border: 1px solid transparent;
-  border-radius: 12px;
-  padding: 10px 14px;
+  border-radius: 14px;
+  padding: 11px 16px;
   font-weight: 900;
   font-size: 13px;
   cursor: pointer;
@@ -287,13 +603,34 @@
   align-items: center;
   gap: 10px;
   transition:
-    transform 0.05s ease,
-    box-shadow 0.15s ease,
-    background 0.15s ease,
-    border-color 0.15s ease;
+    transform var(--mcc-fast) ease,
+    box-shadow var(--mcc-fast) ease,
+    background var(--mcc-fast) ease,
+    border-color var(--mcc-fast) ease,
+    filter var(--mcc-fast) ease;
   user-select: none;
   white-space: nowrap;
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.mcc-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 15%,
+    rgba(255, 255, 255, 0.18) 40%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  transition: transform 700ms ease;
+}
+
+.mcc-btn:hover::before {
+  transform: translateX(120%);
 }
 
 .mcc-btn i {
@@ -301,18 +638,25 @@
 }
 
 .mcc-btn:active {
-  transform: translateY(1px);
+  transform: translateY(1px) scale(0.985);
 }
 
 .mcc-btn-primary {
-  background: var(--mcc-primary);
+  background: linear-gradient(135deg, var(--mcc-primary), var(--mcc-primary-2));
   border-color: rgba(37, 99, 235, 0.3);
   color: #fff;
-  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.2);
 }
 
 .mcc-btn-primary:hover {
-  background: var(--mcc-primary-2);
+  filter: saturate(1.04);
+  box-shadow: 0 18px 36px rgba(37, 99, 235, 0.25);
+  transform: translateY(-1px);
+}
+
+.mcc-btn-primary.is-submitting {
+  pointer-events: none;
+  opacity: 0.95;
 }
 
 .mcc-btn-ghost {
@@ -324,9 +668,78 @@
 .mcc-btn-ghost:hover {
   background: rgba(15, 23, 42, 0.06);
   border-color: rgba(15, 23, 42, 0.14);
+  transform: translateY(-1px);
 }
 
-/* Responsive */
+/* SUBMIT SPINNER */
+.mcc-btn-spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: mccSpin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes mccSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ANIMATIONS */
+@keyframes mccSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mccPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.7) rotate(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes mccFloatIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mccFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .mcc-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
   .mcc-grid-2 {
     grid-template-columns: 1fr;
@@ -347,5 +760,25 @@
   .mcc-btn {
     width: 100%;
     justify-content: center;
+  }
+
+  .mcc-pagehead {
+    flex-direction: column;
+  }
+
+  .mcc-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* REDUCE MOTION */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
   }
 }
