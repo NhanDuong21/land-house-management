@@ -261,24 +261,25 @@
 }
 
 /* DATE BUTTON */
+/* DATE BUTTON */
 .date-btn {
+  position: relative;
   height: 46px;
   min-width: 48px;
   border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.92);
-  padding: 0;
+  padding: 0 12px;
   overflow: hidden;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   transition:
     transform 0.2s var(--mb-ease),
     box-shadow 0.24s ease,
     border-color 0.24s ease,
-    background 0.24s ease,
-    width 0.28s var(--mb-ease),
-    padding 0.28s var(--mb-ease);
+    background 0.24s ease;
   box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
   cursor: pointer;
 }
@@ -290,23 +291,59 @@
   box-shadow: 0 12px 22px rgba(37, 99, 235, 0.08);
 }
 
-.bill-date {
-  height: 100%;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  outline: none;
-  padding: 0 8px;
+.date-btn:focus-within {
+  background: #fff;
+  border-color: rgba(37, 99, 235, 0.38);
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.08),
+    0 10px 20px rgba(37, 99, 235, 0.06);
+}
+
+.date-btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.date-btn-text {
+  font-size: 13px;
   font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.date-btn.has-value .date-btn-text {
   color: #1f2937;
 }
 
-.bill-date::-webkit-datetime-edit {
-  display: none;
+.bill-date {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+  width: 100%;
+  height: 100%;
 }
 
-.bill-date.has-value::-webkit-datetime-edit {
-  display: inline-block;
+.bill-date::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.bill-date::-webkit-datetime-edit,
+.bill-date::-webkit-datetime-edit-fields-wrapper,
+.bill-date::-webkit-datetime-edit-month-field,
+.bill-date::-webkit-datetime-edit-year-field,
+.bill-date::-webkit-datetime-edit-text {
+  color: #1f2937;
 }
 
 .mb-search-form select {
@@ -349,6 +386,7 @@
   box-shadow: var(--mb-shadow);
   border: 1px solid rgba(255, 255, 255, 0.75);
   overflow: hidden;
+  will-change: transform;
 }
 
 .mb-card::before {
@@ -439,13 +477,17 @@
 }
 
 .bill-row {
-  opacity: 0;
-  transform: translateY(20px) scale(0.985);
-  animation: rowEnter 0.62s var(--mb-ease) forwards;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  animation: rowEnter 0.62s var(--mb-ease) both;
   animation-delay: var(--row-delay, 0s);
 }
 
 @keyframes rowEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.985);
+  }
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -698,10 +740,6 @@
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
-  .mb-container {
-    padding: 20px 16px;
-  }
-
   .mb-search-form {
     flex-direction: column;
     align-items: stretch;
@@ -715,6 +753,10 @@
 
   .date-btn {
     justify-content: flex-start;
+  }
+
+  .bill-date.has-value {
+    width: 100%;
   }
 
   .mb-actions {

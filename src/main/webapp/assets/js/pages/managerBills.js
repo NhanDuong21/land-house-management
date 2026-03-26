@@ -1,18 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
   const input = document.querySelector(".searchBill");
   const statusSelected = document.getElementById("status");
-  const dateSelected = document.querySelector(".bill-date");
+  const dateSelected = document.getElementById("billDate");
+  const dateTrigger = document.getElementById("monthTrigger");
+  const dateText = document.querySelector(".date-btn-text");
   const table = document.querySelector(".mb-table");
-  const rows = document.querySelectorAll("#billTable tr:not(#notFoundBill)");
+  const rows = Array.from(document.querySelectorAll("#billTable .bill-row"));
   const notFound = document.getElementById("notFoundBill");
   const dateWrapper = document.querySelector(".date-btn");
+  const billCountTitle = document.getElementById("billCountTitle");
 
-  if (!input || !statusSelected || !dateSelected || !notFound) {
+  if (!input || !statusSelected || !dateSelected || !table || !notFound) {
     return;
   }
 
+  const defaultTitle = billCountTitle ? billCountTitle.textContent.trim() : "";
+
   function pulseTable() {
-    if (!table) return;
     table.classList.add("is-filtering");
     clearTimeout(pulseTable._timer);
     pulseTable._timer = setTimeout(() => {
@@ -20,57 +24,97 @@ document.addEventListener("DOMContentLoaded", function () {
     }, 180);
   }
 
+  function normalizeText(value) {
+    return (value || "").toString().trim().toLowerCase();
+  }
+
+  function getMonthYearFromRow(row) {
+    const dateTextValue =
+      row.querySelector(".dateBill")?.textContent?.trim() || "";
+    const parts = dateTextValue.split("/");
+
+    if (parts.length !== 3) return "";
+
+    const month = parts[1];
+    const year = parts[2];
+
+    return `${year}-${month}`;
+  }
+
+  function animateRow(row) {
+    row.style.opacity = "1";
+    row.style.transform = "translateY(0) scale(1)";
+    row.style.animation = "none";
+    void row.offsetWidth;
+    row.style.animation =
+      "rowEnter 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards";
+  }
+
+  function formatMonthLabel(value) {
+    if (!value) return "Month";
+    const [year, month] = value.split("-");
+    return `${month}/${year}`;
+  }
+
+  function updateDateUI() {
+    if (dateSelected.value) {
+      dateSelected.classList.add("has-value");
+      if (dateWrapper) dateWrapper.classList.add("has-value");
+      if (dateText) dateText.textContent = formatMonthLabel(dateSelected.value);
+    } else {
+      dateSelected.classList.remove("has-value");
+      if (dateWrapper) dateWrapper.classList.remove("has-value");
+      if (dateText) dateText.textContent = "Month";
+    }
+  }
+
   function filterBills() {
     pulseTable();
 
-    const searchKeyword = input.value.toLowerCase().trim();
-    const selectedStatus = statusSelected.value;
-    const selectedDate = dateSelected.value;
-    let countBill = 0;
+    const searchKeyword = normalizeText(input.value);
+    const selectedStatus = statusSelected.value.trim();
+    const selectedDate = dateSelected.value.trim();
+
+    let visibleCount = 0;
 
     rows.forEach((row) => {
-      const billIdText = row.querySelector(".billId");
-      const roomNumberText = row.querySelector(".roomNumber");
-      const statusText = row.querySelector("td:nth-child(6) .mb-badge");
-      const dateText = row.querySelector(".dateBill");
-
-      if (!roomNumberText || !billIdText || !statusText || !dateText) {
-        return;
-      }
-
-      const billId = billIdText.textContent.toLowerCase();
-      const roomNumber = roomNumberText.textContent.toLowerCase();
-      const billStatus = statusText.textContent.trim();
-      const dateBill = dateText.textContent.trim();
+      const billId = normalizeText(row.dataset.billId);
+      const roomNumber = normalizeText(row.dataset.roomNumber);
+      const billStatus = (row.dataset.status || "").trim();
+      const billMonth = getMonthYearFromRow(row);
 
       const matchSearch =
-        roomNumber.includes(searchKeyword) || billId.includes(searchKeyword);
+        searchKeyword === "" ||
+        billId.includes(searchKeyword) ||
+        roomNumber.includes(searchKeyword);
 
       const matchStatus =
         selectedStatus === "" || billStatus === selectedStatus;
 
-      let matchDate = true;
-      if (selectedDate !== "") {
-        const [year, month] = selectedDate.split("-");
-        const parts = dateBill.split("/");
-        const monthBill = parts[1];
-        const yearBill = parts[2];
-
-        matchDate = monthBill === month && yearBill === year;
-      }
+      const matchDate = selectedDate === "" || billMonth === selectedDate;
 
       if (matchSearch && matchStatus && matchDate) {
         row.style.display = "";
-        row.style.animation = "none";
-        void row.offsetWidth;
-        row.style.animation = "rowEnter 0.42s cubic-bezier(0.22, 1, 0.36, 1)";
-        countBill++;
+        animateRow(row);
+        visibleCount++;
       } else {
         row.style.display = "none";
       }
     });
 
-    notFound.style.display = countBill === 0 ? "" : "none";
+    notFound.style.display = visibleCount === 0 ? "" : "none";
+
+    if (billCountTitle) {
+      if (
+        searchKeyword !== "" ||
+        selectedStatus !== "" ||
+        selectedDate !== ""
+      ) {
+        billCountTitle.textContent = `All Bills (${visibleCount})`;
+      } else {
+        billCountTitle.textContent = defaultTitle;
+      }
+    }
   }
 
   let debounceTimer = null;
@@ -81,33 +125,27 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   statusSelected.addEventListener("change", filterBills);
-  dateSelected.addEventListener("change", filterBills);
-
-  if (dateSelected.value) {
-    dateSelected.classList.add("has-value");
-    if (dateWrapper) {
-      dateWrapper.style.width = "auto";
-      dateWrapper.style.padding = "0 10px";
-    }
-  }
 
   dateSelected.addEventListener("change", function () {
-    if (this.value) {
-      this.classList.add("has-value");
-      if (dateWrapper) {
-        dateWrapper.style.width = "auto";
-        dateWrapper.style.padding = "0 10px";
-      }
-    } else {
-      this.classList.remove("has-value");
-      if (dateWrapper) {
-        dateWrapper.style.width = "";
-        dateWrapper.style.padding = "";
-      }
-    }
+    updateDateUI();
+    filterBills();
   });
 
-  // Small 3D hover on card
+  if (dateTrigger) {
+    dateTrigger.addEventListener("click", function (e) {
+      if (e.target === dateSelected) return;
+
+      if (typeof dateSelected.showPicker === "function") {
+        dateSelected.showPicker();
+      } else {
+        dateSelected.focus();
+        dateSelected.click();
+      }
+    });
+  }
+
+  updateDateUI();
+
   const card = document.querySelector(".mb-card");
   if (card) {
     card.addEventListener("mousemove", function (e) {

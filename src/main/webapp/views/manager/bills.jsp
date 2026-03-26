@@ -38,12 +38,16 @@
             <div class="mb-search-form">
                 <div class="mb-search-input-wrap">
                     <span class="mb-search-icon">⌕</span>
-                    <input type="text" id="keyword" class="searchBill"
+                    <input type="text"
+                           id="keyword"
+                           class="searchBill"
                            placeholder="Search by Bill ID, room number...">
                 </div>
 
-                <button class="date-btn" type="button">
-                    <input type="month" class="bill-date">
+                <button class="date-btn" type="button" id="monthTrigger" aria-label="Filter by month">
+                    <span class="date-btn-icon">🗓</span>
+                    <span class="date-btn-text">Month</span>
+                    <input type="month" id="billDate" class="bill-date">
                 </button>
 
                 <select id="status">
@@ -59,7 +63,7 @@
         <div class="mb-card mb-reveal">
 
             <div class="mb-card-top">
-                <div class="mb-card-title">
+                <div class="mb-card-title" id="billCountTitle">
                     All Bills (${totalBills-1})
                 </div>
                 <div class="mb-card-subtitle">
@@ -84,7 +88,12 @@
 
                     <tbody id="billTable">
                         <c:forEach var="b" items="${bill}" varStatus="loop">
-                            <tr class="bill-row" style="--row-delay: ${loop.index * 0.05}s;">
+                            <tr class="bill-row"
+                                style="--row-delay: ${loop.index * 0.05}s;"
+                                data-bill-id="${b.billId}"
+                                data-room-number="${b.roomNumber}"
+                                data-status="${b.status}"
+                                data-payment-status="${empty b.paymentStatus ? 'NO REQUEST' : b.paymentStatus}">
                                 <td class="billId bill-mono">${b.billId}</td>
 
                                 <td class="roomNumber room-strong">${b.roomNumber}</td>
