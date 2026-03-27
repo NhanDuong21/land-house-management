@@ -2,6 +2,57 @@
 (function () {
   const ctxPath = window.MA_CTX || "";
 
+  /* ================= HELPERS ================= */
+  function animatePulse(el, className, duration) {
+    if (!el) return;
+    el.classList.remove(className);
+    void el.offsetWidth;
+    el.classList.add(className);
+
+    setTimeout(() => {
+      el.classList.remove(className);
+    }, duration || 800);
+  }
+
+  function setLoadingButton(btn, loadingText) {
+    if (!btn) return () => {};
+    const oldHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.dataset.loading = "1";
+    btn.innerHTML =
+      '<i class="bi bi-arrow-repeat" style="animation:maSpin .8s linear infinite;"></i> ' +
+      (loadingText || "Loading...");
+
+    return function restore() {
+      btn.disabled = false;
+      btn.dataset.loading = "";
+      btn.innerHTML = oldHtml;
+    };
+  }
+
+  function injectSpinKeyframes() {
+    if (document.getElementById("maSpinStyle")) return;
+    const style = document.createElement("style");
+    style.id = "maSpinStyle";
+    style.textContent = `
+      @keyframes maSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      .ma-row-highlight {
+        animation: maRowHighlight .9s ease;
+      }
+      @keyframes maRowHighlight {
+        0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.00); }
+        35% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0.08); }
+        100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.00); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  injectSpinKeyframes();
+
   /* ================= REALTIME SEARCH ================= */
   (function () {
     const form = document.getElementById("maSearchForm");
@@ -20,7 +71,14 @@
     if (role) role.addEventListener("change", () => form && form.submit());
   })();
 
-  /* ================= TOGGLE STATUS (confirm modal + fetch) ================= */
+  /* ================= INITIAL STAGGER / MICRO FX ================= */
+  (function () {
+    const rows = document.querySelectorAll(".ma-table tbody tr.ma-row-reveal");
+    rows.forEach((row, index) => {
+      row.style.setProperty("--row-delay", `${index * 55}ms`);
+    });
+  })();
+
   /* ================= TOGGLE STATUS (confirm modal + fetch) ================= */
   (function () {
     let _id = null;
@@ -79,11 +137,13 @@
 
       modal.style.display = "flex";
       modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
     }
 
     function closeModal() {
       modal.style.display = "none";
       modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
     }
 
     function showToast(msg, type) {
@@ -102,7 +162,13 @@
 
       clearTimeout(t._tid);
       t._tid = setTimeout(() => {
-        t.style.display = "none";
+        t.style.opacity = "0";
+        t.style.transform = "translateY(-8px)";
+        setTimeout(() => {
+          t.style.display = "none";
+          t.style.opacity = "";
+          t.style.transform = "";
+        }, 220);
       }, 4000);
     }
 
@@ -110,10 +176,12 @@
       const key = type + "-" + id;
       const badge = document.getElementById("statusBadge-" + key);
       const btn = document.getElementById("toggleBtn-" + key);
+      const row = btn ? btn.closest("tr") : null;
 
       if (badge) {
         badge.className = "ma-badge status-" + newStatus.toLowerCase();
         badge.textContent = newStatus;
+        animatePulse(badge, "ma-badge-flash", 850);
       }
 
       if (btn) {
@@ -126,12 +194,19 @@
         if (lbl) {
           lbl.innerHTML = getStatusLabel(type, newStatus);
         }
+
+        animatePulse(btn, "is-bouncing", 600);
+      }
+
+      if (row) {
+        animatePulse(row, "ma-row-highlight", 900);
       }
     }
 
     if (confirmBtn) {
       confirmBtn.addEventListener("click", function () {
-        closeModal();
+        const restoreBtn = setLoadingButton(confirmBtn, "Updating...");
+        const oldStatus = _status;
 
         const params = new URLSearchParams();
         params.append("action", "toggle-status");
@@ -150,8 +225,11 @@
             return res.json();
           })
           .then(function (data) {
+            restoreBtn();
+            closeModal();
+
             if (data && data.ok) {
-              const newStatus = getNextStatus(_type, _status);
+              const newStatus = getNextStatus(_type, oldStatus);
               applyUI(_type, _id, newStatus);
               _status = newStatus;
 
@@ -167,6 +245,8 @@
             }
           })
           .catch(function () {
+            restoreBtn();
+            closeModal();
             showToast("Network error. Please try again.", "error");
           });
       });
@@ -193,16 +273,13 @@
     if (!modal) return;
 
     const sub = document.getElementById("maPassSub");
-
     const hiddenId = document.getElementById("maPassAccountId");
     const hiddenType = document.getElementById("maPassAccountType");
-
     const newPass = document.getElementById("maNewPass");
     const confirmPass = document.getElementById("maConfirmPass");
     const showPass = document.getElementById("maShowPass");
     const errorBox = document.getElementById("maPassError");
     const closeBtn = document.getElementById("maPassClose");
-
     const form = document.getElementById("maPassForm");
 
     let lastFocused = null;
@@ -262,7 +339,6 @@
       return m[code] || code || "Có lỗi xảy ra.";
     }
 
-    // Open buttons + close via backdrop/cancel
     document.addEventListener("click", (e) => {
       const btn = e.target.closest(".ma-open-pass");
       if (btn) {
@@ -278,7 +354,6 @@
       }
     });
 
-    // Close via X
     if (closeBtn) {
       closeBtn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -286,21 +361,18 @@
       });
     }
 
-    // ESC close
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && modal.classList.contains("is-open")) {
         closeModal();
       }
     });
 
-    // Show/Hide passwords
     if (showPass) {
       showPass.addEventListener("change", () => {
         setInputsType(showPass.checked ? "text" : "password");
       });
     }
 
-    // AJAX submit
     if (form) {
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -308,13 +380,13 @@
         const p1 = (newPass?.value || "").trim();
         const p2 = (confirmPass?.value || "").trim();
 
-        // client validate
         if (p1.length < 6) {
           if (errorBox)
             errorBox.textContent = "Password must be at least 6 characters.";
           newPass && newPass.focus();
           return;
         }
+
         if (p1 !== p2) {
           if (errorBox)
             errorBox.textContent = "Confirm password does not match.";
@@ -325,6 +397,8 @@
         if (errorBox) errorBox.textContent = "";
 
         const params = new URLSearchParams(new FormData(form));
+        const submitBtn = form.querySelector("button[type='submit']");
+        const restoreBtn = setLoadingButton(submitBtn, "Updating...");
 
         try {
           const res = await fetch(form.action, {
@@ -341,38 +415,65 @@
           const data = await res.json().catch(() => null);
 
           if (!res.ok || !data || !data.ok) {
+            restoreBtn();
             const msg = data && data.message ? data.message : "RESET_FAILED";
             if (errorBox) errorBox.textContent = mapErr(msg);
             return;
           }
 
-          // success
           if (errorBox) errorBox.textContent = "";
-          if (sub) sub.textContent = " Reset password thành công";
-
-          const submitBtn = form.querySelector("button[type='submit']");
-          if (submitBtn) submitBtn.disabled = true;
+          if (sub) sub.textContent = "Reset password thành công";
+          showGlobalToast("Password updated successfully.", "success");
 
           setTimeout(() => {
-            if (submitBtn) submitBtn.disabled = false;
+            restoreBtn();
             closeModal();
             window.location.reload();
-          }, 600);
+          }, 700);
         } catch (err) {
+          restoreBtn();
           if (errorBox)
             errorBox.textContent = "Network error. Please try again.";
         }
       });
     }
+
+    function showGlobalToast(msg, type) {
+      const t = document.getElementById("maToast");
+      if (!t) return;
+
+      t.className = "ma-toast toast-" + type;
+      t.innerHTML =
+        (type === "success"
+          ? '<i class="bi bi-check-circle-fill"></i>'
+          : '<i class="bi bi-x-circle-fill"></i>') +
+        " " +
+        msg;
+
+      t.style.display = "flex";
+
+      clearTimeout(t._tid);
+      t._tid = setTimeout(() => {
+        t.style.opacity = "0";
+        t.style.transform = "translateY(-8px)";
+        setTimeout(() => {
+          t.style.display = "none";
+          t.style.opacity = "";
+          t.style.transform = "";
+        }, 220);
+      }, 3500);
+    }
   })();
+
   /* ===== AUTO HIDE SUCCESS ALERT ===== */
   (function () {
     const alert = document.getElementById("successAlert");
     if (!alert) return;
 
     setTimeout(() => {
-      alert.style.transition = "opacity 0.5s";
+      alert.style.transition = "opacity 0.5s ease, transform 0.5s ease";
       alert.style.opacity = "0";
+      alert.style.transform = "translateY(-8px)";
 
       setTimeout(() => {
         alert.remove();

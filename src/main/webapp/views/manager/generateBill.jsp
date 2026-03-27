@@ -54,15 +54,23 @@
 
                 <div class="tbg-divider"></div>
 
-                <!-- FORM -->
                 <form action="${pageContext.request.contextPath}/manager/billing/generate"
                       method="post"
                       class="tbg-form"
                       id="billForm">
 
+                    <!-- ERROR -->
+                    <c:if test="${not empty error}">
+                        <div class="tbg-error">
+                            ${error}
+                        </div>
+                    </c:if>
+
                     <!-- TOP -->
                     <div class="tbg-form-top">
                         <div class="tbg-left">
+
+                            <!-- ROOM -->
                             <div class="tbg-field tbg-reveal" style="--delay: 0.18s;">
                                 <label>Room</label>
                                 <select id="roomSelect" name="roomId" required>
@@ -86,22 +94,28 @@
                                 </select>
                             </div>
 
+                            <!-- TENANT -->
                             <div class="tbg-field tbg-reveal" style="--delay: 0.22s;">
                                 <label>Tenant</label>
                                 <input type="text" id="tenantName" readonly>
                             </div>
+
                         </div>
 
                         <div class="tbg-right">
+
+                            <!-- BILL MONTH -->
                             <div class="tbg-field tbg-reveal" style="--delay: 0.26s;">
                                 <label>Bill Month</label>
                                 <input type="month" name="billMonth" required>
                             </div>
 
+                            <!-- DUE DATE -->
                             <div class="tbg-field tbg-reveal" style="--delay: 0.30s;">
                                 <label>Due Date</label>
                                 <input type="date" name="dueDate" required>
                             </div>
+
                         </div>
                     </div>
 
@@ -111,6 +125,7 @@
                     </div>
 
                     <div class="tbg-meter-grid">
+
                         <div class="tbg-field tbg-reveal" style="--delay: 0.38s;">
                             <label>Old Electric</label>
                             <input type="number" id="oldElectric" name="oldElectric" readonly>
@@ -146,20 +161,15 @@
                     <div class="tbg-actions tbg-reveal" style="--delay: 0.64s;">
                         <button type="submit" class="tbg-btn-generate">
                             <i class="bi bi-lightning-charge"></i>
-                            Generate Bill
+                            <span class="tbg-btn-text">Generate Bill</span>
                         </button>
                     </div>
 
-                    <!-- ERROR -->
-                    <c:if test="${not empty error}">
-                        <div class="tbg-error tbg-reveal" style="--delay: 0.68s;">
-                            ${error}
-                        </div>
-                    </c:if>
-
                 </form>
+
             </div>
         </div>
+
     </div>
 
     <script src="${pageContext.request.contextPath}/assets/js/pages/managerGenerateBill.js"></script>

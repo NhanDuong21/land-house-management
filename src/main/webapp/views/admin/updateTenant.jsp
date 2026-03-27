@@ -9,127 +9,173 @@
 
     <div class="update-wrapper">
 
-        <div class="update-card">
+        <div class="bg-orb orb-1"></div>
+        <div class="bg-orb orb-2"></div>
+        <div class="bg-grid"></div>
 
-            <h2 class="update-title">Update Tenant</h2>
+        <div class="update-shell">
 
-            <form method="post"
-                  action="${pageContext.request.contextPath}/admin/accounts/update-tenant">
+            <div class="update-head reveal-up">
+                <span class="page-badge">Admin Panel</span>
+                <h2 class="update-title">Update Tenant</h2>
+                <p class="update-subtitle">Edit tenant information with a smoother and more premium UI experience.</p>
+            </div>
 
-                <!-- ID -->
-                <input type="hidden" name="id" value="${tenant.tenantId}"/>
+            <div class="update-card reveal-scale">
 
-                <div class="form-grid">
+                <div class="card-shine"></div>
 
-                    <!-- FULL NAME -->
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text"
-                               name="fullName"
-                               value="${tenant.fullName}"
-                               required>
-                    </div>
+                <form method="post"
+                      class="update-form"
+                      id="updateManageForm"
+                      action="${pageContext.request.contextPath}/admin/accounts/update-tenant">
 
-                    <!-- PHONE -->
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="text"
-                               name="phone"
-                               value="${tenant.phoneNumber}"
-                               required>
-                    </div>
+                    <!-- ID -->
+                    <input type="hidden" name="id" value="${tenant.tenantId}"/>
 
-                    <!-- EMAIL -->
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email"
-                               name="email"
-                               value="${tenant.email}"
-                               required>
-                    </div>
+                    <div class="form-grid">
 
-                    <!-- GENDER -->
-                    <div class="form-group">
-                        <label>Gender</label>
-                        <select name="gender">
+                        <!-- FULL NAME -->
+                        <div class="form-group stagger-item">
+                            <label for="fullName">Full Name</label>
+                            <div class="input-shell">
+                                <i class="bi bi-person-fill input-icon"></i>
+                                <input type="text"
+                                       id="fullName"
+                                       name="fullName"
+                                       value="${tenant.fullName}"
+                                       required
+                                       placeholder="Enter full name">
+                            </div>
+                        </div>
 
-                            <option value="1"
-                                    <c:if test="${tenant.gender == 1}">selected</c:if>>
+                        <!-- PHONE -->
+                        <div class="form-group stagger-item">
+                            <label for="phone">Phone Number</label>
+                            <div class="input-shell">
+                                <i class="bi bi-telephone-fill input-icon"></i>
+                                <input type="text"
+                                       id="phone"
+                                       name="phone"
+                                       value="${tenant.phoneNumber}"
+                                       required
+                                       placeholder="Enter phone number">
+                            </div>
+                        </div>
+
+                        <!-- EMAIL -->
+                        <div class="form-group stagger-item">
+                            <label for="email">Email</label>
+                            <div class="input-shell">
+                                <i class="bi bi-envelope-fill input-icon"></i>
+                                <input type="email"
+                                       id="email"
+                                       name="email"
+                                       value="${tenant.email}"
+                                       required
+                                       placeholder="Enter email address">
+                            </div>
+                        </div>
+
+                        <!-- GENDER -->
+                        <div class="form-group stagger-item">
+                            <label for="gender">Gender</label>
+                            <div class="input-shell">
+                                <i class="bi bi-gender-ambiguous input-icon"></i>
+                                <select id="gender" name="gender">
+                                    <option value="1"
+                                            <c:if test="${tenant.gender == 1}">selected</c:if>>
                                         Male
                                     </option>
 
                                     <option value="0"
-                                    <c:if test="${tenant.gender == 0}">selected</c:if>>
+                                            <c:if test="${tenant.gender == 0}">selected</c:if>>
                                         Female
                                     </option>
-
-                            </select>
+                                </select>
+                            </div>
                         </div>
 
                         <!-- DATE OF BIRTH -->
-                        <div class="form-group">
-                            <label>Date of Birth</label>
-                            <input type="date"
-                                   name="dateOfBirth"
-                                   value="${tenant.dateOfBirth}">
-                    </div>
+                        <div class="form-group stagger-item">
+                            <label for="dateOfBirth">Date of Birth</label>
+                            <div class="input-shell">
+                                <i class="bi bi-calendar-event-fill input-icon"></i>
+                                <input type="date"
+                                       id="dateOfBirth"
+                                       name="dateOfBirth"
+                                       value="${tenant.dateOfBirth}">
+                            </div>
+                        </div>
 
-                    <!-- CITIZEN ID -->
-                    <div class="form-group">
-                        <label>Citizen ID</label>
-                        <input type="text"
-                               name="identityCode"
-                               value="${tenant.identityCode}">
-                    </div>
+                        <!-- CITIZEN ID -->
+                        <div class="form-group stagger-item">
+                            <label for="identityCode">Citizen ID</label>
+                            <div class="input-shell">
+                                <i class="bi bi-credit-card-2-front-fill input-icon"></i>
+                                <input type="text"
+                                       id="identityCode"
+                                       name="identityCode"
+                                       value="${tenant.identityCode}"
+                                       placeholder="Enter citizen ID">
+                            </div>
+                        </div>
 
-                    <!-- ADDRESS -->
-                    <div class="form-group full">
-                        <label>Address</label>
-                        <input type="text"
-                               name="address"
-                               value="${tenant.address}">
-                    </div>
+                        <!-- ADDRESS -->
+                        <div class="form-group full stagger-item">
+                            <label for="address">Address</label>
+                            <div class="input-shell">
+                                <i class="bi bi-geo-alt-fill input-icon"></i>
+                                <input type="text"
+                                       id="address"
+                                       name="address"
+                                       value="${tenant.address}"
+                                       placeholder="Enter address">
+                            </div>
+                        </div>
 
-                    <!-- STATUS -->
-                    <div class="form-group full">
-                        <label>Status</label>
-
-                        <select name="status">
-
-                            <option value="ACTIVE"
-                                    <c:if test="${tenant.accountStatus == 'ACTIVE'}">selected</c:if>>
+                        <!-- STATUS -->
+                        <div class="form-group full stagger-item">
+                            <label for="status">Status</label>
+                            <div class="input-shell">
+                                <i class="bi bi-shield-check input-icon"></i>
+                                <select id="status" name="status">
+                                    <option value="ACTIVE"
+                                            <c:if test="${tenant.accountStatus == 'ACTIVE'}">selected</c:if>>
                                         Active
                                     </option>
 
                                     <option value="LOCKED"
-                                    <c:if test="${tenant.accountStatus == 'LOCKED'}">selected</c:if>>
+                                            <c:if test="${tenant.accountStatus == 'LOCKED'}">selected</c:if>>
                                         Locked
                                     </option>
-
-                            </select>
-
+                                </select>
+                            </div>
                         </div>
 
                     </div>
 
-                    <!-- BUTTON -->
                     <div class="form-actions">
-
-                        <button type="submit" class="btn-save">
-                            Save
+                        <button type="submit" class="btn-save magnetic-btn" id="submitBtn">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Save Changes</span>
                         </button>
 
                         <a href="${pageContext.request.contextPath}/admin/accounts"
-                       class="btn-cancel">
-                        Cancel
-                    </a>
+                           class="btn-cancel magnetic-btn">
+                            <i class="bi bi-arrow-left"></i>
+                            <span>Cancel</span>
+                        </a>
+                    </div>
 
-                </div>
+                </form>
 
-            </form>
+            </div>
 
         </div>
 
     </div>
+
+    <script src="${pageContext.request.contextPath}/assets/js/pages/admin/updateManage.js"></script>
 
 </t:layout>

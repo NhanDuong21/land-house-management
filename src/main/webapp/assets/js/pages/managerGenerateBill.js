@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const submitBtn = form ? form.querySelector(".tbg-btn-generate") : null;
   const submitBtnIcon = submitBtn ? submitBtn.querySelector("i") : null;
   const submitBtnText = submitBtn
-    ? submitBtn.childNodes[submitBtn.childNodes.length - 1]
+    ? submitBtn.querySelector(".tbg-btn-text")
     : null;
 
   function safeNumber(value) {
@@ -97,11 +97,11 @@ document.addEventListener("DOMContentLoaded", function () {
     roomSelect.addEventListener("change", onRoomChange);
   }
 
-  // Tự tính sẵn khi vào trang editBill
+  // Auto calculate when open edit page
   calcElectric();
   calcWater();
 
-  // Loading effect khi submit, không ảnh hưởng backend
+  // Submit animation only, does not affect backend
   if (form && submitBtn) {
     form.addEventListener("submit", function () {
       submitBtn.classList.add("loading");
@@ -110,19 +110,8 @@ document.addEventListener("DOMContentLoaded", function () {
         submitBtnIcon.className = "bi bi-arrow-repeat";
       }
 
-      // Đổi text bằng cách an toàn hơn
-      const spanText = submitBtn.querySelector(".tbg-btn-text");
-      if (spanText) {
-        spanText.textContent = "Processing...";
-      } else {
-        const textNodes = Array.from(submitBtn.childNodes).filter(
-          (node) =>
-            node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "",
-        );
-
-        if (textNodes.length > 0) {
-          textNodes[textNodes.length - 1].textContent = " Processing...";
-        }
+      if (submitBtnText) {
+        submitBtnText.textContent = "Processing...";
       }
     });
   }
