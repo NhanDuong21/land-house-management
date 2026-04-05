@@ -274,4 +274,4 @@
 
     <script src="${ctx}/assets/js/pages/manageRooms.js"></script>
 
-</t:layout>
+</t:layout> 
