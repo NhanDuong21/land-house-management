@@ -1,8 +1,5 @@
 package DALs.block;
 
-import Models.entity.Block;
-import Utils.database.DBContext;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import Models.entity.Block;
+import Utils.database.DBContext;
 
 /**
  * Description
@@ -30,8 +30,7 @@ public class BlockDAO extends DBContext {
 
         List<Block> list = new ArrayList<>();
 
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Block b = new Block();
@@ -102,6 +101,26 @@ public class BlockDAO extends DBContext {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE,
                     String.format("Failed to find block id by name. blockName=%s", blockName),
+                    e);
+        }
+
+        return null;
+    }
+
+    public String findNameById(int blockId) {
+        String sql = "SELECT block_name FROM BLOCK WHERE block_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, blockId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("block_name");
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE,
+                    String.format("Failed to find block name by id. blockId=%d", blockId),
                     e);
         }
 

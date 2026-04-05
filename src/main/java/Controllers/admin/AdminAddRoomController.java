@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.UUID;
 
 import DALs.block.BlockDAO;
 import DALs.room.RoomDAO;
@@ -41,38 +42,87 @@ public class AdminAddRoomController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        try {
-            String blockNameRaw = req.getParameter("blockName");
-            if (blockNameRaw == null || blockNameRaw.trim().isEmpty()) {
-                req.setAttribute("blocks", blockDAO.findAllActive());
-                req.setAttribute("err", "Please enter block name");
-                req.getRequestDispatcher("/views/admin/createRoom.jsp").forward(req, resp);
-                return;
-            }
-            blockNameRaw = blockNameRaw.trim();
-            if (!blockNameRaw.toLowerCase().startsWith("khu")) {
-                req.setAttribute("blocks", blockDAO.findAllActive());
-                req.setAttribute("err", "Block name must start with 'Khu'");
-                req.getRequestDispatcher("/views/admin/createRoom.jsp").forward(req, resp);
-                return;
-            }
-            String remain = blockNameRaw.substring(3).trim();
-            String finalBlockName = "Khu " + remain;
 
-            Integer blockId = blockDAO.findIdByName(finalBlockName);
-            if (blockId == null) {
-                blockId = blockDAO.insertAndReturnId(finalBlockName);
-                if (blockId == -1) {
-                    req.setAttribute("blocks", blockDAO.findAllActive());
-                    req.setAttribute("err", "Cannot create new block");
-                    req.getRequestDispatcher("/views/admin/createRoom.jsp").forward(req, resp);
+        req.setCharacterEncoding("UTF-8");
+
+        try {
+            String blockMode = req.getParameter("blockMode");
+            String blockIdRaw = req.getParameter("blockId");
+            String newBlockNameRaw = req.getParameter("newBlockName");
+
+            Integer blockId = null;
+            String finalBlockName = null;
+
+            if ("existing".equals(blockMode)) {
+                if (blockIdRaw == null || blockIdRaw.trim().isEmpty()) {
+                    forwardWithError(req, resp, "Please select a block");
                     return;
                 }
+
+                try {
+                    blockId = Integer.parseInt(blockIdRaw);
+                } catch (NumberFormatException e) {
+                    forwardWithError(req, resp, "Invalid block selected");
+                    return;
+                }
+
+                if (!blockDAO.exists(blockId)) {
+                    forwardWithError(req, resp, "Selected block does not exist");
+                    return;
+                }
+
+                finalBlockName = blockDAO.findNameById(blockId);
+                if (finalBlockName == null || finalBlockName.trim().isEmpty()) {
+                    forwardWithError(req, resp, "Cannot load block information");
+                    return;
+                }
+
+            } else if ("new".equals(blockMode)) {
+                if (newBlockNameRaw == null || newBlockNameRaw.trim().isEmpty()) {
+                    forwardWithError(req, resp, "Please enter new block name");
+                    return;
+                }
+
+                finalBlockName = normalizeBlockName(newBlockNameRaw);
+                if (finalBlockName == null) {
+                    if (finalBlockName == null) {
+                        forwardWithError(req, resp, "Block name must be exactly 1 letter from A to Z");
+                        return;
+                    }
+                    return;
+                }
+
+                Integer existingBlockId = blockDAO.findIdByName(finalBlockName);
+                if (existingBlockId != null) {
+                    blockId = existingBlockId;
+                } else {
+                    blockId = blockDAO.insertAndReturnId(finalBlockName);
+                    if (blockId == -1) {
+                        forwardWithError(req, resp, "Cannot create new block");
+                        return;
+                    }
+                }
+
+            } else {
+                forwardWithError(req, resp, "Invalid block mode");
+                return;
             }
+
+            String roomInput = req.getParameter("roomNumber");
+            if (roomInput == null || roomInput.trim().isEmpty()) {
+                forwardWithError(req, resp, "Room number is required");
+                return;
+            }
+
+            roomInput = roomInput.trim();
+
+            if (!roomInput.matches("\\d{3}")) {
+                forwardWithError(req, resp, "Room number must be exactly 3 digits");
+                return;
+            }
+
             Room r = new Room();
             r.setBlockId(blockId);
-            r.setRoomNumber(req.getParameter("roomNumber"));
             r.setArea(parseDecimal(req.getParameter("area")));
             r.setPrice(parseDecimal(req.getParameter("price")));
             r.setFloor(parseInt(req.getParameter("floor")));
@@ -82,42 +132,35 @@ public class AdminAddRoomController extends HttpServlet {
             r.setAirConditioning(req.getParameter("airConditioning") != null);
             r.setDescription(req.getParameter("description"));
 
-            String roomInput = req.getParameter("roomNumber");
-
-            if (roomInput == null || roomInput.trim().isEmpty()) {
-                req.setAttribute("err", "Room number is required");
-                req.setAttribute("blocks", blockDAO.findAllActive());
-                req.getRequestDispatcher("/views/admin/createRoom.jsp").forward(req, resp);
+            String blockLetter = extractBlockLetter(finalBlockName);
+            if (blockLetter == null) {
+                forwardWithError(req, resp, "Invalid block name format");
                 return;
             }
-            roomInput = roomInput.trim();
-            String blockSuffix = finalBlockName.substring(4).trim();
-            String finalRoomNumber;
-            if (roomInput.toUpperCase().startsWith(blockSuffix.toUpperCase())) {
-                finalRoomNumber = roomInput;
-            } else {
-                finalRoomNumber = blockSuffix + roomInput;
-            }
+
+            String finalRoomNumber = blockLetter + roomInput;
             r.setRoomNumber(finalRoomNumber);
+
             Collection<Part> parts = req.getParts();
             int imageCount = 0;
 
             for (Part p : parts) {
                 if ("images".equals(p.getName()) && p.getSize() > 0) {
+                    String contentType = p.getContentType();
+                    if (contentType == null || !contentType.startsWith("image/")) {
+                        forwardWithError(req, resp, "Only image files are allowed.");
+                        return;
+                    }
                     imageCount++;
                 }
             }
             if (imageCount > 12) {
-                req.setAttribute("blocks", blockDAO.findAllActive());
-                req.setAttribute("err", "A maximum of 12 images are allowed.");
-                req.getRequestDispatcher("/views/admin/createRoom.jsp").forward(req, resp);
+                forwardWithError(req, resp, "A maximum of 12 images are allowed.");
                 return;
             }
             int roomId = roomDAO.addRoom(r);
             if (roomId <= 0) {
-                req.setAttribute("blocks", blockDAO.findAllActive());
-                req.setAttribute("err", "Create room failed. Room number may already exist in this block.");
-                req.getRequestDispatcher("/views/admin/createRoom.jsp").forward(req, resp);
+                forwardWithError(req, resp, "Create room failed. Room number may already exist in this block.");
                 return;
             }
             String uploadPath = getServletContext().getRealPath("/assets/images/rooms");
@@ -127,11 +170,15 @@ public class AdminAddRoomController extends HttpServlet {
             }
             for (Part p : parts) {
                 if ("images".equals(p.getName()) && p.getSize() > 0) {
+                    String originalFileName = p.getSubmittedFileName();
+                    String ext = "";
 
-                    String fileName = System.currentTimeMillis() + "_" + p.getSubmittedFileName();
-
+                    int dotIndex = originalFileName.lastIndexOf('.');
+                    if (dotIndex >= 0) {
+                        ext = originalFileName.substring(dotIndex);
+                    }
+                    String fileName = UUID.randomUUID().toString() + ext;
                     p.write(uploadPath + File.separator + fileName);
-
                     imgDAO.insertImage(roomId, fileName);
                 }
             }
@@ -139,10 +186,26 @@ public class AdminAddRoomController extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/admin/rooms?msg=created");
         } catch (Exception e) {
             e.printStackTrace();
-            req.setAttribute("blocks", blockDAO.findAllActive());
-            req.setAttribute("err", "System error: " + e.getMessage());
-            req.getRequestDispatcher("/views/admin/createRoom.jsp").forward(req, resp);
+            forwardWithError(req, resp, "System error: " + e.getMessage());
         }
+    }
+
+    private void forwardWithError(HttpServletRequest req, HttpServletResponse resp, String error)
+            throws ServletException, IOException {
+        req.setAttribute("blocks", blockDAO.findAllActive());
+        req.setAttribute("err", error);
+        req.getRequestDispatcher("/views/admin/createRoom.jsp").forward(req, resp);
+    }
+
+    private String normalizeBlockName(String raw) {
+        if (raw == null) {
+            return null;
+        }
+        raw = raw.trim().toUpperCase();
+        if (!raw.matches("[A-Z]")) {
+            return null;
+        }
+        return "Khu " + raw;
     }
 
     private BigDecimal parseDecimal(String s) {
@@ -159,5 +222,16 @@ public class AdminAddRoomController extends HttpServlet {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private String extractBlockLetter(String blockName) {
+        if (blockName == null) {
+            return null;
+        }
+        blockName = blockName.trim();
+        if (!blockName.matches("Khu\\s+[A-Z]")) {
+            return null;
+        }
+        return blockName.substring(blockName.length() - 1);
     }
 }
