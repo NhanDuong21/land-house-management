@@ -4,12 +4,13 @@
  */
 package DALs.utilities;
 
-import Models.entity.Utility;
-import Utils.database.DBContext;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
+import Models.entity.Utility;
+import Utils.database.DBContext;
 
 /**
  *
@@ -162,7 +163,6 @@ public class Utilities_UsageDAO extends DBContext {
         }
         return ids;
     }
-    
     public int getUnpaidBillIdByTenantId(int tenantId) {
         String sql = "SELECT TOP 1 b.bill_id FROM BILL b "
                 + "JOIN CONTRACT c ON b.contract_id = c.contract_id "
@@ -213,7 +213,7 @@ public class Utilities_UsageDAO extends DBContext {
         }
     }
 
-// Xóa các utility bị untick
+    // Xóa các utility bị untick
     public void removeUtilityUsages(int contractId, List<Integer> utilityIds) {
         if (utilityIds == null || utilityIds.isEmpty()) {
             return;

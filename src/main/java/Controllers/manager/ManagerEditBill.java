@@ -67,6 +67,7 @@ public class ManagerEditBill extends HttpServlet {
                 request.setAttribute("bill", bill);
                 request.setAttribute("paymentStatus", latestPaymentStatus);
                 request.getRequestDispatcher("/views/manager/editBill.jsp").forward(request, response);
+                return;
             }
 
             response.sendRedirect(request.getContextPath() + "/manager/billing");
