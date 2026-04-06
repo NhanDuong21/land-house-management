@@ -26,13 +26,14 @@ public class Utilities_UsageDAO extends DBContext {
                 + "    r.room_number, "
                 + "    t.full_name, "
                 + "    ut.usage_date "
-                + "FROM BILL_DETAIL bd "
-                + "JOIN BILL b ON bd.bill_id = b.bill_id "
-                + "JOIN CONTRACT c ON b.contract_id = c.contract_id "
+                + "FROM UTILITY_USAGE ut "
+                + "JOIN CONTRACT c ON ut.contract_id = c.contract_id "
                 + "JOIN ROOM r ON c.room_id = r.room_id "
                 + "JOIN TENANT t ON c.tenant_id = t.tenant_id "
-                + "JOIN UTILITY_USAGE ut ON c.contract_id = ut.contract_id "
-                + "WHERE bd.utility_id = ? "
+                + "WHERE ut.utility_id = ? "
+                + "AND c.status = 'ACTIVE' "
+                + "AND MONTH(ut.usage_date) = MONTH(GETDATE()) "
+                + "AND YEAR(ut.usage_date) = YEAR(GETDATE()) "
                 + "ORDER BY r.room_id "
                 + "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
@@ -162,7 +163,6 @@ public class Utilities_UsageDAO extends DBContext {
         }
         return ids;
     }
-
     public int getUnpaidBillIdByTenantId(int tenantId) {
         String sql = "SELECT TOP 1 b.bill_id FROM BILL b "
                 + "JOIN CONTRACT c ON b.contract_id = c.contract_id "
@@ -182,7 +182,7 @@ public class Utilities_UsageDAO extends DBContext {
     }
 
     public void syncToBillDetail(int billId, int contractId) {
-        String deleteSql = "DELETE FROM BILL_DETAIL "
+        String deleteSql ="DELETE FROM BILL_DETAIL "
                 + "WHERE bill_id = ? "
                 + "AND charge_type = 'UTILITY' "
                 + "AND utility_id NOT IN ( "
