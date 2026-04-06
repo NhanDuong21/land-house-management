@@ -72,6 +72,11 @@ public class ContractService {
         if (t.getDateOfBirth() == null) {
             return ServiceResult.fail("Ngày sinh tenant không được để trống.");
         }
+
+        if (t.getDateOfBirth().toLocalDate().plusYears(18).isAfter(java.time.LocalDate.now())) {
+            return ServiceResult.fail("Tennat phải đủ 18 tuổi trở lên mới được thuê trọ");
+        }
+
         if (t.getGender() == null) {
             return ServiceResult.fail("Giới tính tenant không được để trống.");
         }
