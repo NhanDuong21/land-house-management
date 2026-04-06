@@ -1,8 +1,5 @@
 package DALs.auth;
 
-import Models.entity.TenantDocument;
-import Utils.database.DBContext;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import Models.entity.TenantDocument;
+import Utils.database.DBContext;
 
 /**
  * Description
@@ -151,22 +151,4 @@ public class TenantDocumentDAO extends DBContext {
         return false;
     }
 
-    public boolean softDeleteById(Connection conn, int documentId) throws SQLException {
-        String sql = """
-                UPDATE TENANT_DOCUMENT
-                SET status = 'DELETED'
-                WHERE document_id = ?
-                  AND status = 'ACTIVE'
-                """;
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, documentId);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE,
-                    String.format("Failed to soft delete tenant document. documentId=%d", documentId),
-                    e);
-            throw e;
-        }
-    }
 }

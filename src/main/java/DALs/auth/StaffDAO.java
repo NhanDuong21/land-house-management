@@ -213,7 +213,7 @@ public class StaffDAO extends DBContext {
     }
 
     public boolean existsEmailExceptStaff(int staffId, String email) {
-        String sql = "SELECT 1 FROM STAFF WHERE email = ? AND staff_id <> ?";
+        String sql = "SELECT * FROM STAFF WHERE email = ? AND staff_id <> ?";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
