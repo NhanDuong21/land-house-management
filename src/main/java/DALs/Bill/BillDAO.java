@@ -25,7 +25,7 @@ public class BillDAO extends DBContext {
     // =========================
     // GET LIST BILL - MANAGER
     // =========================
-    @SuppressWarnings({ "CallToPrintStackTrace", "UseSpecificCatch" })
+    @SuppressWarnings({"CallToPrintStackTrace", "UseSpecificCatch"})
     public List<ManagerBillRowDTO> getManagerBills(int page, int pageSize) {
         List<ManagerBillRowDTO> listBill = new ArrayList<>();
 
@@ -295,9 +295,9 @@ public class BillDAO extends DBContext {
 
             ps.setString(4,
                     "Bill "
-                            + billMonthDate.toLocalDate().getMonthValue()
-                            + "/"
-                            + billMonthDate.toLocalDate().getYear());
+                    + billMonthDate.toLocalDate().getMonthValue()
+                    + "/"
+                    + billMonthDate.toLocalDate().getYear());
 
             ps.setInt(5, oldE);
             ps.setInt(6, newE);
@@ -566,8 +566,18 @@ public class BillDAO extends DBContext {
             connection.commit();
             return true;
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            try {
+                connection.rollback();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (Exception e) {
+            }
         }
 
         return false;
@@ -937,8 +947,7 @@ public class BillDAO extends DBContext {
                     ORDER BY due_date DESC
                 """;
 
-        try (PreparedStatement ps = connection.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 Bill b = new Bill();
