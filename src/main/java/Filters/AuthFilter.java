@@ -89,8 +89,8 @@ public class AuthFilter implements Filter {
             Tenant tenant = auth.getTenant();
             if (tenant != null) {
 
-                // must_set_password trong DB là BIT, entity bạn chắc có getter boolean hoặc int
-                boolean mustSet = tenant.isMustSetPassword(); // nếu lỗi thì xem note bên dưới
+                // must_set_password trong DB là BIT
+                boolean mustSet = tenant.isMustSetPassword(); 
 
                 boolean isSetPasswordPage = uri.equals(ctx + "/tenant/set-password");
                 boolean allowSetPass = isSetPasswordPage || uri.equals(ctx + "/logout") || uri.startsWith(ctx + "/assets/");

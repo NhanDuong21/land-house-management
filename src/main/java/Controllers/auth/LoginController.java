@@ -64,7 +64,7 @@ public class LoginController extends HttpServlet {
             if (authResult == null) {
                 request.setAttribute("error", "OTP không đúng hoặc đã hết hạn.");
                 request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
-                return; // ← fix bug trang đen
+                return; 
             }
 
             // Xóa session forgot-password sau khi login thành công
@@ -120,8 +120,7 @@ public class LoginController extends HttpServlet {
     }
 
     /**
-     * Thêm mới — redirect theo role.
-     * Chỉnh path cho đúng URL mapping thực tế trong project.
+     *  redirect theo role.
      */
     private String resolveRedirect(AuthResult auth) {
         String role = auth.getRole();
