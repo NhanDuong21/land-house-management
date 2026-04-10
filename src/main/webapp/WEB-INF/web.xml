@@ -429,5 +429,7 @@
         <servlet-name>TenantAddOccupantController</servlet-name>
         <url-pattern>/tenant/add-occupant</url-pattern>
     </servlet-mapping>
-
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>
