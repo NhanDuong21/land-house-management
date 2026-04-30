@@ -102,8 +102,7 @@ public class CreateExistingContractController extends HttpServlet {
             Part cccdFront = request.getPart("cccdFront");
             Part cccdBack = request.getPart("cccdBack");
 
-            if (cccdFront == null || cccdFront.getSize() <= 0
-                    || cccdBack == null || cccdBack.getSize() <= 0) {
+            if (cccdFront == null || cccdFront.getSize() <= 0 || cccdBack == null || cccdBack.getSize() <= 0) {
                 redirectError(request, response, "Vui lòng upload đủ CCCD mặt trước và mặt sau.");
                 return;
             }

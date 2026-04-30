@@ -9,7 +9,6 @@ import DALs.auth.OtpCodeDAO;
 import DALs.auth.TenantDAO;
 import DALs.auth.TenantDocumentDAO;
 import DALs.contract.ContractDAO;
-import DALs.contract.ContractOccupantDAO;
 import Models.common.ServiceResult;
 import Models.dto.ManagerContractRowDTO;
 import Models.entity.Contract;
@@ -29,7 +28,6 @@ public class ContractService {
     private final ContractDAO contractDAO = new ContractDAO();
     private final OtpCodeDAO otpDAO = new OtpCodeDAO();
     private final TenantDocumentDAO tenantDocumentDAO = new TenantDocumentDAO();
-    private final ContractOccupantDAO contractOccupantDAO = new ContractOccupantDAO();
 
     //FLOW 1: CREATE CONTRACT + CREATE TENANT (NO ACCOUNT) + OTP
     @SuppressWarnings({"UseSpecificCatch", "CallToPrintStackTrace"})
@@ -152,13 +150,8 @@ public class ContractService {
 
     //FLOW 2: CREATE CONTRACT FOR EXISTING TENANT (HAS ACCOUNT)
     //block: tenant chỉ được có 1 ACTIVE hoặc 1 PENDING (cùng lúc)
-    @SuppressWarnings("UseSpecificCatch")
-    public ServiceResult createContractForExistingTenant(
-            Contract c,
-            int tenantId,
-            String cccdFrontUrl,
-            String cccdBackUrl
-    ) {
+    @SuppressWarnings({"UseSpecificCatch", "CallToPrintStackTrace"})
+    public ServiceResult createContractForExistingTenant(Contract c, int tenantId, String cccdFrontUrl, String cccdBackUrl) {
 
         if (tenantId <= 0) {
             return ServiceResult.fail("Tenant không hợp lệ.");
@@ -183,6 +176,7 @@ public class ContractService {
                 conn.rollback();
                 return ServiceResult.fail("Tenant không tồn tại.");
             }
+
             if (t.getAccountStatus() == null || !"ACTIVE".equalsIgnoreCase(t.getAccountStatus())) {
                 conn.rollback();
                 return ServiceResult.fail("Tenant chưa ACTIVE. Không thể tạo hợp đồng theo luồng has-account.");
@@ -194,24 +188,17 @@ public class ContractService {
                 return ServiceResult.fail("Tenant này đang có hợp đồng ACTIVE/PENDING. Không thể tạo thêm.");
             }
 
-            // 3) Set tenantId vào contract
+            // 3) Set tenant chính trực tiếp vào CONTRACT giống hệt flow 1
             c.setTenantId(tenantId);
 
             // 4) Insert contract PENDING
-            int newId = contractDAO.insertPendingContract(conn, c);
-            if (newId <= 0) {
+            int contractId = contractDAO.insertPendingContract(conn, c);
+            if (contractId <= 0) {
                 conn.rollback();
                 return ServiceResult.fail("Không tạo được contract (PENDING).");
             }
 
-            // 5) Insert PRIMARY occupant
-            int primaryOccupantId = contractOccupantDAO.insertPrimary(conn, newId, tenantId, c.getStartDate(), "PENDING");
-            if (primaryOccupantId <= 0) {
-                conn.rollback();
-                return ServiceResult.fail("Không tạo được người ở chính cho hợp đồng.");
-            }
-
-            // 6) Insert CCCD document cho tenant existing
+            // 5) Lưu CCCD tenant chính vào TENANT_DOCUMENT giống flow 1
             int frontDocId = tenantDocumentDAO.insertDocument(conn, tenantId, "CCCD_FRONT", cccdFrontUrl);
             int backDocId = tenantDocumentDAO.insertDocument(conn, tenantId, "CCCD_BACK", cccdBackUrl);
 
@@ -224,8 +211,10 @@ public class ContractService {
             return ServiceResult.ok("Tạo contract (PENDING) cho tenant có account + lưu CCCD thành công.");
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return ServiceResult.fail(mapSqlErrorToUi(e));
         } catch (Exception e) {
+            e.printStackTrace();
             return ServiceResult.fail("Lỗi hệ thống: " + (e.getMessage() == null ? "UNKNOWN" : e.getMessage()));
         }
     }

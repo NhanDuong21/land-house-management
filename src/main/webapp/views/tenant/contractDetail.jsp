@@ -227,6 +227,108 @@
                         ARTICLE 0: OCCUPANTS INFORMATION
                     </div>
 
+                    <!-- PRIMARY TENANT -->
+                    <div class="tcd-line">
+                        <span class="tcd-label">
+                            <i class="bi bi-person-circle me-1"></i>
+                            Primary Tenant:
+                        </span>
+                        <span class="tcd-value">
+                            <strong><c:out value="${empty contract.tenantName ? '-' : contract.tenantName}"/></strong>
+                            -
+                            PRIMARY
+                            -
+                            <c:out value="${empty contract.status ? '-' : contract.status}"/>
+                        </span>
+                    </div>
+
+                    <div class="tcd-line">
+                        <span class="tcd-label">
+                            <i class="bi bi-credit-card me-1"></i>
+                            Citizen ID:
+                        </span>
+                        <span class="tcd-value">
+                            <c:out value="${empty contract.tenantIdentityCode ? '-' : contract.tenantIdentityCode}"/>
+                        </span>
+                    </div>
+
+                    <div class="tcd-line">
+                        <span class="tcd-label">
+                            <i class="bi bi-telephone me-1"></i>
+                            Phone:
+                        </span>
+                        <span class="tcd-value">
+                            <c:out value="${empty contract.tenantPhoneNumber ? '-' : contract.tenantPhoneNumber}"/>
+                        </span>
+                    </div>
+
+                    <div class="tcd-line">
+                        <span class="tcd-label">
+                            <i class="bi bi-envelope me-1"></i>
+                            Email:
+                        </span>
+                        <span class="tcd-value">
+                            <c:out value="${empty contract.tenantEmail ? '-' : contract.tenantEmail}"/>
+                        </span>
+                    </div>
+
+                    <div class="tcd-line">
+                        <span class="tcd-label">
+                            <i class="bi bi-geo-alt me-1"></i>
+                            Address:
+                        </span>
+                        <span class="tcd-value">
+                            <c:out value="${empty contract.tenantAddress ? '-' : contract.tenantAddress}"/>
+                        </span>
+                    </div>
+
+                    <div class="tcd-line">
+                        <span class="tcd-label">
+                            <i class="bi bi-image me-1"></i>
+                            Primary CCCD Front:
+                        </span>
+                        <span class="tcd-value">
+                            <c:choose>
+                                <c:when test="${not empty tenantCccdFront}">
+                                    <button type="button"
+                                            class="tcd-link-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#imagePreviewModal"
+                                            data-img-src="${pageContext.request.contextPath}${tenantCccdFront}"
+                                            data-img-title="Primary CCCD Front">
+                                        View image
+                                    </button>
+                                </c:when>
+                                <c:otherwise>-</c:otherwise>
+                            </c:choose>
+                        </span>
+                    </div>
+
+                    <div class="tcd-line">
+                        <span class="tcd-label">
+                            <i class="bi bi-image me-1"></i>
+                            Primary CCCD Back:
+                        </span>
+                        <span class="tcd-value">
+                            <c:choose>
+                                <c:when test="${not empty tenantCccdBack}">
+                                    <button type="button"
+                                            class="tcd-link-btn"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#imagePreviewModal"
+                                            data-img-src="${pageContext.request.contextPath}${tenantCccdBack}"
+                                            data-img-title="Primary CCCD Back">
+                                        View image
+                                    </button>
+                                </c:when>
+                                <c:otherwise>-</c:otherwise>
+                            </c:choose>
+                        </span>
+                    </div>
+
+                    <div class="tcd-divider tcd-divider-soft"></div>
+
+                    <!-- ROOMMATES -->
                     <c:choose>
                         <c:when test="${empty occupants}">
                             <div class="tcd-note">
@@ -449,21 +551,21 @@
                                 <c:otherwise>-</c:otherwise>
                             </c:choose>
                             <c:if test="${c.isMezzanine}">, Mezzanine</c:if>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="tcd-divider tcd-divider-soft"></div>
-
-                <div class="tcd-article">
-                    <div class="tcd-article-title">
-                        <i class="bi bi-calendar-range me-2"></i>
-                        ARTICLE 2: RENTAL PERIOD
+                            </span>
+                        </div>
                     </div>
 
-                    <div class="tcd-line">
-                        <span class="tcd-label"><i class="bi bi-calendar-check me-1"></i> Start Date:</span>
-                        <span class="tcd-value">
+                    <div class="tcd-divider tcd-divider-soft"></div>
+
+                    <div class="tcd-article">
+                        <div class="tcd-article-title">
+                            <i class="bi bi-calendar-range me-2"></i>
+                            ARTICLE 2: RENTAL PERIOD
+                        </div>
+
+                        <div class="tcd-line">
+                            <span class="tcd-label"><i class="bi bi-calendar-check me-1"></i> Start Date:</span>
+                            <span class="tcd-value">
                             <c:choose>
                                 <c:when test="${empty c.startDate}">-</c:when>
                                 <c:otherwise><fmt:formatDate value="${c.startDate}" pattern="dd/MM/yyyy"/></c:otherwise>
